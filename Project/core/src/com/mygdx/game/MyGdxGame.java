@@ -163,7 +163,6 @@ public class MyGdxGame extends ApplicationAdapter {
 //						&& gameState == GameState.PLAYING) {
 //					gameState = GameState.PAUSED;
 //				}
-				System.out.println(player.getY());
 
 				//Character and Camera Movement
 				player.move(moveX, moveY, camera);

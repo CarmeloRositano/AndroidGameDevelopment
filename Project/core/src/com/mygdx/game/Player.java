@@ -26,6 +26,8 @@ public class Player extends GameActor {
     }
 
     public void setPosition(float x, float y) {
+        setX(x);
+        setY(y);
         sprite.setX(x);
         sprite.setY(y);
         setVelocityX(0);
@@ -36,7 +38,6 @@ public class Player extends GameActor {
         float dt = Gdx.graphics.getDeltaTime();
 
         setX(getX() + (x * MovementSpeed * dt));
-        System.out.println(getX());
         if(y == 1) {
             setVelocityY(10f);
         }
