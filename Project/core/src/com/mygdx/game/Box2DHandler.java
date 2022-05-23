@@ -34,7 +34,6 @@ public class Box2DHandler {
     }
 
     public void render() {
-        Vector2 normalSize = new Vector2(camera.viewportWidth, camera.viewportHeight);
         box2DRenderer.render(world,camera.combined);
     }
 
@@ -56,6 +55,23 @@ public class Box2DHandler {
         body.createFixture(fdef);
 
         shape.dispose();
+    }
+
+    public Body createCharacterShape(float x, float y, float width, float height) {
+        BodyDef def = new BodyDef();
+        def.position.set(x/PPM, y/PPM);
+        def.type = BodyDef.BodyType.DynamicBody;
+        Body body = world.createBody(def);
+
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox((width/2)/PPM, (height/2)/PPM);
+
+        FixtureDef fdef = new FixtureDef();
+        fdef.shape = shape;
+        body.createFixture(fdef);
+
+        shape.dispose();
+        return body;
     }
 
     public void dispose() {

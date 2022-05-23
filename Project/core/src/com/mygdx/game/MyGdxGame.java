@@ -45,8 +45,6 @@ public class MyGdxGame extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		uiBatch = new SpriteBatch();
 
-		player = new Player();
-
 		//Camera
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, R_WIDTH/5, R_HEIGHT/5);
@@ -74,6 +72,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		box2DHandler = new Box2DHandler(camera);
 		level = new Level("", box2DHandler, camera);
 
+		player = new Player(box2DHandler);
+
 		player.setPosition(level.getPlayerSpawn().x, level.getPlayerSpawn().y);
 	}
 
@@ -94,9 +94,8 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		batch.draw(player.sprite.getTexture(), player.getX(), player.getY());
+		batch.draw(player.sprite.getTexture(), player.sprite.getX(), player.sprite.getY());
 		batch.end();
-
 
 
 		//Draw UI
@@ -166,7 +165,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
 				//Character and Camera Movement
 				player.move(moveX, moveY, camera);
-				Physics.updatePosition(player);
+//				Physics.updatePosition(player);
 				camera.update();
 				break;
 			case PAUSED:

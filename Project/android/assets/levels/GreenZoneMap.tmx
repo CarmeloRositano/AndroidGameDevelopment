@@ -38,6 +38,6 @@
   <object id="9" x="544" y="352" width="160" height="32"/>
  </objectgroup>
  <objectgroup id="4" name="Player">
-  <object id="14" name="Spawn" x="256" y="224" width="32" height="32"/>
+  <object id="14" name="Spawn" x="154.667" y="474.667" width="32" height="32"/>
  </objectgroup>
 </map>
