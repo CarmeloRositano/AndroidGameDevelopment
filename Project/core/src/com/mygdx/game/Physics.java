@@ -5,13 +5,15 @@ import com.badlogic.gdx.math.Rectangle;
 import com.sun.tools.javac.util.Pair;
 
 public class Physics {
-    private static final float gravity = 100f;
+    private static final float gravity = 9.8f;
     private enum ActorSide {LEFT, RIGHT, TOP, BOTTOM};
 
     public static void updatePosition(GameActor actor) {
         float dt = Gdx.graphics.getDeltaTime();
-        actor.setPosition(actor.getX() + actor.getVelocityX()*dt, actor.getY() + actor.getVelocityY()*dt);
+//        actor.setPosition(actor.getX() + actor.getVelocityX()*dt, actor.getY() + actor.getVelocityY()*dt);
         actor.setVelocityY(actor.getVelocityY() - gravity * dt);
+//        actor.setVelocityX(actor.getVelocityX() - (actor.getVelocityX()*0.9f)*1);
+//        if (actor.getVelocityX() < -2 || actor.getVelocityX() > 2) actor.setVelocityX(0);
     }
 
     public static void HandleCollision(GameActor actor, GameActor other) {
@@ -20,15 +22,19 @@ public class Physics {
             switch (sideDist.fst) {
                 case LEFT:
                     actor.moveBy(sideDist.snd, 0);
+                    actor.setVelocityX(0);
                     break;
                 case RIGHT:
                     actor.moveBy(-sideDist.snd, 0);
+                    actor.setVelocityX(0);
                     break;
                 case TOP:
                     actor.moveBy(0, -sideDist.snd);
+                    actor.setVelocityY(0);
                     break;
                 case BOTTOM:
                     actor.moveBy(0, sideDist.snd);
+                    actor.setVelocityY(0);
                     break;
             }
         }

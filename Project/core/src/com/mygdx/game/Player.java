@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 
 public class Player extends GameActor {
 
@@ -20,19 +21,34 @@ public class Player extends GameActor {
     public Player() {
         currentState = PlayerState.IDLE;
         sprite = new Sprite();
-        sprite.setSize(256, 256);
         //TODO temp static player sprite
-        sprite.setRegion(new Texture("Character.png"));
+        sprite.setRegion(new Texture("CharacterSmall.png"));
+    }
+
+    public void setPosition(float x, float y) {
+        sprite.setX(x);
+        sprite.setY(y);
+        setVelocityX(0);
+        setVelocityY(0);
     }
 
     public void move(int x, int y, Camera camera) {
+        float dt = Gdx.graphics.getDeltaTime();
 
-        setX(x * MovementSpeed * Gdx.graphics.getDeltaTime());
+        setX(getX() + (x * MovementSpeed * dt));
+        System.out.println(getX());
         if(y == 1) {
             setVelocityY(10f);
         }
+        setY(getY() + getVelocityY());
 
-        sprite.translate(getX(), getVelocityY());
+        // Camera Banding
+        float camXDist = ((getX() + sprite.getWidth()/2) - camera.position.x) * dt*5;
+        float camYDist = ((getY() + sprite.getHeight()/2) - camera.position.y) * dt*5;
+        camera.position.x += camXDist/2;
+        camera.position.y +=  camYDist/2;
+
+        sprite.translate(getX(), getY());
     }
 
     public void dispose() {

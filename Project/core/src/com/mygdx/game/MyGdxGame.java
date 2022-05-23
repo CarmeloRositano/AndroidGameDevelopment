@@ -13,6 +13,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class MyGdxGame extends ApplicationAdapter {
 
 	public enum GameState { MAIN_MENU, PLAYING, PAUSED, COMPLETE }
+	private float R_WIDTH = 1920;
+	private float R_HEIGHT;
 
 	GameState gameState;
 
@@ -21,6 +23,10 @@ public class MyGdxGame extends ApplicationAdapter {
 
 	SpriteBatch batch, uiBatch;
 	OrthographicCamera camera;
+
+	//Box2D
+	Box2DHandler box2DHandler;
+	Level level;
 
 	//UI textures
 	Texture buttonSquareTexture, buttonSquareDownTexture, buttonLongTexture, buttonLongDownTexture;
@@ -31,6 +37,8 @@ public class MyGdxGame extends ApplicationAdapter {
 	
 	@Override
 	public void create () {
+		R_HEIGHT  = R_WIDTH * ((float)Gdx.graphics.getHeight() / Gdx.graphics.getWidth());
+
 		newGame();
 
 		//Render
@@ -41,7 +49,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		//Camera
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		camera.setToOrtho(false, R_WIDTH/5, R_HEIGHT/5);
 		camera.update();
 
 		//UI Textures
@@ -62,6 +70,11 @@ public class MyGdxGame extends ApplicationAdapter {
 		exitButton = new Button(w - (w * 0.425f) - (w * 0.05f), h * 0.6f, w * 0.425f, h * 0.2f, buttonLongTexture, buttonLongDownTexture);
 		pauseButton = new Button(w * 0.5f - (w * 0.1f) * 0.5f, h * 0.89f, w * 0.1f, h * 0.1f, buttonSquareTexture, buttonSquareDownTexture);
 
+
+		box2DHandler = new Box2DHandler(camera);
+		level = new Level("", box2DHandler, camera);
+
+		player.setPosition(level.getPlayerSpawn().x, level.getPlayerSpawn().y);
 	}
 
 	@Override
@@ -74,9 +87,17 @@ public class MyGdxGame extends ApplicationAdapter {
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+		level.update();
+		level.render();
+		box2DHandler.update();
+		box2DHandler.render();
+
+		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		player.sprite.draw(batch);
+		batch.draw(player.sprite.getTexture(), player.getX(), player.getY());
 		batch.end();
+
+
 
 		//Draw UI
 		uiBatch.begin();
@@ -142,6 +163,7 @@ public class MyGdxGame extends ApplicationAdapter {
 //						&& gameState == GameState.PLAYING) {
 //					gameState = GameState.PAUSED;
 //				}
+				System.out.println(player.getY());
 
 				//Character and Camera Movement
 				player.move(moveX, moveY, camera);
