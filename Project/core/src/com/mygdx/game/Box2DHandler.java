@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -13,7 +14,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 
 public class Box2DHandler {
-    private final float PPM = 100;
+    private final float PPM = 1;
 
     private World world;
     private Box2DDebugRenderer box2DRenderer;
@@ -33,12 +34,8 @@ public class Box2DHandler {
     }
 
     public void render() {
-        box2DCam.combined.set(camera.combined.cpy());
-        box2DCam.viewportWidth = camera.viewportWidth / 100;
-        box2DCam.viewportHeight = camera.viewportHeight / 100;
-        box2DCam.update();
-
-        box2DRenderer.render(world, box2DCam.combined);
+        Vector2 normalSize = new Vector2(camera.viewportWidth, camera.viewportHeight);
+        box2DRenderer.render(world,camera.combined);
     }
 
     public World getWorld() {
