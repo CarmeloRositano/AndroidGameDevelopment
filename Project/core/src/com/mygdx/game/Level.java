@@ -22,12 +22,16 @@ public class Level {
      * Initialises field variables and prepares level.
      */
     public Level(String levelName, Box2DHandler handler, OrthographicCamera camera) {
-        tiledMap = new TmxMapLoader().load("levels/GreenZoneMap.tmx");
+        // Loads map and adds it to a new renderer
+        tiledMap = new TmxMapLoader().load("levels/" + levelName + ".tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+
+        // Initialise field variables with arguments
         this.camera = camera;
         box2DHandler = handler;
-        MapObjects world = tiledMap.getLayers().get("World").getObjects();
 
+        // Finds all collision objects and makes static box2d bodies out of them.
+        MapObjects world = tiledMap.getLayers().get("World").getObjects();
         for (int i = 0; i < world.getCount(); i++) {
             Rectangle rect = ((RectangleMapObject) world.get(i)).getRectangle();
             handler.createStaticShape(rect.getX() + rect.getWidth() / 2f, rect.getY() + rect.getHeight() / 2f, rect.width, rect.height);
@@ -41,20 +45,29 @@ public class Level {
      */
     public Vector2 getPlayerSpawn() {
         RectangleMapObject playerObject = (RectangleMapObject) tiledMap.getLayers().get("Player").getObjects().get("Spawn");
-
         return new Vector2(playerObject.getRectangle().x, playerObject.getRectangle().y);
     }
 
+    /**
+     * Updates level state
+     */
     public void update() {
 
     }
 
+    /**
+     * Renders level using given camera and the levels renderer
+     */
     public void render() {
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
     }
 
+    /**
+     * Disposes items that wouldn't be cleaned up automatically by the javavm
+     */
     public void dispose() {
+        tiledMap.dispose();
     }
 
 }

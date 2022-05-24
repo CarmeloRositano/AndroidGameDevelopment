@@ -13,35 +13,44 @@ public class Character {
 
     public enum State { IDLE, RUNNING , ATTACKING, CASTING, HURT, DYING, DEAD }
 
+    // Movement
     protected float movementSpeedBuildup = 10.0f;
     protected float maxMovementSpeed = 2f;
     protected float jumpSpeed = 310;
 
-    State currentState;
-    Body box2dBody;
-    Texture texture;
-    Sprite sprite;
-
+    // Character states
+    public Body box2dBody;
+    protected State currentState;
     protected float stateTime;
-    protected TextureRegion currentFrame;
 
     //Player Textures
+    protected Texture texture;
+    public Sprite sprite;
     protected String[] paths;
     protected Texture[] textures;
+    protected TextureRegion currentFrame;
     protected Animation<TextureRegion>[] animations;
     protected int[][] colRow;
 
 
+    /**
+     * Constructor that takes a box2DHandler and sets up the character to be placed in the world
+     * @param box2DHandler The handler to create the physics and collision body for the Character
+     */
     public Character(Box2DHandler box2DHandler) {
-        currentState = State.IDLE;
-        sprite = new Sprite();
-
         //TODO temp static player sprite
 
 
+        // Initialise some character variables
+        sprite = new Sprite();
+        currentState = State.IDLE;
         box2dBody = box2DHandler.createCharacterShape(sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
     }
 
+    /**
+     * Updates the character and animation state based on its current state.
+     * @param camera
+     */
     public void update(Camera camera) {
         stateTime += Gdx.graphics.getDeltaTime();
 
@@ -80,10 +89,18 @@ public class Character {
 
     }
 
+    /**
+     * Renders the character
+     */
     public void render() {
 
     }
 
+    /**
+     * Hard sets the character position in the world
+     * @param x
+     * @param y
+     */
     public void setPosition(float x, float y) {
         sprite.setX(x);
         sprite.setY(y);
@@ -119,8 +136,11 @@ public class Character {
         sprite.setPosition(sprite.getX() - sprite.getWidth() / 2, sprite.getY() - sprite.getHeight() / 2);
     }
 
+    /**
+     * Disposes items that wouldn't be cleaned up automatically by the javavm
+     */
     public void dispose() {
         texture.dispose();
-
+        //TODO Dispose All Necessary Objects
     }
 }

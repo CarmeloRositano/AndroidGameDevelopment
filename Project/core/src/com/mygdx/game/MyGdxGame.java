@@ -12,51 +12,52 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 public class MyGdxGame extends ApplicationAdapter {
 
-	public enum GameState { MAIN_MENU, PLAYING, PAUSED, COMPLETE }
 	private float R_WIDTH = 1920;
 	private float R_HEIGHT;
+	public enum GameState { MAIN_MENU, PLAYING, PAUSED, COMPLETE }
 
 	GameState gameState;
 
-	//Player
+	// Player
 	Player player;
 
+	// Rendering
 	SpriteBatch batch, uiBatch;
 	OrthographicCamera camera;
 
-	//Box2D
+	// Box2D
 	Box2DHandler box2DHandler;
 	Level level;
 
-	//UI textures
+	// UI
 	Texture buttonSquareTexture, buttonSquareDownTexture, buttonLongTexture, buttonLongDownTexture;
-
-	//UI Buttons
 	Button moveLeftButton, moveRightButton, moveUpButton, shootButton
 			, restartButton, startButton, exitButton, pauseButton;
-	
+
+	/**
+	 * Sets up game and initialises all field variables
+	 */
 	@Override
 	public void create () {
+		// Finds required height for current device
 		R_HEIGHT  = R_WIDTH * ((float)Gdx.graphics.getHeight() / Gdx.graphics.getWidth());
 
-		newGame();
-
-		//Render
+		// Render
 		batch = new SpriteBatch();
 		uiBatch = new SpriteBatch();
 
-		//Camera
+		// Camera
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, R_WIDTH/5, R_HEIGHT/5);
 		camera.update();
 
-		//UI Textures
+		// UI Textures
 		buttonSquareTexture = new Texture("GUI/buttonSquare_blue.png");
 		buttonSquareDownTexture = new Texture("GUI/buttonSquare_beige_pressed.png");
 		buttonLongTexture = new Texture("GUI/buttonLong_blue.png");
 		buttonLongDownTexture = new Texture("GUI/buttonLong_beige_pressed.png");
 
-		//Buttons
+		// Buttons
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		moveLeftButton = new Button(0.0f, 0.0f, w * 0.2f, h * 0.5f, buttonSquareTexture, buttonSquareDownTexture);
@@ -68,26 +69,26 @@ public class MyGdxGame extends ApplicationAdapter {
 		exitButton = new Button(w - (w * 0.425f) - (w * 0.05f), h * 0.6f, w * 0.425f, h * 0.2f, buttonLongTexture, buttonLongDownTexture);
 		pauseButton = new Button(w * 0.5f - (w * 0.1f) * 0.5f, h * 0.89f, w * 0.1f, h * 0.1f, buttonSquareTexture, buttonSquareDownTexture);
 
-
+		// Level and Player
 		box2DHandler = new Box2DHandler(camera);
-		level = new Level("", box2DHandler, camera);
-
+		level = new Level("GreenZoneMap", box2DHandler, camera);
 		player = new Player(box2DHandler, camera);
-
 		player.setPosition(level.getPlayerSpawn().x, level.getPlayerSpawn().y);
+
+		newGame();
 	}
 
+	/**
+	 * Clears and Renders all screen elements
+	 */
 	@Override
 	public void render () {
-
-		//Game World
-		update();
-
-		System.out.println(player.sprite);
-
 		ScreenUtils.clear(0, 0, 0, 1);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+		//Game World
+		update();
 
 		level.update();
 		level.render();
@@ -102,7 +103,6 @@ public class MyGdxGame extends ApplicationAdapter {
 				player.sprite.getWidth() * 2,
 				player.sprite.getHeight() * 2);
 		batch.end();
-		player.render();
 
 		//Draw UI
 		uiBatch.begin();
@@ -125,6 +125,9 @@ public class MyGdxGame extends ApplicationAdapter {
 		uiBatch.end();
 	}
 
+	/**
+	 * Updates game state
+	 */
 	public void update() {
 		//Touch Input Info
 		boolean checkTouch = Gdx.input.isTouched();
@@ -181,12 +184,19 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 	}
 
+	/**
+	 * Re initilises variables and resets game to fresh state
+	 */
 	public void newGame() {
 		gameState = GameState.PLAYING;
 	}
-	
+
+	/**
+	 * Disposes items that wouldn't be cleaned up automatically by the javavm
+	 */
 	@Override
 	public void dispose () {
 		batch.dispose();
+		//TODO Dispose all other textures and objects if needed.
 	}
 }
