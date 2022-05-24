@@ -14,16 +14,18 @@ import com.badlogic.gdx.physics.box2d.World;
 
 
 public class Box2DHandler {
-    private final float PPM = 1;
+    public static final float PPM = 100;
 
     private World world;
     private Box2DDebugRenderer box2DRenderer;
+    private boolean debugLines = false;
+
     private OrthographicCamera camera;
     private OrthographicCamera box2DCam;
 
     public Box2DHandler(OrthographicCamera camera) {
         world = new World(new Vector2(0, -9.81f), true);
-        box2DRenderer = new Box2DDebugRenderer();
+        box2DRenderer = new Box2DDebugRenderer(debugLines,debugLines,false,debugLines,false,debugLines);
         this.camera = camera;
         box2DCam = new OrthographicCamera();
     }
@@ -34,7 +36,7 @@ public class Box2DHandler {
     }
 
     public void render() {
-        box2DRenderer.render(world,camera.combined);
+        box2DRenderer.render(world,camera.combined.cpy().scl(PPM));
     }
 
     public World getWorld() {
@@ -68,6 +70,7 @@ public class Box2DHandler {
 
         FixtureDef fdef = new FixtureDef();
         fdef.shape = shape;
+        fdef.friction = 0.2f;
         body.createFixture(fdef);
 
         shape.dispose();

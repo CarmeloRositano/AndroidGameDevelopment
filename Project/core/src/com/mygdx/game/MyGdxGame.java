@@ -72,7 +72,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		box2DHandler = new Box2DHandler(camera);
 		level = new Level("", box2DHandler, camera);
 
-		player = new Player(box2DHandler);
+		player = new Player(box2DHandler, camera);
 
 		player.setPosition(level.getPlayerSpawn().x, level.getPlayerSpawn().y);
 	}
@@ -94,11 +94,11 @@ public class MyGdxGame extends ApplicationAdapter {
 		box2DHandler.update();
 		box2DHandler.render();
 
+		player.update(camera);
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		System.out.println(player.sprite);
-		batch.draw(player.sprite, player.sprite.getX() - player.sprite.getHeight(),
-				player.sprite.getY() - player.sprite.getHeight(),
+		batch.draw(player.sprite, player.sprite.getX() - player.sprite.getHeight()/2,
+				player.sprite.getY() - player.sprite.getHeight()/2,
 				player.sprite.getWidth() * 2,
 				player.sprite.getHeight() * 2);
 		batch.end();
@@ -154,7 +154,7 @@ public class MyGdxGame extends ApplicationAdapter {
 					moveRightButton.isDown = true;
 					moveX += 1;
 				}
-				if (Gdx.input.isKeyPressed(Input.Keys.UP) || moveUpButton.isDown
+				if (Gdx.input.isKeyPressed(Input.Keys.UP) || (moveUpButton.isDown && !moveUpButton.isDownPrev)
 						&& gameState == GameState.PLAYING) {
 					moveUpButton.isDown = true;
 					moveY += 1;
@@ -170,7 +170,7 @@ public class MyGdxGame extends ApplicationAdapter {
 //				}
 
 				//Character and Camera Movement
-				player.move(moveX, moveY, camera);
+				player.move(moveX, moveY);
 //				Physics.updatePosition(player);
 				camera.update();
 				break;
