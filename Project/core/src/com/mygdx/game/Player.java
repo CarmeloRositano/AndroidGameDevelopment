@@ -31,6 +31,7 @@ public class Player {
     public Player(Box2DHandler box2DHandler) {
         currentState = PlayerState.RUNNING;
         sprite = new Sprite();
+        sprite.setSize(32, 32);
         textures = new Texture[6];
         animations = new Animation[6];
         paths = new String[6];

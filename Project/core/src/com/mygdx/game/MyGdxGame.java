@@ -83,6 +83,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		//Game World
 		update();
 
+		System.out.println(player.sprite);
+
 		ScreenUtils.clear(0, 0, 0, 1);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -94,9 +96,11 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-//		player.sprite.draw(batch);
 		System.out.println(player.sprite);
-		batch.draw(player.sprite, player.sprite.getX(), player.sprite.getY());
+		batch.draw(player.sprite, player.sprite.getX() - player.sprite.getHeight(),
+				player.sprite.getY() - player.sprite.getHeight(),
+				player.sprite.getWidth() * 2,
+				player.sprite.getHeight() * 2);
 		batch.end();
 		player.render();
 
