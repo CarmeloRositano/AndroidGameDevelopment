@@ -7,10 +7,12 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class AnimationBuild {
 
     private static Animation<TextureRegion>[] animations;
+    private static Texture[] textures;
 
-    public static Animation<TextureRegion>[] buildAnimation(String[] paths, Texture[] textures, int[][] colRow) {
+    public static Animation<TextureRegion>[] buildAnimation(String[] paths, int[][] colRow) {
 
         animations = new Animation[paths.length];
+        textures = new Texture[paths.length];
 
         //Build Textures
         for (int i = 0; i < paths.length; i++) {
