@@ -27,21 +27,6 @@ public class Player {
     private Texture[] textures;
     private Animation<TextureRegion>[] animations;
     private int[][] colRow;
-//    //Walking
-//    Texture walkingTexture;
-//    private Animation<TextureRegion> walkingAnimation;
-//    //Attacking
-//    Texture attackingTexture;
-//    private Animation<TextureRegion> attackingAnimation;
-//    //Casting
-//    Texture castingTexture;
-//    private Animation<TextureRegion> castingAnimation;
-//    //Hurting
-//    Texture hurtingTexture;
-//    private Animation<TextureRegion> hurtingAnimation;
-//    //Dying
-//    Texture dyingTexture;
-//    private Animation<TextureRegion> dyingAnimation;
 
     public Player(Box2DHandler box2DHandler) {
         currentState = PlayerState.RUNNING;
