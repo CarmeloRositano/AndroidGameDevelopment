@@ -94,9 +94,11 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		batch.draw(player.sprite.getTexture(), player.sprite.getX(), player.sprite.getY());
+//		player.sprite.draw(batch);
+		System.out.println(player.sprite);
+		batch.draw(player.sprite, player.sprite.getX(), player.sprite.getY());
 		batch.end();
-
+		player.render();
 
 		//Draw UI
 		uiBatch.begin();

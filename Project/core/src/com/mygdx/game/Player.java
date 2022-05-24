@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 
 public class Player {
@@ -17,6 +16,8 @@ public class Player {
 
     PlayerState currentState;
     Body box2dBody;
+
+    float stateTime;
 
     private TextureRegion currentFrame;
     Sprite sprite;
@@ -43,12 +44,14 @@ public class Player {
 //    private Animation<TextureRegion> dyingAnimation;
 
     public Player(Box2DHandler box2DHandler) {
-        currentState = PlayerState.IDLE;
+        currentState = PlayerState.RUNNING;
         sprite = new Sprite();
-        //TODO temp static player sprite
-        sprite.setRegion(new Texture("CharacterSmall.png"));
-
+        textures = new Texture[6];
+        animations = new Animation[6];
         paths = new String[6];
+
+        colRow = new int[][]{{4, 3, 12}, {4, 3, 12}, {4, 5, 17}, {4, 3 ,12}, {4, 4, 15}, {4, 3, 12}};
+
         paths[0] = "Characters\\Wraith\\PNG\\Wraith_03\\Walking\\walking_spritesheet.png";
         paths[1] = "Characters\\Wraith\\PNG\\Wraith_03\\Attacking\\attacking_spritesheet.png";
         paths[2] = "Characters\\Wraith\\PNG\\Wraith_03\\Casting\\casting_spritesheet.png";
@@ -56,110 +59,53 @@ public class Player {
         paths[4] = "Characters\\Wraith\\PNG\\Wraith_03\\Dying\\dying_spritesheet.png";
         paths[5] = "Characters\\Wraith\\PNG\\Wraith_03\\Idle\\idle_spritesheet.png";
 
-//        colRow = new int[6][3];
-        colRow = new int[][]{{3, 4, 12}, {3, 4, 12}, {4, 5, 17}, {4, 3 ,12}, {4, 4, 15}, {4, 3, 12}};
+        animations = AnimationBuild.buildAnimation(paths, textures, colRow);
 
-        //Build Textures
-        for (int i = 0; i < paths.length; i++) {
-            textures[i] = new Texture(paths[i]);
-        }
+        update();
 
-        //Build Animation
-        for (int i = 0; i < textures.length; i++) {
-            TextureRegion[][] temp = TextureRegion.split(textures[i],
-                    textures[i].getWidth() / colRow[i][0],
-                    textures[i].getHeight() / colRow[i][1]);
-            TextureRegion[] frames = new TextureRegion[(colRow[i][0] * colRow[i][1]) - +((colRow[i][0] * colRow[i][1]) - colRow[i][2])];
-            int index = 0;
-            for (int l = 0; i < colRow[i][1]; l++) {
-                for (int j = 0; j < colRow[i][0]; j++) {
-                    if(index < 18) {
-                        frames[index++] = temp[l][j];
-                    }
-                }
-            }
-            animations[i] = new Animation(1f/30f, (Object[]) frames);
-        }
-//        int frameCol;
-//        int frameRow;
-//        int index;
-//        //Walking Animation Build
-//        frameCol = 3;
-//        frameRow = 4;
-//        walkingTexture = new Texture("Wraith/PNG/Wraith_03/PNG/Walking/walking_spritesheet.png");
-//        TextureRegion[][] walkTemp = TextureRegion.split(walkingTexture, walkingTexture.getWidth() / frameCol,
-//                walkingTexture.getHeight() / frameRow);
-//        TextureRegion[] walkingFrames = new TextureRegion[frameCol * frameRow];
-//        index = 0;
-//        for (int i = 0; i < frameRow; i++) {
-//            for (int j = 0; j < frameCol; j++) {
-//                walkingFrames[index++] = walkTemp[i][j];
-//            }
-//        }
-//        walkingAnimation = new Animation(1f/30f, (Object[]) walkingFrames);
-//        //Attacking
-//        frameCol = 3;
-//        frameRow = 4;
-//        attackingTexture = new Texture("Wraith/PNG/Wraith_03/PNG/Attacking/attacking_spritesheet.png");
-//        TextureRegion[][] attackingTemp = TextureRegion.split(attackingTexture, attackingTexture.getWidth() / frameCol,
-//                walkingTexture.getHeight() / frameRow);
-//        TextureRegion[] attackingFrames = new TextureRegion[frameCol * frameRow];
-//        index = 0;
-//        for (int i = 0; i < frameRow; i++) {
-//            for (int j = 0; j < frameCol; j++) {
-//                attackingFrames[index++] = attackingTemp[i][j];
-//            }
-//        }
-//        //Casting
-//        frameCol = 5;
-//        frameRow = 4;
-//        castingTexture = new Texture("Wraith/PNG/Wraith_03/PNG/Casting/casting_spritesheet.png");
-//        TextureRegion[][] castingTemp = TextureRegion.split(castingTexture, castingTexture.getWidth() / frameCol,
-//                castingTexture.getHeight() / frameRow);
-//        TextureRegion[] castingFrames = new TextureRegion[(frameCol * frameRow) - 3];
-//        index = 0;
-//        for (int i = 0; i < frameRow; i++) {
-//            for (int j = 0; j < frameCol; j++) {
-//                if(index < castingFrames.length)
-//                castingFrames[index++] = castingTemp[i][j];
-//            }
-//        }
-//        //Hurting
         box2dBody = box2DHandler.createCharacterShape(sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
     }
 
     public void update() {
 
+        stateTime += Gdx.graphics.getDeltaTime();
+
         switch (currentState) {
             case RUNNING:
-                currentFrame = (TextureRegion) animations[0].getKeyFrame(Gdx.graphics.getDeltaTime(), true);
+                currentFrame = (TextureRegion) animations[0].getKeyFrame(stateTime, true);
+                sprite.setRegion(currentFrame);
                 break;
             case ATTACKING:
-                currentFrame = (TextureRegion) animations[1].getKeyFrame(Gdx.graphics.getDeltaTime(), false);
+                currentFrame = (TextureRegion) animations[1].getKeyFrame(stateTime, false);
+                sprite.setRegion(currentFrame);
                 break;
             case CASTING:
-                currentFrame = (TextureRegion) animations[2].getKeyFrame(Gdx.graphics.getDeltaTime(), false);
+                currentFrame = (TextureRegion) animations[2].getKeyFrame(stateTime, false);
+                sprite.setRegion(currentFrame);
                 break;
             case HURT:
-                currentFrame = (TextureRegion) animations[3].getKeyFrame(Gdx.graphics.getDeltaTime(), true);
+                currentFrame = (TextureRegion) animations[3].getKeyFrame(stateTime, true);
+                sprite.setRegion(currentFrame);
                 break;
             case DYING:
-                currentFrame = (TextureRegion) animations[4].getKeyFrame(Gdx.graphics.getDeltaTime(), false);
+                currentFrame = (TextureRegion) animations[4].getKeyFrame(stateTime, false);
                 if(animations[4].isAnimationFinished(Gdx.graphics.getDeltaTime())) {
                     currentState = PlayerState.DEAD;
                 }
+                sprite.setRegion(currentFrame);
                 break;
             case DEAD:
                 break;
             case IDLE:
-                currentFrame = (TextureRegion) animations[5].getKeyFrame(Gdx.graphics.getDeltaTime(), true);
+                currentFrame = (TextureRegion) animations[5].getKeyFrame(stateTime, true);
+                sprite.setRegion(currentFrame);
                 break;
         }
         sprite.setRegion(currentFrame);
     }
 
     public void render() {
-
+        update();
     }
 
 
