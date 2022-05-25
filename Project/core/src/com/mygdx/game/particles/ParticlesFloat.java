@@ -1,28 +1,28 @@
 package com.mygdx.game.particles;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class ParticlesFloat extends Particles {
 
 
-    public ParticlesFloat(SpriteBatch batch, String texturePath, float spawnX, float spawnY, long lifetime) {
-        super(batch, texturePath, spawnX, spawnY, lifetime);
+    public ParticlesFloat(Camera camera, String texturePath, float spawnX, float spawnY, long lifetimeMS) {
+        super(camera, texturePath, spawnX, spawnY, lifetimeMS);
         gravity = -100;
     }
 
-    public ParticlesFloat(SpriteBatch batch, String texturePath, float spawnX, float spawnY, long lifetime, Color color) {
-        super(batch, texturePath, spawnX, spawnY, lifetime, color);
+    public ParticlesFloat(Camera camera, String texturePath, float spawnX, float spawnY, long lifetimeMS, Color color) {
+        super(camera, texturePath, spawnX, spawnY, lifetimeMS, color);
         gravity = -300;
     }
 
-    public ParticlesFloat(SpriteBatch batch, String texturePath, float spawnX, float spawnY, long lifetime, float spawnSpeed, float maxVelocity) {
-        super(batch, texturePath, spawnX, spawnY, lifetime, spawnSpeed, maxVelocity);
+    public ParticlesFloat(Camera camera, String texturePath, float spawnX, float spawnY, long lifetimeMS, float spawnSpeed, float maxVelocity) {
+        super(camera, texturePath, spawnX, spawnY, lifetimeMS, spawnSpeed, maxVelocity);
         gravity = -300;
     }
 
-    public ParticlesFloat(SpriteBatch batch, String texturePath, float spawnX, float spawnY, long lifetime, float spawnSpeed, float maxVelocity, Color color) {
-        super(batch, texturePath, spawnX, spawnY, lifetime, spawnSpeed, maxVelocity, color);
+    public ParticlesFloat(Camera camera, String texturePath, float spawnX, float spawnY, long lifetimeMS, float spawnSpeed, float maxVelocity, Color color) {
+        super(camera, texturePath, spawnX, spawnY, lifetimeMS, spawnSpeed, maxVelocity, color);
         gravity = -300;
     }
 

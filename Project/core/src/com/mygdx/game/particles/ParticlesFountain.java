@@ -1,25 +1,25 @@
 package com.mygdx.game.particles;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class ParticlesFountain extends Particles {
 
 
-    public ParticlesFountain(SpriteBatch batch, String texturePath, float spawnX, float spawnY, long lifetime) {
-        super(batch, texturePath, spawnX, spawnY, lifetime);
+    public ParticlesFountain(Camera camera, String texturePath, float spawnX, float spawnY, long MS) {
+        super(camera, texturePath, spawnX, spawnY, MS);
     }
 
-    public ParticlesFountain(SpriteBatch batch, String texturePath, float spawnX, float spawnY, long lifetime, Color color) {
-        super(batch, texturePath, spawnX, spawnY, lifetime, color);
+    public ParticlesFountain(Camera camera, String texturePath, float spawnX, float spawnY, long MS, Color color) {
+        super(camera, texturePath, spawnX, spawnY, MS, color);
     }
 
-    public ParticlesFountain(SpriteBatch batch, String texturePath, float spawnX, float spawnY, long lifetime, float spawnSpeed, float maxVelocity) {
-        super(batch, texturePath, spawnX, spawnY, lifetime, spawnSpeed, maxVelocity);
+    public ParticlesFountain(Camera camera, String texturePath, float spawnX, float spawnY, long MS, float spawnSpeed, float maxVelocity) {
+        super(camera, texturePath, spawnX, spawnY, MS, spawnSpeed, maxVelocity);
     }
 
-    public ParticlesFountain(SpriteBatch batch, String texturePath, float spawnX, float spawnY, long lifetime, float spawnSpeed, float maxVelocity, Color color) {
-        super(batch, texturePath, spawnX, spawnY, lifetime, spawnSpeed, maxVelocity, color);
+    public ParticlesFountain(Camera camera, String texturePath, float spawnX, float spawnY, long MS, float spawnSpeed, float maxVelocity, Color color) {
+        super(camera, texturePath, spawnX, spawnY, MS, spawnSpeed, maxVelocity, color);
     }
 
     @Override

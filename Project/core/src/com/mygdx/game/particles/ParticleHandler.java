@@ -1,5 +1,6 @@
 package com.mygdx.game.particles;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -10,11 +11,11 @@ public class ParticleHandler {
     public enum Type {STANDARD, EXPLOSION, FOUNTAIN, FLOAT};
 
     public Vector<Particles> particleSets;
-    private SpriteBatch batch;
+    private Camera camera;
 
-    public ParticleHandler(SpriteBatch batch) {
+    public ParticleHandler(Camera camera) {
         particleSets = new Vector<>();
-        this.batch = batch;
+        this.camera = camera;
     }
 
     public Particles addParticle(Type type, Vector2 position) {
@@ -22,21 +23,21 @@ public class ParticleHandler {
         return addParticle(type, "particle.png", position, 3, 0.002f, 500, new Color(0.5f,0.5f,0.5f,1), -1);
     }
 
-    public Particles addParticle(Type type, String texturePath, Vector2 position, long lifetime, float spawnInterval, float maxVelocity, Color color, float durationSeconds) {
+    public Particles addParticle(Type type, String texturePath, Vector2 position, long lifetimeMS, float spawnInterval, float maxVelocity, Color color, float durationSeconds) {
         Particles particleToAdd;
 
         switch (type) {
             case STANDARD:
-                particleToAdd = new Particles(batch, texturePath, position.x, position.y, lifetime, spawnInterval, maxVelocity, color);
+                particleToAdd = new Particles(camera, texturePath, position.x, position.y, lifetimeMS, spawnInterval, maxVelocity, color);
                 break;
             case EXPLOSION:
-                particleToAdd = new ParticlesExplosion(batch, texturePath, position.x, position.y, lifetime, spawnInterval, maxVelocity, color);
+                particleToAdd = new ParticlesExplosion(camera, texturePath, position.x, position.y, lifetimeMS, spawnInterval, maxVelocity, color);
                 break;
             case FOUNTAIN:
-                particleToAdd = new ParticlesFountain(batch, texturePath, position.x, position.y, lifetime, spawnInterval, maxVelocity, color);
+                particleToAdd = new ParticlesFountain(camera, texturePath, position.x, position.y, lifetimeMS, spawnInterval, maxVelocity, color);
                 break;
             case FLOAT:
-                particleToAdd = new ParticlesFloat(batch, texturePath, position.x, position.y, lifetime, spawnInterval, maxVelocity, color);
+                particleToAdd = new ParticlesFloat(camera, texturePath, position.x, position.y, lifetimeMS, spawnInterval, maxVelocity, color);
                 break;
             default:
                 return null;
@@ -55,6 +56,7 @@ public class ParticleHandler {
     }
 
     public void update() {
+
         for (int i = particleSets.size() - 1; i >= 0; i--) {
             if (particleSets.get(i).isFinished()) {
                 particleSets.get(i).dispose();

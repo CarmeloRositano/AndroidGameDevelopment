@@ -2,26 +2,37 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.mygdx.game.particles.ParticleHandler;
+import com.sun.org.apache.xpath.internal.axes.WalkerFactory;
 
 public class Character {
 
     public enum State { IDLE, RUNNING , ATTACKING, CASTING, HURT, DYING, DEAD }
+    private SpriteBatch batch;
+    protected Camera camera;
 
     // Movement
     protected float movementSpeedBuildup = 10.0f;
     protected float maxMovementSpeed = 2f;
-    protected float jumpSpeed = 310;
+    protected float jumpSpeed = 4f;
+
+    private ParticleHandler particles;
 
     // Character states
     public Body box2dBody;
     protected State currentState;
     protected float stateTime;
+    public int jumpsLeft;
+    private float prevVelocityY;
 
     //Player Textures
     protected Texture texture;
@@ -31,13 +42,14 @@ public class Character {
     protected TextureRegion currentFrame;
     protected Animation<TextureRegion>[] animations;
     protected int[][] colRow;
+    private boolean flip;
 
 
     /**
      * Constructor that takes a box2DHandler and sets up the character to be placed in the world
      * @param box2DHandler The handler to create the physics and collision body for the Character
      */
-    public Character(Box2DHandler box2DHandler) {
+    public Character(Box2DHandler box2DHandler, Camera camera, SpriteBatch batch) {
         //TODO temp static player sprite
 
 
@@ -45,13 +57,20 @@ public class Character {
         sprite = new Sprite();
         currentState = State.IDLE;
         box2dBody = box2DHandler.createCharacterShape(sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
+        jumpsLeft = 2;
+        prevVelocityY = 0;
+        this.batch = batch;
+        this.camera = camera;
+        flip = false;
+
+        particles = new ParticleHandler(camera);
     }
 
     /**
      * Updates the character and animation state based on its current state.
-     * @param camera
      */
-    public void update(Camera camera) {
+    public void update() {
+        this.camera = camera;
         stateTime += Gdx.graphics.getDeltaTime();
 
         switch (currentState) {
@@ -93,7 +112,16 @@ public class Character {
      * Renders the character
      */
     public void render() {
+        particles.update();
+        particles.render();
 
+        batch.begin();
+        sprite.flip(flip, false);
+        batch.draw(sprite, sprite.getX() - sprite.getHeight()/2,
+                sprite.getY() - sprite.getHeight()/2,
+                sprite.getWidth() * 2,
+                sprite.getHeight() * 2);
+        batch.end();
     }
 
     /**
@@ -108,25 +136,29 @@ public class Character {
                             (sprite.getY() + 32) / Box2DHandler.PPM, 0);
     }
 
-    public void move(int x, int y) {
+    public void move(int x) {
         float dt = Gdx.graphics.getDeltaTime();
+        if (box2dBody.getLinearVelocity().y == 0 && prevVelocityY < 0) jumpsLeft = 2;
+
+        if (box2dBody.getLinearVelocity().x > 0f) flip = false;
+        if (box2dBody.getLinearVelocity().x < 0f) flip = true;
 
         if (x != 0) {
             box2dBody.setLinearVelocity(box2dBody.getLinearVelocity().x + (x * movementSpeedBuildup * dt),
                     box2dBody.getLinearVelocity().y);
-            if (box2dBody.getLinearVelocity().x > maxMovementSpeed)
+            currentState = State.RUNNING;
+            if (box2dBody.getLinearVelocity().x > maxMovementSpeed) {
                 box2dBody.setLinearVelocity(maxMovementSpeed,
                         box2dBody.getLinearVelocity().y);
-            if (box2dBody.getLinearVelocity().x < -1 * maxMovementSpeed)
+            }
+            if (box2dBody.getLinearVelocity().x < -1 * maxMovementSpeed) {
                 box2dBody.setLinearVelocity(-1 * maxMovementSpeed,
                         box2dBody.getLinearVelocity().y);
+            }
         } else {
             box2dBody.setLinearVelocity(box2dBody.getLinearVelocity().x / 1.2f,
                     box2dBody.getLinearVelocity().y);
-        }
-
-        if (y == 1) {
-            box2dBody.applyForceToCenter(new Vector2(0, jumpSpeed), true);
+            currentState = State.IDLE;
         }
 
         float PPM = Box2DHandler.PPM;
@@ -134,6 +166,20 @@ public class Character {
         sprite.setY(box2dBody.getPosition().y * Box2DHandler.PPM);
 
         sprite.setPosition(sprite.getX() - sprite.getWidth() / 2, sprite.getY() - sprite.getHeight() / 2);
+        prevVelocityY = box2dBody.getLinearVelocity().y;
+    }
+
+    public void jump() {
+        // TODO fix jump not being reset
+
+        if (jumpsLeft > 0) {
+            box2dBody.setLinearVelocity(box2dBody.getLinearVelocity().x, jumpSpeed);
+            particles.addParticle(ParticleHandler.Type.EXPLOSION, "particle.png",
+                    new Vector2(sprite.getX()+sprite.getWidth()/2, sprite.getY()), 500, 1, 100, new Color(0.7f, 0.5f, 0.6f, 0.6f), 0.5f);
+            jumpsLeft--;
+
+//            box2dBody.applyForceToCenter(new Vector2(0, jumpSpeed), true);
+        }
     }
 
     /**

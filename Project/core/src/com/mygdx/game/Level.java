@@ -3,11 +3,13 @@ package com.mygdx.game;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -33,8 +35,15 @@ public class Level {
         // Finds all collision objects and makes static box2d bodies out of them.
         MapObjects world = tiledMap.getLayers().get("World").getObjects();
         for (int i = 0; i < world.getCount(); i++) {
-            Rectangle rect = ((RectangleMapObject) world.get(i)).getRectangle();
-            handler.createStaticShape(rect.getX() + rect.getWidth() / 2f, rect.getY() + rect.getHeight() / 2f, rect.width, rect.height);
+            if (world.get(i) instanceof RectangleMapObject) {
+                Rectangle rect = ((RectangleMapObject) world.get(i)).getRectangle();
+                handler.createStaticRect(rect.getX() + rect.getWidth() / 2f, rect.getY() + rect.getHeight() / 2f, rect.width, rect.height);
+            }
+            if (world.get(i) instanceof PolygonMapObject) {
+                Polygon poly = ((PolygonMapObject) world.get(i)).getPolygon();
+                // Magic Numbers = Tile Size
+                handler.createStaticPolygon(poly, poly.getX() + 16, poly.getY() + 16 / 2f, 32, 32);
+            }
 
         }
     }

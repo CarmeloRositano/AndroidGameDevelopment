@@ -1,34 +1,33 @@
 package com.mygdx.game.particles;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.Arrays;
 
 public class ParticlesExplosion extends Particles {
 
 
-    public ParticlesExplosion(SpriteBatch batch, String texturePath, float spawnX, float spawnY, long lifetime) {
-        super(batch, texturePath, spawnX, spawnY, lifetime);
+    public ParticlesExplosion(Camera camera, String texturePath, float spawnX, float spawnY, long lifetimeMS) {
+        super(camera, texturePath, spawnX, spawnY, lifetimeMS);
     }
 
-    public ParticlesExplosion(SpriteBatch batch, String texturePath, float spawnX, float spawnY, long lifetime, Color color) {
-        super(batch, texturePath, spawnX, spawnY, lifetime, color);
+    public ParticlesExplosion(Camera camera, String texturePath, float spawnX, float spawnY, long lifetimeMS, Color color) {
+        super(camera, texturePath, spawnX, spawnY, lifetimeMS, color);
     }
 
-    public ParticlesExplosion(SpriteBatch batch, String texturePath, float spawnX, float spawnY, long lifetime, float spawnSpeed, float maxVelocity) {
-        super(batch, texturePath, spawnX, spawnY, lifetime, spawnSpeed, maxVelocity);
+    public ParticlesExplosion(Camera camera, String texturePath, float spawnX, float spawnY, long lifetimeMS, float spawnSpeed, float maxVelocity) {
+        super(camera, texturePath, spawnX, spawnY, lifetimeMS, spawnSpeed, maxVelocity);
     }
 
-    public ParticlesExplosion(SpriteBatch batch, String texturePath, float spawnX, float spawnY, long lifetime, float spawnSpeed, float maxVelocity, Color color) {
-        super(batch, texturePath, spawnX, spawnY, lifetime, spawnSpeed, maxVelocity, color);
+    public ParticlesExplosion(Camera camera, String texturePath, float spawnX, float spawnY, long lifetimeMS, float spawnSpeed, float maxVelocity, Color color) {
+        super(camera, texturePath, spawnX, spawnY, lifetimeMS, spawnSpeed, maxVelocity, color);
     }
 
     @Override
     protected void initialise() {
-        // Uses lifetime to estimate how many concurrent particles are needed.
-        int particleCount = (int)(200);
+        // Uses lifetimeMS to estimate how many concurrent particles are needed.
+        int particleCount = (int)(100);
         particleData = new float[5][particleCount];
         creationTime = new long[particleCount];
         color = new Color[particleCount];

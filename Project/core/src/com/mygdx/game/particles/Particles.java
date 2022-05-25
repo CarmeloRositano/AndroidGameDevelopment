@@ -1,21 +1,23 @@
 package com.mygdx.game.particles;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import java.util.Arrays;
 
 public class Particles {
-    protected float gravity = 600f;
+    protected float gravity = 300f;
     private SpriteBatch batch;
+    private Camera camera;
     private Texture texture;
 
     // First index contains {x, y, velocityX, velocityY, rotation} Second index contains values for each particle
     protected float[][] particleData;
     protected long[] creationTime;
     protected long lastCreateTime;
-    protected long lifetime;
+    protected long lifetimeMS;
     protected long emitEndTime;
     protected float spawnSpeed = 0.2f;
     protected float maxVelocity = 50;
@@ -31,11 +33,12 @@ public class Particles {
     protected float scale;
 
 
-    public Particles(SpriteBatch batch, String texturePath, float spawnX, float spawnY, long lifetime) {
-        this.batch = batch;
+    public Particles(Camera camera, String texturePath, float spawnX, float spawnY, long lifetimeMS) {
+        this.camera = camera;
+        batch = new SpriteBatch();
         texture = new Texture(texturePath);
         lastCreateTime = 0;
-        this.lifetime = lifetime;
+        this.lifetimeMS = lifetimeMS;
         this.spawnX = spawnX;
         this.spawnY = spawnY;
         initialised = false;
@@ -45,25 +48,25 @@ public class Particles {
         emitEndTime = -1;
     }
 
-    public Particles(SpriteBatch batch, String texturePath, float spawnX, float spawnY, long lifetime, Color color) {
-        this(batch, texturePath, spawnX, spawnY, lifetime);
+    public Particles(Camera camera, String texturePath, float spawnX, float spawnY, long lifetimeMS, Color color) {
+        this(camera, texturePath, spawnX, spawnY, lifetimeMS);
         baseColour = color;
     }
 
-    public Particles(SpriteBatch batch, String texturePath, float spawnX, float spawnY, long lifetime, float spawnSpeed, float maxVelocity) {
-        this(batch, texturePath, spawnX, spawnY, lifetime);
+    public Particles(Camera camera, String texturePath, float spawnX, float spawnY, long lifetimeMS, float spawnSpeed, float maxVelocity) {
+        this(camera, texturePath, spawnX, spawnY, lifetimeMS);
         this.maxVelocity = maxVelocity;
         this.spawnSpeed = spawnSpeed;
     }
 
-    public Particles(SpriteBatch batch, String texturePath, float spawnX, float spawnY, long lifetime, float spawnSpeed, float maxVelocity, Color color) {
-        this(batch, texturePath, spawnX, spawnY, lifetime, spawnSpeed, maxVelocity);
+    public Particles(Camera camera, String texturePath, float spawnX, float spawnY, long lifetimeMS, float spawnSpeed, float maxVelocity, Color color) {
+        this(camera, texturePath, spawnX, spawnY, lifetimeMS, spawnSpeed, maxVelocity);
         baseColour = color;
     }
 
     protected void initialise() {
-        // Uses lifetime to estimate how many concurrent particles are needed.
-        int particleCount = (int)(lifetime / (spawnSpeed == 0 ? 0.002f : spawnSpeed));
+        // Uses lifetimeMS to estimate how many concurrent particles are needed.
+        int particleCount = (int)(((float)lifetimeMS/1000) / (spawnSpeed == 0 ? 0.002f : spawnSpeed));
         particleData = new float[5][particleCount];
         creationTime = new long[particleCount];
         color = new Color[particleCount];
@@ -137,15 +140,15 @@ public class Particles {
         }
 
         for (int i = 0; i < particleData[0].length; i++) {
-            if (System.currentTimeMillis() > creationTime[i] + lifetime*1000) creationTime[i] = 0;
+            if (System.currentTimeMillis() > creationTime[i] + lifetimeMS) creationTime[i] = 0;
 
             if (creationTime[i] > 0) {
-                if (creationTime[i] + lifetime * 1000 > System.currentTimeMillis()) {
+                if (creationTime[i] + lifetimeMS> System.currentTimeMillis()) {
                     particleData[0][i] += particleData[2][i] * dt;
                     particleData[1][i] += particleData[3][i] * dt;
                     particleData[3][i] -= gravity * dt;
                     particleData[4][i] +=  (particleData[2][i] >= 0 ? rotationSpeed * -1 : rotationSpeed) * dt;
-                    color[i].a -= dt / lifetime;
+                    color[i].a -= dt / ((float)(lifetimeMS)/1000f);
                     if (color[i].a < 0 ) color[i].a = 0;
 //                    collisionDetect(i);
                 }
@@ -163,6 +166,7 @@ public class Particles {
 
     public void render() {
         if (isFinished()) return;
+        batch.setProjectionMatrix(camera.combined);
         batch.begin();
         for (int i = 0; i < particleData[0].length; i++) {
             if (creationTime[i] > 0) {
@@ -183,7 +187,7 @@ public class Particles {
     }
 
     public boolean isFinished() {
-        if (stopped && System.currentTimeMillis() > stopTime + lifetime*1000) return true;
+        if (stopped && System.currentTimeMillis() > stopTime + lifetimeMS*1000) return true;
         return false;
     }
 
@@ -196,6 +200,7 @@ public class Particles {
     }
 
     public void dispose(){
+        batch.dispose();
         texture.dispose();
     }
 }

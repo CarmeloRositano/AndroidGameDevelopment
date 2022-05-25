@@ -2,7 +2,9 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -65,7 +67,7 @@ public class Box2DHandler {
      * @param width Width of the shape
      * @param height Height of the shape
      */
-    public void createStaticShape(float x, float y, float width, float height) {
+    public void createStaticRect(float x, float y, float width, float height) {
         // Creates the collision body of the shape
         BodyDef def = new BodyDef();
         def.position.set(x/PPM, y/PPM);
@@ -83,6 +85,45 @@ public class Box2DHandler {
 
         shape.dispose();
     }
+
+    /**
+     * Creates a non-movable collision ploygon to be used in the box2d world. Mainly for map tiles.
+     * @param polygon The polygon object to take vertices from
+     * @param x X Coordinate to place the shape
+     * @param y Y Coordinate to place the shape
+     * @param width Width of the shape
+     * @param height Height of the shape
+     */
+    public void createStaticPolygon(Polygon polygon, float x, float y, float width, float height) {
+        // Creates the collision body of the shape
+        float[] scaledVertices = polygon.getVertices();
+        for (int i = 0; i < scaledVertices.length; i++) {
+            scaledVertices[i] /= PPM;
+            if (i%2 == 0) {
+                scaledVertices[i] -= 16/PPM;
+            } else {
+                scaledVertices[i] -= 8/PPM;
+            }
+        }
+
+        BodyDef def = new BodyDef();
+        def.position.set((x/PPM), (y/PPM));
+        def.type = BodyDef.BodyType.StaticBody;
+        Body body = world.createBody(def);
+
+        // Creates the shape for the body to use
+        PolygonShape shape = new PolygonShape();
+        shape.set(scaledVertices);
+
+        // Adds the shape to the body, applying various settings to it if needed
+        FixtureDef fdef = new FixtureDef();
+        fdef.shape = shape;
+        fdef.friction = 0;
+        body.createFixture(fdef);
+
+        shape.dispose();
+    }
+
 
     /**
      * Creates a movable collision box to be used in the box2d world. Mainly for characters.
@@ -106,7 +147,6 @@ public class Box2DHandler {
         // Adds the shape to the body, applying various settings to it if needed
         FixtureDef fdef = new FixtureDef();
         fdef.shape = shape;
-        fdef.friction = 0.2f;
         body.createFixture(fdef);
 
         shape.dispose();

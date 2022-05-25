@@ -4,14 +4,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Box2D;
 
 public class Player extends Character {
 
-    public Player(Box2DHandler box2DHandler, Camera camera) {
-        super(box2DHandler);
+    public Player(Box2DHandler box2DHandler, Camera camera, SpriteBatch batch) {
+        super(box2DHandler, camera, batch);
         sprite.setSize(32, 32);
 
         // Preparing Animations
@@ -30,15 +33,16 @@ public class Player extends Character {
     }
 
     @Override
-    public void update(Camera camera) {
-        super.update(camera);
+    public void update() {
+        super.update();
         float dt = Gdx.graphics.getDeltaTime();
 
         // Camera Banding
         float camXDist = ((sprite.getX() + sprite.getWidth() / 2) - camera.position.x) * dt * 10;
         float camYDist = ((sprite.getY() + sprite.getHeight() / 2) - camera.position.y) * dt * 10;
-        camera.position.x += camXDist / 2;
-        camera.position.y += camYDist / 2;
+        camera.position.x += camXDist / 1.5;
+        camera.position.y += camYDist / 1.5;
+        if (camera.position.x - camera.viewportWidth/2 < 0)  camera.position.x = camera.viewportWidth/2;
     }
 
     @Override
