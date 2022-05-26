@@ -39,10 +39,11 @@ public class Player extends Character {
 
         // Camera Banding
         float camXDist = ((sprite.getX() + sprite.getWidth() / 2) - camera.position.x) * dt * 10;
-        float camYDist = ((sprite.getY() + sprite.getHeight() / 2) - camera.position.y) * dt * 10;
+        float camYDist = ((sprite.getY() + sprite.getHeight() * 0.8f) - camera.position.y) * dt * 10;
         camera.position.x += camXDist / 1.5;
         camera.position.y += camYDist / 1.5;
 
+        // Stops camera from going out of play area. Not needed atm
 //        if (camera.position.x - camera.viewportWidth/2 < 0)  camera.position.x = camera.viewportWidth/2;
 //        if (box2dBody.getPosition().x < 0) box2dBody.setLinearVelocity(5, box2dBody.getLinearVelocity().y);
     }
