@@ -15,18 +15,14 @@ import java.util.Random;
 public class Satyr extends Character {
 
     Random rand;
-    Sprite sprite;
-    private String[] paths;
-    private Texture[] textures;
-    private Animation<TextureRegion>[] animations;
-    private int[][] colRow;
     int satyrChoice;
 
     public Satyr(Box2DHandler box2DHandler, Camera camera, SpriteBatch batch, int satyrChoice) {
         super(box2DHandler, camera, batch);
+        rand = new Random();
         sprite.setSize(32, 32);
         this.satyrChoice = satyrChoice;
-        if(satyrChoice != 1 || satyrChoice != 2 || satyrChoice != 3) this.satyrChoice = rand.nextInt(3);
+        if(satyrChoice != 1 || satyrChoice != 2 || satyrChoice != 3) this.satyrChoice = rand.nextInt(2) + 1;
 
         //Preparing Animations
         textures = new Texture[5];
@@ -36,7 +32,7 @@ public class Satyr extends Character {
         for (int i = 0; i < paths.length; i++) paths[i] = "Characters\\Golem\\PNG\\Golem_0" + satyrChoice + "\\" + paths[i] + "_spritesheet.png";
 
         //Build Animations
-        animations = AnimationBuild.buildAnimation(paths, colRow);
+        animations = AnimationBuild.buildAnimation(textures, colRow);
         currentFrame = (TextureRegion) animations[0].getKeyFrame(stateTime, true);
 
         //Give Character Box2D Physics

@@ -15,18 +15,14 @@ import java.util.Random;
 public class Minotaur extends Character {
 
     Random rand;
-    Sprite sprite;
-    private String[] paths;
-    private Texture[] textures;
-    private Animation<TextureRegion>[] animations;
-    private int[][] colRow;
     int minotaurChoice;
 
     public Minotaur(Box2DHandler box2DHandler, Camera camera, SpriteBatch batch, int minotaurChoice) {
         super(box2DHandler, camera, batch);
-        sprite.setSize(32, 32);
+        rand = new Random();
+        sprite.setSize(48, 48);
         this.minotaurChoice = minotaurChoice;
-        if(minotaurChoice != 1 || minotaurChoice != 2 || minotaurChoice != 3) this.minotaurChoice = rand.nextInt(3);
+        if(minotaurChoice != 1 || minotaurChoice != 2 || minotaurChoice != 3) this.minotaurChoice = rand.nextInt(2) + 1;
 
         //Preparing Animations
         textures = new Texture[5];
@@ -36,7 +32,7 @@ public class Minotaur extends Character {
         for (int i = 0; i < paths.length; i++) paths[i] = "Characters\\Minotaur\\PNG\\Minotaur_0" + minotaurChoice + "\\" + paths[i] + "_spritesheet.png";
 
         //Build Animations
-        animations = AnimationBuild.buildAnimation(paths, colRow);
+        animations = AnimationBuild.buildAnimation(textures, colRow);
         currentFrame = (TextureRegion) animations[0].getKeyFrame(stateTime, true);
 
         //Give Character Box2D Physics
