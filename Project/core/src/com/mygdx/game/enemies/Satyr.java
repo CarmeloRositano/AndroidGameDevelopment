@@ -12,7 +12,7 @@ import com.mygdx.game.Character;
 
 import java.util.Random;
 
-public class Golem extends Character {
+public class Satyr extends Character {
 
     Random rand;
     Sprite sprite;
@@ -20,20 +20,20 @@ public class Golem extends Character {
     private Texture[] textures;
     private Animation<TextureRegion>[] animations;
     private int[][] colRow;
-    int golemChoice;
+    int satyrChoice;
 
-    public Golem(Box2DHandler box2DHandler, Camera camera, SpriteBatch batch, int golemChoice) {
+    public Satyr(Box2DHandler box2DHandler, Camera camera, SpriteBatch batch, int satyrChoice) {
         super(box2DHandler, camera, batch);
         sprite.setSize(32, 32);
-        this.golemChoice = golemChoice;
-        if(golemChoice != 1 || golemChoice != 2 || golemChoice != 3) this.golemChoice = rand.nextInt(3);
+        this.satyrChoice = satyrChoice;
+        if(satyrChoice != 1 || satyrChoice != 2 || satyrChoice != 3) this.satyrChoice = rand.nextInt(3);
 
         //Preparing Animations
         textures = new Texture[5];
         animations = new Animation[5];
         colRow = new int[][]{{4,5,18}, {4,3,12}, {4,3,12}, {4,4,15}, {4,3,12}};
         paths = new String[]{"Walking\\walking", "Attacking\\attacking", "Hurt\\hurt", "Dying\\dying", "Idle\\idle"};
-        for (int i = 0; i < paths.length; i++) paths[i] = "Characters\\Golem\\PNG\\Golem_0" + golemChoice + "\\" + paths[i] + "_spritesheet.png";
+        for (int i = 0; i < paths.length; i++) paths[i] = "Characters\\Golem\\PNG\\Golem_0" + satyrChoice + "\\" + paths[i] + "_spritesheet.png";
 
         //Build Animations
         animations = AnimationBuild.buildAnimation(paths, colRow);
