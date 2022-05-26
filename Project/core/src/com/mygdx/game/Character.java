@@ -70,7 +70,6 @@ public class Character {
      * Updates the character and animation state based on its current state.
      */
     public void update() {
-        this.camera = camera;
         stateTime += Gdx.graphics.getDeltaTime();
 
         switch (currentState) {

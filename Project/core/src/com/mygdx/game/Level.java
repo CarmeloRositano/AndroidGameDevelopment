@@ -2,6 +2,8 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapLayers;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -13,39 +15,35 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.Vector;
+
 
 public class Level {
-    TiledMap tiledMap;
-    TiledMapRenderer tiledMapRenderer;
-    Box2DHandler box2DHandler;
-    OrthographicCamera camera;
+    private final int numberOfMapsAvailable = 2;
+    private final int mapWidth = 36;
+    private final int tileWidth = 32;
+
+
+    private Vector<Pair<TiledMap, TiledMapRenderer>> map;
+    private int segmentsRight;
+    private int segmentsLeft;
+
+    private Box2DHandler box2DHandler;
+    private OrthographicCamera camera;
 
     /**
      * Initialises field variables and prepares level.
      */
-    public Level(String levelName, Box2DHandler handler, OrthographicCamera camera) {
-        // Loads map and adds it to a new renderer
-        tiledMap = new TmxMapLoader().load("levels/" + levelName + ".tmx");
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+    public Level(Box2DHandler handler, OrthographicCamera camera) {
+        map = new Vector<>();
 
         // Initialise field variables with arguments
         this.camera = camera;
         box2DHandler = handler;
 
-        // Finds all collision objects and makes static box2d bodies out of them.
-        MapObjects world = tiledMap.getLayers().get("World").getObjects();
-        for (int i = 0; i < world.getCount(); i++) {
-            if (world.get(i) instanceof RectangleMapObject) {
-                Rectangle rect = ((RectangleMapObject) world.get(i)).getRectangle();
-                handler.createStaticRect(rect.getX() + rect.getWidth() / 2f, rect.getY() + rect.getHeight() / 2f, rect.width, rect.height);
-            }
-            if (world.get(i) instanceof PolygonMapObject) {
-                Polygon poly = ((PolygonMapObject) world.get(i)).getPolygon();
-                // Magic Numbers = Tile Size
-                handler.createStaticPolygon(poly, poly.getX() + 16, poly.getY() + 16 / 2f, 32, 32);
-            }
+        addMapPiece("Map01", true);
+        addMapPiece(false);
 
-        }
     }
 
     /**
@@ -53,30 +51,109 @@ public class Level {
      * @return float[] holding two values: x position, y position
      */
     public Vector2 getPlayerSpawn() {
-        RectangleMapObject playerObject = (RectangleMapObject) tiledMap.getLayers().get("Player").getObjects().get("Spawn");
+        RectangleMapObject playerObject = (RectangleMapObject) map.get(0).fst.getLayers().get("Player").getObjects().get("Spawn");
         return new Vector2(playerObject.getRectangle().x, playerObject.getRectangle().y);
+    }
+
+    public Vector2[] getEnemySpawns(TiledMap tiledMap) {
+        MapObjects enemies = tiledMap.getLayers().get("Enemies").getObjects();
+        Vector2[] enemySpawns = new Vector2[enemies.getCount()];
+
+        for (int i = 0; i < enemies.getCount(); i++) {
+            RectangleMapObject position = (RectangleMapObject)(enemies.get(i));
+            enemySpawns[i] = new Vector2(position.getRectangle().x, position.getRectangle().y);
+        }
+        return enemySpawns;
     }
 
     /**
      * Updates level state
      */
     public void update() {
-
+        if (camera.position.x > (segmentsRight - 1)*tileWidth*mapWidth) {
+            System.out.println("ADDED RIGHT PIECE");
+            addMapPiece(true);
+        }
+        if (camera.position.x < (segmentsLeft - 1)*tileWidth*mapWidth*-1) {
+            System.out.println("ADDED LEFT PIECE");
+            addMapPiece(false);
+        }
     }
 
     /**
      * Renders level using given camera and the levels renderer
      */
     public void render() {
-        tiledMapRenderer.setView(camera);
-        tiledMapRenderer.render();
+        for (Pair<TiledMap, TiledMapRenderer> pair : map) {
+            pair.snd.setView(camera);
+            pair.snd.render();
+        }
+    }
+
+    public void addMapPiece(boolean right) {
+        addMapPiece("random", right);
+    }
+
+    private void addMapPiece(String name, boolean right) {
+        String mapName = name.toLowerCase().equals("random") ? "Map0" + (int)(Math.random() * numberOfMapsAvailable + 1) : name;
+
+        // Calculates needed offset
+        float offset;
+        if (right) {
+            offset = segmentsRight*tileWidth*mapWidth;
+            segmentsRight++;
+        } else {
+            offset = (segmentsLeft+1)*tileWidth*mapWidth * -1;
+            segmentsLeft++;
+        }
+
+        // Loads map and adds it to a new renderer
+        TiledMap tiledMap = new TmxMapLoader().load("levels/" + mapName + ".tmx");
+        TiledMapRenderer renderer = new OrthogonalTiledMapRenderer(tiledMap);
+
+        // Set offset of tiled map then adds it to map vector
+        moveTiledMap(tiledMap, offset, 0);
+        map.add(new Pair<TiledMap, TiledMapRenderer>(tiledMap, renderer));
+
+        // Finds all collision objects and makes static box2d bodies out of them.
+        MapObjects world = tiledMap.getLayers().get("World").getObjects();
+        for (int i = 0; i < world.getCount(); i++) {
+            if (world.get(i) instanceof RectangleMapObject) {
+                Rectangle rect = ((RectangleMapObject) world.get(i)).getRectangle();
+                box2DHandler.createStaticRect(offset + rect.getX() + rect.getWidth() / 2f, rect.getY() + rect.getHeight() / 2f, rect.width, rect.height);
+            }
+            if (world.get(i) instanceof PolygonMapObject) {
+                Polygon poly = ((PolygonMapObject) world.get(i)).getPolygon();
+                // Magic Numbers = Tile Size
+                box2DHandler.createStaticPolygon(poly, offset + poly.getX() + 16, poly.getY() + 16 / 2f, 32, 32);
+            }
+        }
+
+        spawnEnemies(tiledMap);
+    }
+
+    private void spawnEnemies(TiledMap tiledMap) {
+        //        System.out.println(getEnemySpawns(tiledMap).length);
+        // TODO ADD ENEMY SPAWNS
+    }
+
+    private void moveTiledMap(TiledMap tilemap, float x, float y) {
+        MapLayers layers = tilemap.getLayers();
+
+        // Sets offset for all layers
+        for (MapLayer layer : layers) {
+            layer.setOffsetX(x);
+            layer.setOffsetY(y);
+        }
     }
 
     /**
      * Disposes items that wouldn't be cleaned up automatically by the javavm
      */
     public void dispose() {
-        tiledMap.dispose();
+        for (Pair<TiledMap, TiledMapRenderer> pair : map) {
+            pair.fst.dispose();
+        }
     }
 
 }

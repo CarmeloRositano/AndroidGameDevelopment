@@ -42,7 +42,9 @@ public class Player extends Character {
         float camYDist = ((sprite.getY() + sprite.getHeight() / 2) - camera.position.y) * dt * 10;
         camera.position.x += camXDist / 1.5;
         camera.position.y += camYDist / 1.5;
-        if (camera.position.x - camera.viewportWidth/2 < 0)  camera.position.x = camera.viewportWidth/2;
+
+//        if (camera.position.x - camera.viewportWidth/2 < 0)  camera.position.x = camera.viewportWidth/2;
+//        if (box2dBody.getPosition().x < 0) box2dBody.setLinearVelocity(5, box2dBody.getLinearVelocity().y);
     }
 
     @Override

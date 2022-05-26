@@ -40,7 +40,8 @@ public class MyGdxGame extends ApplicationAdapter {
 	@Override
 	public void create () {
 		// Finds required height for current device
-		R_HEIGHT  = R_WIDTH * ((float)Gdx.graphics.getHeight() / Gdx.graphics.getWidth());
+		R_HEIGHT  = (R_WIDTH / 16) * 9;
+		System.out.println(R_HEIGHT);
 
 		// Render
 		batch = new SpriteBatch();
@@ -48,7 +49,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		// Camera
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, R_WIDTH/5, R_HEIGHT/5);
+		camera.setToOrtho(false, R_WIDTH/4, R_HEIGHT/4);
 		camera.update();
 
 		// UI Textures
@@ -71,7 +72,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		// Level and Player
 		box2DHandler = new Box2DHandler(camera);
-		level = new Level("GreenZoneMap", box2DHandler, camera);
+		level = new Level(box2DHandler, camera);
 		player = new Player(box2DHandler, camera, batch);
 		player.setPosition(level.getPlayerSpawn().x, level.getPlayerSpawn().y);
 
