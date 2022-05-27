@@ -30,9 +30,13 @@ public class Level {
     private final int numberOfMapsAvailable = 3;
     private final int mapWidth = 36;
     private final int tileWidth = 32;
+    private int currentChunk;
+    private int lastChunkAtChange;
 
     private SpriteBatch batch;
     private List<Character> enemies;
+
+    private Vector<Tuple<TiledMap, TiledMapRenderer, Body[]>> map;
 
     private Vector<Tuple<TiledMap, TiledMapRenderer, Body[]>> mapRight;
     private Vector<Tuple<TiledMap, TiledMapRenderer, Body[]>> mapLeft;
@@ -44,6 +48,7 @@ public class Level {
      * Initialises field variables and prepares level.
      */
     public Level(Box2DHandler handler, OrthographicCamera camera) {
+        map = new Vector<>();
         mapLeft = new Vector<>();
         mapRight = new Vector<>();
 
@@ -53,9 +58,13 @@ public class Level {
 
         batch = new SpriteBatch();
         enemies = new ArrayList<Character>();
+        currentChunk = 0;
+        lastChunkAtChange = 0;
 
-        addMapPiece("Map01", true);
-        addMapPiece(false);
+        //Set middle and side map pieces
+        addMapPiece(-1);
+        addMapPiece("Map01", 0);
+        addMapPiece(1);
     }
 
     /**
@@ -63,7 +72,7 @@ public class Level {
      * @return float[] holding two values: x position, y position
      */
     public Vector2 getPlayerSpawn() {
-        RectangleMapObject playerObject = (RectangleMapObject) mapRight.get(0).fst.getLayers().get("Player").getObjects().get("Spawn");
+        RectangleMapObject playerObject = (RectangleMapObject) map.get(1).fst.getLayers().get("Player").getObjects().get("Spawn");
         return new Vector2(playerObject.getRectangle().x, playerObject.getRectangle().y);
     }
 
@@ -78,30 +87,30 @@ public class Level {
         return enemySpawns;
     }
 
+    boolean hitupdate = false;
     /**
      * Updates level state
      */
     public void update() {
-        //
-        if (camera.position.x > (mapRight.size() - 1)*tileWidth*mapWidth) {
-            addMapPiece(true);
+        currentChunk = (int)(camera.position.x / (mapWidth*tileWidth)) - (camera.position.x >= 0 ? 0 : 1);
+
+        // Add new map chunk if player is nearing edge of right side
+        if (currentChunk > lastChunkAtChange) {
+            lastChunkAtChange = currentChunk;
+            addMapPiece(1);
         }
-        if (camera.position.x < (mapLeft.size() - 1)*tileWidth*mapWidth*-1) {
-            addMapPiece(false);
+        // Add new map chunk if player is nearing edge of left side
+        if (currentChunk < lastChunkAtChange) {
+            lastChunkAtChange = currentChunk;
+            addMapPiece(-1);
         }
 
-        if (mapRight.size() > 0 && camera.position.x < (mapRight.size() - 2)*tileWidth*mapWidth) {
-            int index = mapRight.size() - 1;
-            box2DHandler.removeBodies(mapRight.get(index).thd);
-            mapRight.lastElement().fst.dispose();
-            mapRight.remove(index);
-        }
-        if (mapLeft.size() > 0 && camera.position.x > (mapLeft.size() - 2)*tileWidth*mapWidth*-1) {
-            int index = mapLeft.size() - 1;
-            System.out.println();
-            box2DHandler.removeBodies(mapLeft.get(index).thd);
-            mapLeft.get(index).fst.dispose();
-            mapLeft.remove(index);
+        // Remove enemies if far away
+        for (int i = enemies.size()-1; i >= 0 ; i--) {
+            if (camera.position.dst(enemies.get(i).getPosition().x, enemies.get(i).getPosition().y, 0) > tileWidth*mapWidth * 2) {
+                enemies.get(i).dispose();
+                enemies.remove(i);
+            }
         }
     }
 
@@ -109,32 +118,24 @@ public class Level {
      * Renders level using given camera and the levels renderer
      */
     public void render() {
-        updateEnemies();
 
-        for (Tuple<TiledMap, TiledMapRenderer, Body[]> tuple : mapRight) {
+        for (Tuple<TiledMap, TiledMapRenderer, Body[]> tuple : map) {
             tuple.snd.setView(camera);
             tuple.snd.render();
         }
-        for (Tuple<TiledMap, TiledMapRenderer, Body[]> tuple : mapLeft) {
-            tuple.snd.setView(camera);
-            tuple.snd.render();
-        }
+
+        renderEnemies();
     }
 
-    public void addMapPiece(boolean right) {
-        addMapPiece("random", right);
+    public void addMapPiece(int side) {
+        addMapPiece("random", side);
     }
 
-    private void addMapPiece(String name, boolean right) {
+    private void addMapPiece(String name, int side) {
         String mapName = name.equalsIgnoreCase("random") ? "Map0" + (int)(Math.random() * numberOfMapsAvailable + 1) : name;
 
         // Calculates needed offset
-        float offset;
-        if (right) {
-            offset = mapRight.size()*tileWidth*mapWidth;
-        } else {
-            offset = (mapLeft.size()+1)*tileWidth*mapWidth * -1;
-        }
+        float offset = (currentChunk * tileWidth * mapWidth) + (side * (tileWidth * mapWidth));
 
         // Loads map and adds it to a new renderer
         TiledMap tiledMap = new TmxMapLoader().load("levels/" + mapName + ".tmx");
@@ -158,27 +159,43 @@ public class Level {
             }
         }
 
-        if (right) {
-            mapRight.add(new Tuple(tiledMap, renderer, mapBodies));
+        if (side < 0) {
+            addPieceLeft(new Tuple(tiledMap, renderer, mapBodies));
         } else {
-            mapLeft.add(new Tuple(tiledMap, renderer, mapBodies));
+            addPieceRight(new Tuple(tiledMap, renderer, mapBodies));
         }
+
         spawnEnemies(getEnemySpawns(tiledMap, offset));
+    }
+
+    private void addPieceLeft(Tuple<TiledMap, TiledMapRenderer, Body[]> mapPiece) {
+        map.insertElementAt(mapPiece, 0);
+        while (map.size() > 3) {
+            System.out.println("DELETED RIGHT PIECE");
+            map.lastElement().fst.dispose();
+            box2DHandler.removeBodies(map.lastElement().thd);
+            map.remove(map.lastElement());
+        }
+    }
+
+    private void addPieceRight(Tuple<TiledMap, TiledMapRenderer, Body[]> mapPiece) {
+        map.add(mapPiece);
+        while (map.size() > 3) {
+            System.out.println("DELETED LEFT PIECE");
+            map.firstElement().fst.dispose();
+            box2DHandler.removeBodies(map.firstElement().thd);
+            map.remove(map.firstElement());
+        }
     }
 
     private void spawnEnemies(Vector2[] spawnLocations) {
         for(Vector2 location: spawnLocations) {
-            SpriteBatch batch = new SpriteBatch();
-            Golem tempEnemy =  new Golem(box2DHandler, camera, batch, 1);
-
-            tempEnemy.setPosition(location.x, location.y);
-            enemies.add(tempEnemy);
-//            getRandomEnemy(location);
+            Character enemy = makeRandomEnemy(location);
+            enemies.add(enemy);
         }
-        // TODO ADD ENEMY SPAWNS
     }
 
-    public Character getRandomEnemy(Vector2 chords) {
+    public Character makeRandomEnemy(Vector2 chords) {
         Random rand = new Random();
         int temp = rand.nextInt(2) + 1;
         if (temp == 1) {
@@ -200,6 +217,9 @@ public class Level {
     }
 
     private void updateEnemies() {
+    }
+
+    private void renderEnemies() {
         for(Character temp : enemies) {
             temp.render();
         }

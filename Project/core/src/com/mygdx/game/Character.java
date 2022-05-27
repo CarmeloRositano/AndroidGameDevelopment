@@ -29,6 +29,7 @@ public class Character {
 
     // Character states
     public Body box2dBody;
+    private Box2DHandler box2DHandler;
     protected State currentState;
     protected float stateTime;
     public int jumpsLeft;
@@ -56,6 +57,7 @@ public class Character {
         // Initialise some character variables
         sprite = new Sprite();
         currentState = State.IDLE;
+        this.box2DHandler = box2DHandler;
         box2dBody = box2DHandler.createCharacterShape(sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
         jumpsLeft = 2;
         prevVelocityY = 0;
@@ -104,6 +106,10 @@ public class Character {
                 break;
         }
         sprite.setRegion(currentFrame);
+
+        sprite.setX(box2dBody.getPosition().x * Box2DHandler.PPM);
+        sprite.setY(box2dBody.getPosition().y * Box2DHandler.PPM);
+        sprite.setPosition(sprite.getX() - sprite.getWidth() / 2, sprite.getY() - sprite.getHeight() / 2);
     }
 
     /**
@@ -135,6 +141,10 @@ public class Character {
                             (sprite.getY() + 32) / Box2DHandler.PPM, 0);
     }
 
+    public Vector2 getPosition() {
+        return new Vector2(sprite.getX(), sprite.getY());
+    }
+
     public void move(int x) {
         float dt = Gdx.graphics.getDeltaTime();
         if (box2dBody.getLinearVelocity().y == 0 && prevVelocityY < 0) jumpsLeft = 2;
@@ -160,11 +170,6 @@ public class Character {
             currentState = State.IDLE;
         }
 
-        float PPM = Box2DHandler.PPM;
-        sprite.setX(box2dBody.getPosition().x * Box2DHandler.PPM);
-        sprite.setY(box2dBody.getPosition().y * Box2DHandler.PPM);
-
-        sprite.setPosition(sprite.getX() - sprite.getWidth() / 2, sprite.getY() - sprite.getHeight() / 2);
         prevVelocityY = box2dBody.getLinearVelocity().y;
     }
 
@@ -185,7 +190,9 @@ public class Character {
      * Disposes items that wouldn't be cleaned up automatically by the javavm
      */
     public void dispose() {
-//        texture.dispose();
+//        texture.dispose(); // TEXTURES CURRENTLY STORED AS STATIC FOR ALL CHARACTERS
+        box2DHandler.removeBodies(new Body[]{box2dBody});
+
         //TODO Dispose All Necessary Objects
     }
 }

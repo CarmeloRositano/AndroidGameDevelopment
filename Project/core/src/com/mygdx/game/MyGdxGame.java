@@ -12,8 +12,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 public class MyGdxGame extends ApplicationAdapter {
 
-	private float R_WIDTH = 1920;
-	private float R_HEIGHT;
+	public static float R_WIDTH = 1920;
+	public static float R_HEIGHT;
 	public enum GameState { MAIN_MENU, PLAYING, PAUSED, COMPLETE }
 
 	GameState gameState;
@@ -53,7 +53,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		// Camera
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, R_WIDTH*2, R_HEIGHT*2);
+		camera.setToOrtho(false, R_WIDTH/3, R_HEIGHT/3);
 		camera.update();
 
 
@@ -94,9 +94,6 @@ public class MyGdxGame extends ApplicationAdapter {
 	 */
 	@Override
 	public void render () {
-
-		System.out.println(gameState);
-
 		ScreenUtils.clear(0, 0, 0, 1);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -159,7 +156,6 @@ public class MyGdxGame extends ApplicationAdapter {
 				if (userInterface.jumpButtonPressed()) player.jump();
 				if (userInterface.shootButtonPressed()) //	player.shoot();
 				if(userInterface.pauseButtonPressed()) gameState = GameState.PAUSED;
-				System.out.println(gameState);
 
 				//Character and Camera Movement
 				player.move(moveX);

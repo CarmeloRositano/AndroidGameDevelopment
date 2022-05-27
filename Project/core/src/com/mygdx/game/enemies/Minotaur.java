@@ -22,14 +22,36 @@ public class Minotaur extends Character {
         rand = new Random();
         sprite.setSize(48, 48);
         this.minotaurChoice = minotaurChoice;
-        if(minotaurChoice != 1 || minotaurChoice != 2 || minotaurChoice != 3) this.minotaurChoice = rand.nextInt(2) + 1;
+        if(minotaurChoice != 1 && minotaurChoice != 2 && minotaurChoice != 3) this.minotaurChoice = rand.nextInt(2) + 1;
 
         //Preparing Animations
-        textures = new Texture[5];
-        animations = new Animation[5];
-        colRow = new int[][]{{4,5,18}, {4,3,12}, {4,3,12}, {4,4,15}, {4,3,12}};
-        paths = new String[]{"Walking\\walking", "Attacking\\attacking", "Hurt\\hurt", "Dying\\dying", "Idle\\idle"};
-        for (int i = 0; i < paths.length; i++) paths[i] = "Characters\\Minotaur\\PNG\\Minotaur_0" + minotaurChoice + "\\" + paths[i] + "_spritesheet.png";
+        if(minotaurChoice == 1) {
+            textures = new Texture[]{
+                    TextureSingleton.getInstance().minotaur01Walking,
+                    TextureSingleton.getInstance().minotaur01Attacking,
+                    null,
+                    TextureSingleton.getInstance().minotaur01Hurt,
+                    TextureSingleton.getInstance().minotaur01Dying,
+                    TextureSingleton.getInstance().minotaur01Idle};
+        } else if(minotaurChoice == 2) {
+            textures = new Texture[]{
+                    TextureSingleton.getInstance().minotaur02Walking,
+                    TextureSingleton.getInstance().minotaur02Attacking,
+                    null,
+                    TextureSingleton.getInstance().minotaur02Hurt,
+                    TextureSingleton.getInstance().minotaur02Dying,
+                    TextureSingleton.getInstance().minotaur02Idle};
+        } else {
+            textures = new Texture[]{
+                    TextureSingleton.getInstance().minotaur03Walking,
+                    TextureSingleton.getInstance().minotaur03Attacking,
+                    null,
+                    TextureSingleton.getInstance().minotaur03Hurt,
+                    TextureSingleton.getInstance().minotaur03Dying,
+                    TextureSingleton.getInstance().minotaur03Idle};
+        }
+
+        colRow = new int[][]{{4,5,18}, {4,3,12}, {0, 0, 0}, {4,3,12}, {4,4,15}, {4,3,12}};
 
         //Build Animations
         animations = AnimationBuild.buildAnimation(textures, colRow);
@@ -46,7 +68,7 @@ public class Minotaur extends Character {
     public void render() {super.render();}
 
     public void dispose() {
-        for (Texture temp:textures) {temp.dispose();}
+        super.dispose();
         //TODO All Textures/ Animations Not In Parent
     }
 }

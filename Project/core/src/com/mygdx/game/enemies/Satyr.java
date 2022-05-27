@@ -22,14 +22,36 @@ public class Satyr extends Character {
         rand = new Random();
         sprite.setSize(32, 32);
         this.satyrChoice = satyrChoice;
-        if(satyrChoice != 1 || satyrChoice != 2 || satyrChoice != 3) this.satyrChoice = rand.nextInt(2) + 1;
+        if(satyrChoice != 1 && satyrChoice != 2 && satyrChoice != 3) this.satyrChoice = rand.nextInt(2) + 1;
 
         //Preparing Animations
-        textures = new Texture[5];
-        animations = new Animation[5];
-        colRow = new int[][]{{4,5,18}, {4,3,12}, {4,3,12}, {4,4,15}, {4,3,12}};
-        paths = new String[]{"Walking\\walking", "Attacking\\attacking", "Hurt\\hurt", "Dying\\dying", "Idle\\idle"};
-        for (int i = 0; i < paths.length; i++) paths[i] = "Characters\\Golem\\PNG\\Golem_0" + satyrChoice + "\\" + paths[i] + "_spritesheet.png";
+        if(satyrChoice == 1) {
+            textures = new Texture[]{
+                    TextureSingleton.getInstance().satyr01Walking,
+                    TextureSingleton.getInstance().satyr01Attacking,
+                    null,
+                    TextureSingleton.getInstance().satyr01Hurt,
+                    TextureSingleton.getInstance().satyr01Dying,
+                    TextureSingleton.getInstance().satyr01Idle};
+        } else if(satyrChoice == 2) {
+            textures = new Texture[]{
+                    TextureSingleton.getInstance().satyr02Walking,
+                    TextureSingleton.getInstance().satyr02Attacking,
+                    null,
+                    TextureSingleton.getInstance().satyr02Hurt,
+                    TextureSingleton.getInstance().satyr02Dying,
+                    TextureSingleton.getInstance().satyr02Idle};
+        } else {
+            textures = new Texture[]{
+                    TextureSingleton.getInstance().satyr03Walking,
+                    TextureSingleton.getInstance().satyr03Attacking,
+                    null,
+                    TextureSingleton.getInstance().satyr03Hurt,
+                    TextureSingleton.getInstance().satyr03Dying,
+                    TextureSingleton.getInstance().satyr03Idle};
+        }
+
+        colRow = new int[][]{{4,5,18}, {4,3,12}, {0, 0, 0}, {4,3,12}, {4,4,15}, {4,3,12}};
 
         //Build Animations
         animations = AnimationBuild.buildAnimation(textures, colRow);
@@ -46,7 +68,7 @@ public class Satyr extends Character {
     public void render() {super.render();}
 
     public void dispose() {
-        for (Texture temp:textures) {temp.dispose();}
+        super.dispose();
         //TODO All Textures/ Animations Not In Parent
     }
 }

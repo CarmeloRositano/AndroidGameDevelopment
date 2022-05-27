@@ -25,8 +25,8 @@ public class Golem extends Character {
         sprite.setSize(32, 32);
         this.golemChoice = golemChoice;
         if(golemChoice != 1 && golemChoice != 2 && golemChoice != 3) this.golemChoice = rand.nextInt(2) + 1;
-        //Preparing Animations
 
+        //Preparing Animations
         if(golemChoice == 1) {
             textures = new Texture[]{
                     TextureSingleton.getInstance().golem01Walking,
@@ -53,7 +53,6 @@ public class Golem extends Character {
                     TextureSingleton.getInstance().golem03Idle};
         }
 
-        animations = new Animation[5];
         colRow = new int[][]{{4,5,18}, {4,3,12}, {0, 0, 0},{4,3,12}, {4,4,15}, {4,3,12}};
 
         //Build Animations
@@ -66,7 +65,6 @@ public class Golem extends Character {
 
     public void update() {
         super.update();
-        move(0);
     }
 
     public void render() {
@@ -74,7 +72,7 @@ public class Golem extends Character {
     }
 
     public void dispose() {
-        for (Texture temp:textures) {temp.dispose();}
+        super.dispose();
         //TODO All Textures/ Animations Not In Parent
     }
 }

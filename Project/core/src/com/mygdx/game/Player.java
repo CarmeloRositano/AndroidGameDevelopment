@@ -53,6 +53,17 @@ public class Player extends Character {
         super.render();
     }
 
+    /**
+     * Hard sets the character position in the world
+     * @param x
+     * @param y
+     */
+    public void setPosition(float x, float y) {
+        super.setPosition(x, y);
+        camera.position.x = x;
+        camera.position.y = y;
+    }
+
     public void dispose() {
         //TODO All Textures/ Animations Not In Parent
     }
