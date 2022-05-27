@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="2021.03.23" orientation="orthogonal" renderorder="right-down" width="36" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="10" nextobjectid="128">
+<map version="1.5" tiledversion="2021.03.23" orientation="orthogonal" renderorder="right-down" width="36" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="10" nextobjectid="129">
  <tileset firstgid="1" source="GreenZoneTileset.tsx"/>
  <tileset firstgid="97" source="BackgroundTileset.tsx"/>
  <tileset firstgid="277" source="DecorTileset.tsx"/>
- <layer id="5" name="Background" width="36" height="40">
+ <layer id="5" name="Background" width="36" height="40" visible="0">
   <data encoding="csv">
 99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,
 99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,
@@ -246,5 +246,6 @@
   <object id="118" x="704" y="1120">
    <polygon points="0,0 0,32 32,32"/>
   </object>
+  <object id="128" x="544" y="768" width="32" height="32"/>
  </objectgroup>
 </map>

@@ -48,7 +48,7 @@ public class Level {
      */
     public Level(Box2DHandler handler, OrthographicCamera camera) {
         map = new Vector<>();
-        background = new TmxMapLoader().load("levels/background.tmx");
+        background = new TmxMapLoader().load("levels/Background.tmx");
         backgroundRenderer = new OrthogonalTiledMapRenderer(background);
 
         // Initialise field variables with arguments
@@ -86,7 +86,6 @@ public class Level {
         return enemySpawns;
     }
 
-    boolean hitupdate = false;
     /**
      * Updates level state
      */
@@ -111,6 +110,12 @@ public class Level {
                 enemies.remove(i);
             }
         }
+
+
+
+
+
+
     }
 
     /**

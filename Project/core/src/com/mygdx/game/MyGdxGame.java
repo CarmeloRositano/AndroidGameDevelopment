@@ -109,7 +109,6 @@ public class MyGdxGame extends ApplicationAdapter {
 			case MAIN_MENU:
 				break;
 			case PLAYING:
-
 				level.update();
 				level.render();
 

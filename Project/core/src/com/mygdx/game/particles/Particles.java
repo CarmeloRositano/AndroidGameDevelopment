@@ -187,7 +187,7 @@ public class Particles {
     }
 
     public boolean isFinished() {
-        if (stopped && System.currentTimeMillis() > stopTime + lifetimeMS*1000) return true;
+        if (stopped && System.currentTimeMillis() > stopTime + lifetimeMS) return true;
         return false;
     }
 

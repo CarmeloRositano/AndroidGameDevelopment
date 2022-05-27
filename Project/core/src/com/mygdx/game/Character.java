@@ -24,7 +24,7 @@ public class Character {
     protected float movementSpeedBuildup = 10.0f;
     protected float maxMovementSpeed = 2f;
     protected float jumpSpeed = 4f;
-    protected float jumpPause = 0.3f;
+    protected float jumpPause = 0.4f;
 
     private ParticleHandler particles;
 
@@ -116,6 +116,9 @@ public class Character {
 
         jumpWait -= Gdx.graphics.getDeltaTime();
         if (jumpWait < 0) jumpWait = 0;
+
+        if (box2dBody.getLinearVelocity().x > 0f) flip = false;
+        if (box2dBody.getLinearVelocity().x < 0f) flip = true;
     }
 
     /**
@@ -154,9 +157,6 @@ public class Character {
     public void move(int x) {
         float dt = Gdx.graphics.getDeltaTime();
         if (box2dBody.getLinearVelocity().y == 0 && prevVelocityY < 0) jumpsLeft = 2;
-
-        if (box2dBody.getLinearVelocity().x > 0f) flip = false;
-        if (box2dBody.getLinearVelocity().x < 0f) flip = true;
 
         if (x != 0) {
             box2dBody.setLinearVelocity(box2dBody.getLinearVelocity().x + (x * movementSpeedBuildup * dt),

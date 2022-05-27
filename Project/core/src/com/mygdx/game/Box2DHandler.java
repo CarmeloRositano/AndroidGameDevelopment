@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
@@ -22,7 +23,7 @@ public class Box2DHandler {
     // Important box2d variables
     private World world;
     private Box2DDebugRenderer box2DRenderer;
-    private boolean debugLines = true;
+    private boolean debugLines = false;
 
     // The camera that box2d will be projected on
     private OrthographicCamera camera;
@@ -149,13 +150,19 @@ public class Box2DHandler {
         Body body = world.createBody(def);
 
         // Creates the shape for the body to use
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox((width/2)/PPM, (height/2)/PPM);
+        CircleShape shape = new CircleShape();
+        shape.setRadius((width/2)/PPM);
+        shape.setPosition(new Vector2(0, (height/3)/PPM));
 
         // Adds the shape to the body, applying various settings to it if needed
-        FixtureDef fdef = new FixtureDef();
-        fdef.shape = shape;
-        body.createFixture(fdef);
+        FixtureDef fdef1 = new FixtureDef();
+        fdef1.shape = shape;
+        body.createFixture(fdef1);
+
+        shape.setPosition(new Vector2(0, -(height/5)/PPM));
+        FixtureDef fdef2 = new FixtureDef();
+        fdef2.shape = shape;
+        body.createFixture(fdef2);
 
         shape.dispose();
         return body;
