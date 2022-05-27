@@ -41,7 +41,6 @@ public class MyGdxGame extends ApplicationAdapter {
 	public void create () {
 		// Finds required height for current device
 		R_HEIGHT  = (R_WIDTH / 16) * 9;
-		System.out.println(R_HEIGHT);
 
 		// Render
 		batch = new SpriteBatch();

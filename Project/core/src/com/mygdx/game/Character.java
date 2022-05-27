@@ -104,16 +104,16 @@ public class Character {
                 break;
         }
         sprite.setRegion(currentFrame);
-
     }
 
     /**
      * Renders the character
      */
     public void render() {
+        update();
         particles.update();
         particles.render();
-
+        batch.setProjectionMatrix(camera.combined);
         batch.begin();
         sprite.flip(flip, false);
         batch.draw(sprite, sprite.getX() - sprite.getHeight()/2,
@@ -185,7 +185,7 @@ public class Character {
      * Disposes items that wouldn't be cleaned up automatically by the javavm
      */
     public void dispose() {
-        texture.dispose();
+//        texture.dispose();
         //TODO Dispose All Necessary Objects
     }
 }

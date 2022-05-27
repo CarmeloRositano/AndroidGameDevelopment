@@ -1,6 +1,7 @@
 package com.mygdx.game.enemies;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Interpolation;
 
 /**
  *
@@ -64,6 +65,7 @@ public class TextureSingleton {
 
     public Texture getGolem01Attacking() {
         if (golem01Attacking == null) {
+
             golem01Attacking = new Texture("Characters\\Golem\\PNG\\Golem_01\\Attacking\\attacking_spritesheet.png");
         }
         return golem01Attacking;
@@ -73,6 +75,7 @@ public class TextureSingleton {
         if (golem02Attacking == null) {
             golem02Attacking = new Texture("Characters\\Golem\\PNG\\Golem_02\\Attacking\\attacking_spritesheet.png");
         }
+
         return golem02Attacking;
     }
 

@@ -7,25 +7,30 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class AnimationBuild {
 
     public static Animation<TextureRegion>[] buildAnimation(Texture[] textures, int[][] colRow) {
+
         Animation<TextureRegion>[] animations;
 
         animations = new Animation[textures.length];
 
         //Build Animation
         for (int i = 0; i < textures.length; i++) {
-            TextureRegion[][] temp = TextureRegion.split(textures[i],
-                    textures[i].getWidth() / colRow[i][0],
-                    textures[i].getHeight() / colRow[i][1]);
-            TextureRegion[] frames = new TextureRegion[(colRow[i][0] * colRow[i][1]) - +((colRow[i][0] * colRow[i][1]) - colRow[i][2])];
-            int index = 0;
-            for (int col = 0; col < colRow[i][1]; col++) {
-                for (int row = 0; row < colRow[i][0]; row++) {
-                    if(index < colRow[i][2]) {
-                        frames[index++] = temp[col][row];
+            if(textures[i] == null) {
+                animations[i] = null;
+            } else {
+                TextureRegion[][] temp = TextureRegion.split(textures[i],
+                        textures[i].getWidth() / colRow[i][0],
+                        textures[i].getHeight() / colRow[i][1]);
+                TextureRegion[] frames = new TextureRegion[(colRow[i][0] * colRow[i][1]) - +((colRow[i][0] * colRow[i][1]) - colRow[i][2])];
+                int index = 0;
+                for (int col = 0; col < colRow[i][1]; col++) {
+                    for (int row = 0; row < colRow[i][0]; row++) {
+                        if(index < colRow[i][2]) {
+                            frames[index++] = temp[col][row];
+                        }
                     }
                 }
+                animations[i] = new Animation(1f/30f, (Object[]) frames);
             }
-            animations[i] = new Animation(1f/30f, (Object[]) frames);
         }
 
         return animations;

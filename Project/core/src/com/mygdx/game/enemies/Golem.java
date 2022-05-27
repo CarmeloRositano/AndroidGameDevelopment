@@ -31,6 +31,7 @@ public class Golem extends Character {
             textures = new Texture[]{
                     TextureSingleton.getInstance().getGolem01Walking(),
                     TextureSingleton.getInstance().getGolem01Attacking(),
+                    null,
                     TextureSingleton.getInstance().getGolem01Hurt(),
                     TextureSingleton.getInstance().getGolem01Dying(),
                     TextureSingleton.getInstance().getGolem01Idle()};
@@ -38,6 +39,7 @@ public class Golem extends Character {
             textures = new Texture[]{
                     TextureSingleton.getInstance().getGolem02Walking(),
                     TextureSingleton.getInstance().getGolem02Attacking(),
+                    null,
                     TextureSingleton.getInstance().getGolem02Hurt(),
                     TextureSingleton.getInstance().getGolem02Dying(),
                     TextureSingleton.getInstance().getGolem02Idle()};
@@ -45,13 +47,14 @@ public class Golem extends Character {
             textures = new Texture[]{
                     TextureSingleton.getInstance().getGolem03Walking(),
                     TextureSingleton.getInstance().getGolem03Attacking(),
+                    null,
                     TextureSingleton.getInstance().getGolem03Hurt(),
                     TextureSingleton.getInstance().getGolem03Dying(),
                     TextureSingleton.getInstance().getGolem03Idle()};
         }
 
         animations = new Animation[5];
-        colRow = new int[][]{{4,5,18}, {4,3,12}, {4,3,12}, {4,4,15}, {4,3,12}};
+        colRow = new int[][]{{4,5,18}, {4,3,12}, {0, 0, 0},{4,3,12}, {4,4,15}, {4,3,12}};
 
         //Build Animations
         animations = AnimationBuild.buildAnimation(textures, colRow);
@@ -63,9 +66,12 @@ public class Golem extends Character {
 
     public void update() {
         super.update();
+        move(0);
     }
 
-    public void render() {super.render();}
+    public void render() {
+        super.render();
+    }
 
     public void dispose() {
         for (Texture temp:textures) {temp.dispose();}

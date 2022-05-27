@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapLayer;
@@ -21,6 +22,8 @@ import com.mygdx.game.enemies.Golem;
 import com.mygdx.game.enemies.Minotaur;
 import com.mygdx.game.enemies.Satyr;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
@@ -30,6 +33,8 @@ public class Level {
     private final int mapWidth = 36;
     private final int tileWidth = 32;
 
+    SpriteBatch batch;
+    List<Character> enemies;
 
     private Vector<Pair<TiledMap, TiledMapRenderer>> map;
     private int segmentsRight;
@@ -48,6 +53,9 @@ public class Level {
         // Initialise field variables with arguments
         this.camera = camera;
         box2DHandler = handler;
+
+        batch = new SpriteBatch();
+        enemies = new ArrayList<Character>();
 
         addMapPiece("Map01", true);
         addMapPiece(false);
@@ -94,6 +102,7 @@ public class Level {
             pair.snd.setView(camera);
             pair.snd.render();
         }
+        updateEnemies();
     }
 
     public void addMapPiece(boolean right) {
@@ -101,7 +110,6 @@ public class Level {
     }
 
     private void addMapPiece(String name, boolean right) {
-//        System.out.println("AHHHHHHHHH FUCKING HELP ME PLZ GOD!!!!!!!!!!!!!!!!!!!!!");
         String mapName = name.toLowerCase().equals("random") ? "Map0" + (int)(Math.random() * numberOfMapsAvailable + 1) : name;
 
         // Calculates needed offset
@@ -140,41 +148,36 @@ public class Level {
     }
 
     private void spawnEnemies(Vector2[] spawnLocations) {
-        int i = 0;
-        System.out.println("SPAWN LOCATION LENGTH " + spawnLocations.length);
         for(Vector2 location: spawnLocations) {
             SpriteBatch batch = new SpriteBatch();
             Golem tempEnemy =  new Golem(box2DHandler, camera, batch, 1);
+
             tempEnemy.setPosition(location.x, location.y);
+            enemies.add(tempEnemy);
 //            getRandomEnemy(location);
-            System.out.println(i++);
         }
         // TODO ADD ENEMY SPAWNS
     }
 
     public Character getRandomEnemy(Vector2 chords){
         Random rand = new Random();
-        SpriteBatch batch = new SpriteBatch();
-        Golem tempEnemy =  new Golem(box2DHandler, camera, batch, 1);
-        tempEnemy.setPosition(chords.x, chords.y);
-        return tempEnemy;
-//        int temp = rand.nextInt(2) + 1;
-//        if(temp == 1) {
-//            temp = rand.nextInt(2) + 1;
-//            Golem tempEnemy =  new Golem(box2DHandler, camera, batch, temp);
-//            tempEnemy.setPosition(chords.x, chords.y);
-//            return tempEnemy;
-//        } else if (temp == 2) {
-//            temp = rand.nextInt(2) + 1;
-//            Minotaur tempEnemy =  new Minotaur(box2DHandler, camera, batch, temp);
-//            tempEnemy.setPosition(chords.x, chords.y);
-//            return tempEnemy;
-//        } else {
-//            temp = rand.nextInt(2) + 1;
-//            Satyr tempEnemy =  new Satyr(box2DHandler, camera, batch, temp);
-//            tempEnemy.setPosition(chords.x, chords.y);
-//            return tempEnemy;
-//        }
+        int temp = rand.nextInt(2) + 1;
+        if(temp == 1) {
+            temp = rand.nextInt(2) + 1;
+            Golem tempEnemy =  new Golem(box2DHandler, camera, batch, temp);
+            tempEnemy.setPosition(chords.x, chords.y);
+            return tempEnemy;
+        } else if (temp == 2) {
+            temp = rand.nextInt(2) + 1;
+            Minotaur tempEnemy =  new Minotaur(box2DHandler, camera, batch, temp);
+            tempEnemy.setPosition(chords.x, chords.y);
+            return tempEnemy;
+        } else {
+            temp = rand.nextInt(2) + 1;
+            Satyr tempEnemy =  new Satyr(box2DHandler, camera, batch, temp);
+            tempEnemy.setPosition(chords.x, chords.y);
+            return tempEnemy;
+        }
 
     }
 
@@ -185,6 +188,12 @@ public class Level {
         for (MapLayer layer : layers) {
             layer.setOffsetX(x);
             layer.setOffsetY(y);
+        }
+    }
+
+    private void updateEnemies() {
+        for(Character temp : enemies) {
+            temp.render();
         }
     }
 
