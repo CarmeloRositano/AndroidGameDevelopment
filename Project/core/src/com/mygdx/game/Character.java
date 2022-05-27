@@ -24,6 +24,7 @@ public class Character {
     protected float movementSpeedBuildup = 10.0f;
     protected float maxMovementSpeed = 2f;
     protected float jumpSpeed = 4f;
+    protected float jumpPause = 0.3f;
 
     private ParticleHandler particles;
 
@@ -33,6 +34,7 @@ public class Character {
     protected State currentState;
     protected float stateTime;
     public int jumpsLeft;
+    private float jumpWait;
     private float prevVelocityY;
 
     //Player Textures
@@ -60,6 +62,7 @@ public class Character {
         this.box2DHandler = box2DHandler;
         box2dBody = box2DHandler.createCharacterShape(sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
         jumpsLeft = 2;
+        jumpWait = 0;
         prevVelocityY = 0;
         this.batch = batch;
         this.camera = camera;
@@ -110,6 +113,9 @@ public class Character {
         sprite.setX(box2dBody.getPosition().x * Box2DHandler.PPM);
         sprite.setY(box2dBody.getPosition().y * Box2DHandler.PPM);
         sprite.setPosition(sprite.getX() - sprite.getWidth() / 2, sprite.getY() - sprite.getHeight() / 2);
+
+        jumpWait -= Gdx.graphics.getDeltaTime();
+        if (jumpWait < 0) jumpWait = 0;
     }
 
     /**
@@ -176,11 +182,12 @@ public class Character {
     public void jump() {
         // TODO fix jump not being reset
 
-        if (jumpsLeft > 0) {
+        if (jumpsLeft > 0 && jumpWait <= 0) {
             box2dBody.setLinearVelocity(box2dBody.getLinearVelocity().x, jumpSpeed);
             particles.addParticle(ParticleHandler.Type.EXPLOSION, "particle.png",
                     new Vector2(sprite.getX()+sprite.getWidth()/2, sprite.getY()), 500, 1, 100, new Color(0.7f, 0.5f, 0.6f, 0.6f), 0.5f);
             jumpsLeft--;
+            jumpWait = jumpPause;
 
 //            box2dBody.applyForceToCenter(new Vector2(0, jumpSpeed), true);
         }

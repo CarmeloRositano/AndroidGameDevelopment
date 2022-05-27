@@ -37,9 +37,8 @@ public class Level {
     private List<Character> enemies;
 
     private Vector<Tuple<TiledMap, TiledMapRenderer, Body[]>> map;
-
-    private Vector<Tuple<TiledMap, TiledMapRenderer, Body[]>> mapRight;
-    private Vector<Tuple<TiledMap, TiledMapRenderer, Body[]>> mapLeft;
+    private TiledMap background;
+    private TiledMapRenderer backgroundRenderer;
 
     private Box2DHandler box2DHandler;
     private OrthographicCamera camera;
@@ -49,8 +48,8 @@ public class Level {
      */
     public Level(Box2DHandler handler, OrthographicCamera camera) {
         map = new Vector<>();
-        mapLeft = new Vector<>();
-        mapRight = new Vector<>();
+        background = new TmxMapLoader().load("levels/background.tmx");
+        backgroundRenderer = new OrthogonalTiledMapRenderer(background);
 
         // Initialise field variables with arguments
         this.camera = camera;
@@ -171,7 +170,6 @@ public class Level {
     private void addPieceLeft(Tuple<TiledMap, TiledMapRenderer, Body[]> mapPiece) {
         map.insertElementAt(mapPiece, 0);
         while (map.size() > 3) {
-            System.out.println("DELETED RIGHT PIECE");
             map.lastElement().fst.dispose();
             box2DHandler.removeBodies(map.lastElement().thd);
             map.remove(map.lastElement());
@@ -181,7 +179,6 @@ public class Level {
     private void addPieceRight(Tuple<TiledMap, TiledMapRenderer, Body[]> mapPiece) {
         map.add(mapPiece);
         while (map.size() > 3) {
-            System.out.println("DELETED LEFT PIECE");
             map.firstElement().fst.dispose();
             box2DHandler.removeBodies(map.firstElement().thd);
             map.remove(map.firstElement());
@@ -239,11 +236,9 @@ public class Level {
      * Disposes items that wouldn't be cleaned up automatically by the javavm
      */
     public void dispose() {
-        for (Tuple<TiledMap, TiledMapRenderer, Body[]> tuple : mapLeft) {
+        for (Tuple<TiledMap, TiledMapRenderer, Body[]> tuple : map) {
             tuple.fst.dispose();
-        }
-        for (Tuple<TiledMap, TiledMapRenderer, Body[]> tuple : mapRight) {
-            tuple.fst.dispose();
+            box2DHandler.removeBodies(tuple.thd);
         }
     }
 

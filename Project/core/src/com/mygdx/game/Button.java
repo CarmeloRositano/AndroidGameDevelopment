@@ -25,13 +25,12 @@ public class Button {
     }
 
     public void update(boolean checkTouch, int touchX, int touchY) {
+        isDownPrev = isDown;
         isDown = false;
-
         if (checkTouch) {
             int h2 = Gdx.graphics.getHeight();
             //Touch coordinates have origin in top-left instead of bottom left
 
-            isDownPrev = isDown;
             if (touchX >= x && touchX <= x + w && h2 - touchY >= y && h2 - touchY <= y + h) {
                 isDown = true;
             }
