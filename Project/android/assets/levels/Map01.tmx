@@ -199,31 +199,31 @@
   <object id="90" x="864" y="448" width="224" height="32"/>
  </objectgroup>
  <objectgroup id="8" name="Enemies">
-  <object id="91" x="1094" y="374">
+  <object id="91" x="1091" y="343">
    <point/>
   </object>
-  <object id="92" x="575" y="338">
+  <object id="92" x="572" y="307">
    <point/>
   </object>
-  <object id="93" x="511" y="590">
+  <object id="93" x="508" y="559">
    <point/>
   </object>
-  <object id="94" x="1120" y="580">
+  <object id="94" x="1117" y="549">
    <point/>
   </object>
-  <object id="95" x="196" y="1140">
+  <object id="95" x="193" y="1109">
    <point/>
   </object>
-  <object id="96" x="611" y="1013">
+  <object id="96" x="608" y="982">
    <point/>
   </object>
-  <object id="97" x="478" y="1168">
+  <object id="97" x="475" y="1137">
    <point/>
   </object>
-  <object id="98" x="722" y="1175">
+  <object id="98" x="719" y="1144">
    <point/>
   </object>
-  <object id="99" x="1046" y="1129">
+  <object id="99" x="1043" y="1098">
    <point/>
   </object>
  </objectgroup>

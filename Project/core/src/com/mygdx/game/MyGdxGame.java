@@ -48,7 +48,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		// Camera
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, R_WIDTH/4, R_HEIGHT/4);
+		camera.setToOrtho(false, R_WIDTH*2, R_HEIGHT*2);
 		camera.update();
 
 		// UI Textures

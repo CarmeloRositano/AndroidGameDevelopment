@@ -29,28 +29,28 @@ public class Golem extends Character {
 
         if(golemChoice == 1) {
             textures = new Texture[]{
-                    TextureSingleton.getInstance().getGolem01Walking(),
-                    TextureSingleton.getInstance().getGolem01Attacking(),
+                    TextureSingleton.getInstance().golem01Walking,
+                    TextureSingleton.getInstance().golem01Attacking,
                     null,
-                    TextureSingleton.getInstance().getGolem01Hurt(),
-                    TextureSingleton.getInstance().getGolem01Dying(),
-                    TextureSingleton.getInstance().getGolem01Idle()};
+                    TextureSingleton.getInstance().golem01Hurt,
+                    TextureSingleton.getInstance().golem01Dying,
+                    TextureSingleton.getInstance().golem01Idle};
         } else if(golemChoice == 2) {
             textures = new Texture[]{
-                    TextureSingleton.getInstance().getGolem02Walking(),
-                    TextureSingleton.getInstance().getGolem02Attacking(),
+                    TextureSingleton.getInstance().golem02Walking,
+                    TextureSingleton.getInstance().golem02Attacking,
                     null,
-                    TextureSingleton.getInstance().getGolem02Hurt(),
-                    TextureSingleton.getInstance().getGolem02Dying(),
-                    TextureSingleton.getInstance().getGolem02Idle()};
+                    TextureSingleton.getInstance().golem02Hurt,
+                    TextureSingleton.getInstance().golem02Dying,
+                    TextureSingleton.getInstance().golem02Idle};
         } else {
             textures = new Texture[]{
-                    TextureSingleton.getInstance().getGolem03Walking(),
-                    TextureSingleton.getInstance().getGolem03Attacking(),
+                    TextureSingleton.getInstance().golem03Walking,
+                    TextureSingleton.getInstance().golem03Attacking,
                     null,
-                    TextureSingleton.getInstance().getGolem03Hurt(),
-                    TextureSingleton.getInstance().getGolem03Dying(),
-                    TextureSingleton.getInstance().getGolem03Idle()};
+                    TextureSingleton.getInstance().golem03Hurt,
+                    TextureSingleton.getInstance().golem03Dying,
+                    TextureSingleton.getInstance().golem03Idle};
         }
 
         animations = new Animation[5];

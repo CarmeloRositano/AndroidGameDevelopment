@@ -67,7 +67,7 @@ public class Box2DHandler {
      * @param width Width of the shape
      * @param height Height of the shape
      */
-    public void createStaticRect(float x, float y, float width, float height) {
+    public Body createStaticRect(float x, float y, float width, float height) {
         // Creates the collision body of the shape
         BodyDef def = new BodyDef();
         def.position.set(x/PPM, y/PPM);
@@ -84,6 +84,7 @@ public class Box2DHandler {
         body.createFixture(fdef);
 
         shape.dispose();
+        return body;
     }
 
     /**
@@ -94,7 +95,7 @@ public class Box2DHandler {
      * @param width Width of the shape
      * @param height Height of the shape
      */
-    public void createStaticPolygon(Polygon polygon, float x, float y, float width, float height) {
+    public Body createStaticPolygon(Polygon polygon, float x, float y, float width, float height) {
         // Creates the collision body of the shape
         float[] scaledVertices = polygon.getVertices();
         for (int i = 0; i < scaledVertices.length; i++) {
@@ -122,6 +123,13 @@ public class Box2DHandler {
         body.createFixture(fdef);
 
         shape.dispose();
+        return body;
+    }
+
+    public void removeBodies(Body[] bodies) {
+        for (Body body : bodies) {
+            world.destroyBody(body);
+        }
     }
 
 
