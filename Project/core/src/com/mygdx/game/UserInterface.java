@@ -20,6 +20,7 @@ public class UserInterface {
     private SpriteBatch uiBatch;
     private MyGdxGame.GameState currentGameState;
     private float deathFade;
+    private boolean debug;
 
     /**
      * Initialises all the buttons and applies textures, positions and scaling to all of them.
@@ -43,7 +44,7 @@ public class UserInterface {
 
         mainMenuBackground = new Texture("background/main_menu.png");
         deathFade = 0;
-
+        debug = false;
 
         // UI Renderer
         uiBatch = new SpriteBatch();
@@ -96,13 +97,14 @@ public class UserInterface {
      * @param score Current score of the player
      */
     public void render(Camera camera, float totalTime, float score) {
+        if(debug) score = Gdx.graphics.getFramesPerSecond();
         // Render score if not in main menu
         if (currentGameState == MyGdxGame.GameState.PLAYING || currentGameState == MyGdxGame.GameState.PAUSED) {
             uiBatch.begin();
             font.setColor(1, 1, 1, 0.8f);
-            font.getData().setScale(1);
+            font.getData().setScale(3);
             font.draw(uiBatch, "  SCORE: " + ((int) score), 0, Gdx.graphics.getHeight() * 0.95f, 0f, -1, false);
-            font.getData().setScale(1);
+            font.getData().setScale(3);
             uiBatch.end();
         }
 
@@ -216,6 +218,11 @@ public class UserInterface {
         renderer.end();
         renderer.dispose();
     }
+
+    public void enableDebug() {
+        debug = true;
+    }
+
 
     public boolean moveLeftButtonPressed() {
         return  Gdx.input.isKeyPressed(Input.Keys.LEFT) || moveLeftButton.isDown;

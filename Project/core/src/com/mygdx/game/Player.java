@@ -36,6 +36,7 @@ public class Player extends Character {
     public void update() {
         super.update();
         float dt = Gdx.graphics.getDeltaTime();
+        sprite.setPosition(sprite.getX() - sprite.getWidth() / 2, sprite.getY() - sprite.getHeight() / 2);
 
         // Camera Banding
         float camXDist = ((sprite.getX() + sprite.getWidth() / 2) - camera.position.x) * dt * 10;

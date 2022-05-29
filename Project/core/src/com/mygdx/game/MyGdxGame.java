@@ -60,23 +60,6 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		// UI Textures
 		userInterface = new UserInterface();
-//		userInterface.update(gameState);
-//		buttonSquareTexture = new Texture("GUI/buttonSquare_blue.png");
-//		buttonSquareDownTexture = new Texture("GUI/buttonSquare_beige_pressed.png");
-//		buttonLongTexture = new Texture("GUI/buttonLong_blue.png");
-//		buttonLongDownTexture = new Texture("GUI/buttonLong_beige_pressed.png");
-//
-//		// Buttons
-//		float w = Gdx.graphics.getWidth();
-//		float h = Gdx.graphics.getHeight();
-//		moveLeftButton = new Button(0.0f, 0.0f, w * 0.2f, h * 0.5f, buttonSquareTexture, buttonSquareDownTexture);
-//		moveRightButton = new Button(w * 0.2f , 0.0f, w * 0.2f, h * 0.5f, buttonSquareTexture, buttonSquareDownTexture);
-//		moveUpButton = new Button(0.0f, h * 0.5f, w * 0.4f, h * 0.5f, buttonSquareTexture, buttonSquareDownTexture);
-//		shootButton = new Button(w * 0.6f, 0.0f, w * 0.4f, h * 1, buttonSquareTexture, buttonSquareDownTexture);
-//		restartButton = new Button(w * 0.05f, h * 0.6f, w * 0.425f, h * 0.2f, buttonLongTexture, buttonLongDownTexture);
-//		startButton = new Button(w * 0.05f, h * 0.6f, w * 0.425f, h * 0.2f, buttonLongTexture, buttonLongDownTexture);
-//		exitButton = new Button(w - (w * 0.425f) - (w * 0.05f), h * 0.6f, w * 0.425f, h * 0.2f, buttonLongTexture, buttonLongDownTexture);
-//		pauseButton = new Button(w * 0.5f - (w * 0.1f) * 0.5f, h * 0.89f, w * 0.1f, h * 0.1f, buttonSquareTexture, buttonSquareDownTexture);
 
 		// Level and Player
 		box2DHandler = new Box2DHandler(camera);
@@ -174,6 +157,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	 */
 	public void newGame() {
 		gameState = GameState.MAIN_MENU;
+		userInterface.enableDebug();
 	}
 
 	/**

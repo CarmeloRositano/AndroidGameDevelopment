@@ -6,9 +6,11 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.AnimationBuild;
 import com.mygdx.game.Box2DHandler;
 import com.mygdx.game.Character;
+import com.mygdx.game.Player;
 
 import org.w3c.dom.Text;
 
@@ -61,10 +63,12 @@ public class Golem extends Character {
 
         //Give Character Box2D Physics
         box2dBody = box2DHandler.createCharacterShape(sprite.getX(), sprite.getY(), sprite.getWidth() * 0.75f, sprite.getHeight());
+
     }
 
     public void update() {
         super.update();
+        sprite.setPosition(sprite.getX() - sprite.getWidth() / 2, sprite.getY() - sprite.getHeight() / 4);
     }
 
     public void render() {

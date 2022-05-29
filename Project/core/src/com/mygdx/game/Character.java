@@ -112,7 +112,6 @@ public class Character {
 
         sprite.setX(box2dBody.getPosition().x * Box2DHandler.PPM);
         sprite.setY(box2dBody.getPosition().y * Box2DHandler.PPM);
-        sprite.setPosition(sprite.getX() - sprite.getWidth() / 2, sprite.getY() - sprite.getHeight() / 2);
 
         jumpWait -= Gdx.graphics.getDeltaTime();
         if (jumpWait < 0) jumpWait = 0;
@@ -179,6 +178,19 @@ public class Character {
         prevVelocityY = box2dBody.getLinearVelocity().y;
     }
 
+    public void moveEnemy(Player player) {
+        if(canSeePlayer(player)) {
+            if (this.getPosition().y < player.getPosition().y)
+                if(player.getPosition().x > getPosition().x) {
+                    move(1);
+                } else if (player.getPosition().x < getPosition().x){
+                    move(-1);
+                } else {
+                    move(0);
+                }
+        }
+    }
+
     public void jump() {
         // TODO fix jump not being reset
 
@@ -191,6 +203,24 @@ public class Character {
 
 //            box2dBody.applyForceToCenter(new Vector2(0, jumpSpeed), true);
         }
+    }
+
+    public boolean canSeePlayer(Player player) {
+        float angle = this.getAngle(player.getPosition());
+        if (player.getPosition().x < getPosition().x) {
+            if (angle > 170 && angle < 190) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public float getAngle(Vector2 target) {
+        float angle = (float) Math.toDegrees(Math.atan2(target.y - this.getPosition().y, target.x - this.getPosition().x));
+        if(angle < 0){
+            angle += 360;
+        }
+        return angle;
     }
 
     /**

@@ -110,12 +110,6 @@ public class Level {
                 enemies.remove(i);
             }
         }
-
-
-
-
-
-
     }
 
     /**
@@ -199,26 +193,29 @@ public class Level {
 
     public Character makeRandomEnemy(Vector2 chords) {
         Random rand = new Random();
-        int temp = rand.nextInt(2) + 1;
+        int temp = rand.nextInt(3) + 1;
         if (temp == 1) {
-            temp = rand.nextInt(2) + 1;
+            temp = rand.nextInt(3) + 1;
             Golem tempEnemy = new Golem(box2DHandler, camera, batch, temp);
             tempEnemy.setPosition(chords.x, chords.y);
             return tempEnemy;
         } else if (temp == 2) {
-            temp = rand.nextInt(2) + 1;
+            temp = rand.nextInt(3) + 1;
             Minotaur tempEnemy = new Minotaur(box2DHandler, camera, batch, temp);
             tempEnemy.setPosition(chords.x, chords.y);
             return tempEnemy;
         } else {
-            temp = rand.nextInt(2) + 1;
+            temp = rand.nextInt(3) + 1;
             Satyr tempEnemy = new Satyr(box2DHandler, camera, batch, temp);
             tempEnemy.setPosition(chords.x, chords.y);
             return tempEnemy;
         }
     }
 
-    private void updateEnemies() {
+    private void updateEnemies(Player player) {
+        for(Character temp : enemies) {
+            temp.moveEnemy(player);
+        }
     }
 
     private void renderEnemies() {

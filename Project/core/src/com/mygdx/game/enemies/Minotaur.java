@@ -63,6 +63,7 @@ public class Minotaur extends Character {
 
     public void update() {
         super.update();
+        sprite.setPosition(sprite.getX() - sprite.getWidth() / 2, sprite.getY() - sprite.getHeight() / 4);
     }
 
     public void render() {super.render();}
