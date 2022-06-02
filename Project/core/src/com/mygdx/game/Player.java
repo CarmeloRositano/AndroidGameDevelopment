@@ -16,6 +16,7 @@ public class Player extends Character {
     public Player(Box2DHandler box2DHandler, Camera camera, SpriteBatch batch) {
         super(box2DHandler, camera, batch);
         sprite.setSize(32, 32);
+        health = 10;
 
         // Preparing Animations
         textures = new Texture[6];
@@ -36,6 +37,13 @@ public class Player extends Character {
     public void update() {
         super.update();
         float dt = Gdx.graphics.getDeltaTime();
+
+        health -= dt/4;
+        if (health < 0) {
+            health = 0;
+            currentState = State.DEAD;
+        }
+
         sprite.setPosition(sprite.getX() - sprite.getWidth() / 2, sprite.getY() - sprite.getHeight() / 2);
 
         // Camera Banding
@@ -67,13 +75,14 @@ public class Player extends Character {
 
     @Override
     public void meleeAttack(Character other) {
-        if (other.currentState == State.DEAD) return;
+        if (other.currentState == State.DEAD || currentState == State.DEAD) return;
 
         currentState = State.ATTACKING;
         stateTime = 0;
         if (otherInMeleeRange(other)) {
             other.takeDamage(meleeDamage);
-            if (other.health <= 0) health += 0.5f;
+            if (other.health <= 0) health += 1.5f;
+            if (health > 10) health = 10;
         }
     }
 

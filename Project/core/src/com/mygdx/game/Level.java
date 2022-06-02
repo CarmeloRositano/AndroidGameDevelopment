@@ -43,6 +43,7 @@ public class Level {
 
     private Box2DHandler box2DHandler;
     private OrthographicCamera camera;
+    private float prevCamX;
 
     /**
      * Initialises field variables and prepares level.
@@ -65,6 +66,7 @@ public class Level {
         addMapPiece(-1);
         addMapPiece("Map01", 0);
         addMapPiece(1);
+        prevCamX = camera.position.x;
     }
 
     /**
@@ -91,6 +93,22 @@ public class Level {
      * Updates level state
      */
     public void update() {
+        // Gets width and current offset
+        int bgWidth = (background.getProperties().get("tilewidth", Integer.class) * background.getProperties().get("width", Integer.class));
+        float bgOffset = background.getLayers().get(0).getOffsetX();
+
+        // Adjust offset depending on when camera is
+        if (camera.position.x > bgOffset+(bgWidth/3)*2) {
+            bgOffset += bgWidth/3;
+        } else if (camera.position.x < bgOffset+bgWidth/3) {
+            bgOffset -= bgWidth/3;
+        }
+        // Apply offset and remeber previous camera
+        bgOffset += (camera.position.x - prevCamX)/4;
+        prevCamX = camera.position.x;
+        background.getLayers().get(0).setOffsetX(bgOffset);
+
+        // Sets current chunk based on cam pos
         currentChunk = (int)(camera.position.x / (mapWidth*tileWidth)) - (camera.position.x >= 0 ? 0 : 1);
 
         // Add new map chunk if player is nearing edge of right side
@@ -103,6 +121,8 @@ public class Level {
             lastChunkAtChange = currentChunk;
             addMapPiece(-1);
         }
+
+        for (Character enemy : enemies) enemy.update();
 
         // Remove enemies if far away
         for (int i = enemies.size()-1; i >= 0 ; i--) {
@@ -117,8 +137,11 @@ public class Level {
      * Renders level using given camera and the levels renderer
      */
     public void render() {
+        // Render background
+        backgroundRenderer.setView(camera);
+        backgroundRenderer.render();
 
-
+        // Renders each map piece
         for (Tuple<TiledMap, TiledMapRenderer, Body[]> tuple : map) {
             tuple.snd.setView(camera);
             tuple.snd.render();
@@ -242,6 +265,13 @@ public class Level {
             tuple.fst.dispose();
             box2DHandler.removeBodies(tuple.thd);
         }
+
+        for (Character enemy : enemies) {
+            enemy.dispose();
+        }
+
+        batch.dispose();
+        background.dispose();
     }
 
 }

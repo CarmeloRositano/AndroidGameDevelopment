@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import jdk.internal.org.jline.utils.ShutdownHooks;
+
 public class UserInterface {
     // UI Buttons
     private Button moveLeftButton, moveRightButton, jumpButton, shootButton, pauseButton;
@@ -94,16 +96,35 @@ public class UserInterface {
      * Renders the User interface to the viewport, including shapes, buttons and images.
      * @param camera The current camera, to attach shape elements to.
      * @param totalTime The total time passed since a new game has started. Used to fade out buttons.
-     * @param score Current score of the player
+     * @param health Current health of the player
      */
-    public void render(Camera camera, float totalTime, float score) {
+    public void render(Camera camera, float totalTime, float health) {
 //        if(debug) score = Gdx.graphics.getFramesPerSecond();
         // Render score if not in main menu
         if (currentGameState == MyGdxGame.GameState.PLAYING || currentGameState == MyGdxGame.GameState.PAUSED) {
+            int lineW = 5;
+            int playerMaxHealth = 10;
+            float x = Gdx.graphics.getWidth() * 0.022f;
+            float y = Gdx.graphics.getHeight() * 0.9f;
+            float w = Gdx.graphics.getWidth() * 0.20f;
+            float h = Gdx.graphics.getHeight() * 0.05f;
+
+            ShapeRenderer sr = new ShapeRenderer();
+            sr.begin(ShapeRenderer.ShapeType.Filled);
+            sr.setColor(0, 0, 0, 0.4f);
+            sr.rect(x - lineW, y - lineW, w + lineW * 2, h + lineW * 2);
+
+            sr.setColor(0.7f, 0, 0, 1);
+            sr.rect(x, y, w * (health/playerMaxHealth), h);
+            sr.setColor(0, 0, 0, 1);
+            sr.end();
+            sr.dispose();
+
+
             uiBatch.begin();
             font.setColor(1, 1, 1, 0.8f);
             font.getData().setScale(3);
-            font.draw(uiBatch, "  SCORE: " + ((int) score), 0, Gdx.graphics.getHeight() * 0.95f, 0f, -1, false);
+            font.draw(uiBatch, "  ENERGY" , x+w/2, y+h/2-14, 0f, 1, false);
             font.getData().setScale(3);
             uiBatch.end();
         }

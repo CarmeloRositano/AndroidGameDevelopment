@@ -51,6 +51,7 @@ public class Character {
     protected Animation<TextureRegion>[] animations;
     protected int[][] colRow;
     protected boolean lookingLeft;
+    private boolean deathPlayed;
 
 
     /**
@@ -72,6 +73,7 @@ public class Character {
         this.batch = batch;
         this.camera = camera;
         lookingLeft = false;
+        deathPlayed = false;
 
         particles = new ParticleHandler(camera);
     }
@@ -80,6 +82,11 @@ public class Character {
      * Updates the character and animation state based on its current state.
      */
     public void update() {
+        if (!deathPlayed && currentState == State.DEAD) {
+            particles.addParticle(ParticleHandler.Type.EXPLOSION, "particleB.png",
+                    new Vector2(sprite.getX()+sprite.getWidth()/2, sprite.getY() + sprite.getHeight()/2), 500, 1, 100, new Color(0.7f, 0, 0, 1), 0.5f);
+            deathPlayed = true;
+        }
         stateTime += Gdx.graphics.getDeltaTime();
 
         switch (currentState) {
@@ -99,8 +106,11 @@ public class Character {
                 sprite.setRegion(currentFrame);
                 break;
             case HURT:
-                currentFrame = (TextureRegion) animations[3].getKeyFrame(stateTime, true);
+                currentFrame = (TextureRegion) animations[3].getKeyFrame(stateTime, false);
                 sprite.setRegion(currentFrame);
+                if(animations[1].isAnimationFinished(stateTime)) {
+                    currentState = State.IDLE;
+                }
                 break;
             case DEAD:
                 currentFrame = (TextureRegion) animations[4].getKeyFrame(stateTime, false);
@@ -120,16 +130,18 @@ public class Character {
         jumpWait -= Gdx.graphics.getDeltaTime();
         if (jumpWait < 0) jumpWait = 0;
 
-        if (box2dBody.getLinearVelocity().x > 0f) lookingLeft = false;
-        if (box2dBody.getLinearVelocity().x < 0f) lookingLeft = true;
+        if (box2dBody.getLinearVelocity().x > 0.02f) lookingLeft = false;
+        if (box2dBody.getLinearVelocity().x < -0.02f) lookingLeft = true;
+        if (currentState == State.RUNNING && box2dBody.getLinearVelocity().x == 0f) currentState = State.IDLE;
+
+        particles.update();
     }
 
     /**
      * Renders the character
      */
     public void render() {
-        update();
-        particles.update();
+        if (sprite.getTexture() == null) return;
         particles.render();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
@@ -166,7 +178,7 @@ public class Character {
     }
 
     public void move(float x) {
-        if (currentState != State.DEAD) {
+        if (currentState != State.DEAD && currentState != State.HURT) {
             float dt = Gdx.graphics.getDeltaTime();
             if (box2dBody.getLinearVelocity().y == 0 && prevVelocityY < 0) jumpsLeft = 2;
 
@@ -193,7 +205,7 @@ public class Character {
     }
 
     public void meleeAttack(Character other) {
-        if (other.currentState == State.DEAD) return;
+        if (other.currentState == State.DEAD || currentState == State.DEAD) return;
 
         currentState = State.ATTACKING;
         stateTime = 0;
@@ -210,7 +222,7 @@ public class Character {
     }
 
     public void jump() {
-        // TODO fix jump not being reset
+        if (currentState == State.DEAD) return;
 
         if (jumpsLeft > 0 && jumpWait <= 0) {
             box2dBody.setLinearVelocity(box2dBody.getLinearVelocity().x, jumpSpeed);
@@ -224,11 +236,14 @@ public class Character {
     }
 
     public void takeDamage(float damage) {
+        if (currentState == State.DEAD) return;
         health -= damage;
+        currentState = State.HURT;
         if (health <= 0) {
             stateTime = 0;
             currentState = State.DEAD;
         }
+        stateTime = 0;
     }
 
     /**
@@ -237,6 +252,7 @@ public class Character {
     public void dispose() {
 //        texture.dispose(); // TEXTURES CURRENTLY STORED AS STATIC FOR ALL CHARACTERS
         box2DHandler.removeBodies(new Body[]{box2dBody});
+
 
         //TODO Dispose All Necessary Objects
     }

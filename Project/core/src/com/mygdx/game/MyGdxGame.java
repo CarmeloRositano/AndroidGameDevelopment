@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.mygdx.game.enemies.TextureSingleton;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	float totalTime;
 
 	// Player
-	Player player;
+	public static Player player;				// Static so accessible for targeting
 	float attackCooldownDefault = 0.3f;
 	float attackCooldown;
 
@@ -39,9 +40,6 @@ public class MyGdxGame extends ApplicationAdapter {
 
 	// UI
 	UserInterface userInterface;
-//	Texture buttonSquareTexture, buttonSquareDownTexture, buttonLongTexture, buttonLongDownTexture;
-//	Button moveLeftButton, moveRightButton, moveUpButton, shootButton
-//			, restartButton, startButton, exitButton, pauseButton;
 
 	/**
 	 * Sets up game and initialises all field variables
@@ -56,26 +54,13 @@ public class MyGdxGame extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		uiBatch = new SpriteBatch();
 
-		// Camera
+		// Camera and UI
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, R_WIDTH/3, R_HEIGHT/3);
 		camera.update();
-
-
-		// UI Textures
 		userInterface = new UserInterface();
 
-		// Level and Player
-		box2DHandler = new Box2DHandler(camera);
-		level = new Level(box2DHandler, camera);
-		player = new Player(box2DHandler, camera, batch);
-		player.setPosition(level.getPlayerSpawn().x, level.getPlayerSpawn().y);
-		attackCooldown = attackCooldownDefault;
-
-		score = player.health;
-		totalTime = 0f;
-
-		newGame();
+		gameState = GameState.MAIN_MENU;
 	}
 
 	/**
@@ -96,17 +81,11 @@ public class MyGdxGame extends ApplicationAdapter {
 		switch(gameState) {
 			case MAIN_MENU:
 				break;
-			case PLAYING:
-				level.update();
-				level.render();
-
-				box2DHandler.update();
-				box2DHandler.render();
-
-				player.update();
-				player.render();
-				break;
 			case PAUSED:
+			case PLAYING:
+				level.render();
+				box2DHandler.render();
+				player.render();
 				break;
 			case COMPLETE:
 				break;
@@ -121,17 +100,15 @@ public class MyGdxGame extends ApplicationAdapter {
 	public void update() {
 		float dt = Gdx.graphics.getDeltaTime();
 		totalTime += dt;
-		attackCooldown -= dt;
-		if (attackCooldown < 0) attackCooldown = 0;
 
 		userInterface.update(gameState);
-		score = player.health;
+
 		switch(gameState) {
 			case MAIN_MENU:
 				//TODO MUSIC
 
 				if(userInterface.playButtonPressed()) {
-					gameState = GameState.PLAYING;
+					newGame();
 					totalTime = 0f;
 				}
 				if(userInterface.quitButtonPressed()) {
@@ -141,6 +118,13 @@ public class MyGdxGame extends ApplicationAdapter {
 				}
 				break;
 			case PLAYING:
+				level.update();
+				box2DHandler.update();
+				player.update();
+
+				attackCooldown -= dt;
+				if (attackCooldown < 0) attackCooldown = 0;
+				score = player.health;
 
 				int moveX = 0;
 				if (userInterface.moveLeftButtonPressed()) moveX -= 1;
@@ -155,6 +139,9 @@ public class MyGdxGame extends ApplicationAdapter {
 				camera.update();
 				break;
 			case PAUSED:
+				if (userInterface.mainMenuButtonPressed()) gameState = GameState.MAIN_MENU;
+				if (userInterface.resumeButtonPressed()) gameState = GameState.PLAYING;
+				if (userInterface.restartButtonPressed()) newGame();
 				break;
 			case COMPLETE:
 				break;
@@ -173,8 +160,23 @@ public class MyGdxGame extends ApplicationAdapter {
 	 * Re initilises variables and resets game to fresh state
 	 */
 	public void newGame() {
-		gameState = GameState.MAIN_MENU;
-		userInterface.enableDebug();
+		// Cleaning leftover data
+		if (box2DHandler != null) {
+			level.dispose();
+			player.dispose();
+			box2DHandler.dispose();
+		}
+
+		// Level and Player
+		box2DHandler = new Box2DHandler(camera);
+		level = new Level(box2DHandler, camera);
+		player = new Player(box2DHandler, camera, batch);
+		player.setPosition(level.getPlayerSpawn().x, level.getPlayerSpawn().y);
+		attackCooldown = attackCooldownDefault;
+
+		score = player.health;
+		totalTime = 0f;
+		gameState = GameState.PLAYING;
 	}
 
 	/**
@@ -183,6 +185,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		batch.dispose();
+		TextureSingleton.getInstance().dispose();
 		//TODO Dispose all other textures and objects if needed.
 	}
 }

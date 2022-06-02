@@ -110,6 +110,7 @@ public class TextureSingleton {
         satyr01Walking.dispose();
         satyr02Walking.dispose();
         satyr03Walking.dispose();
+        INSTANCE = null;
     }
 
 }

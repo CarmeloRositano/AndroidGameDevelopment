@@ -3,15 +3,13 @@ package com.mygdx.game.enemies;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Box2DHandler;
 import com.mygdx.game.Character;
-import com.mygdx.game.Player;
+import com.mygdx.game.MyGdxGame;
 
 public class EnemyAI extends Character {
 
-    public enum AIState {CHASING, RUNNINGAWAY, PATROLING, ATTACKING, DEAD};
+    public enum AIState {CHASING, RUNNINGAWAY, PATROLING, DEAD};
     public enum PatrolState {LEFT, RIGHT, STILL};
 
     private PatrolState patrolState;
@@ -21,7 +19,8 @@ public class EnemyAI extends Character {
     private float flipChance = 0.01f;  // chance per frame to flip
     private float lostViewWait = 2;     // Seconds to look for player
     private float lostViewTimer;
-    private float sinceLastAttack;
+    private float attackCooldownDefault = 1f;
+    private float attackCooldown;
 
     /**
      * Constructor that takes a box2DHandler and sets up the character to be placed in the world
@@ -37,7 +36,7 @@ public class EnemyAI extends Character {
         maxMovementSpeed = 1.5f;
         aiState = AIState.PATROLING;
         patrolState = PatrolState.STILL;
-        sinceLastAttack = 8f;
+        attackCooldown = attackCooldownDefault;
     }
 
     @Override
@@ -45,44 +44,48 @@ public class EnemyAI extends Character {
         super.update();
 
         // Using camera pos to get player pos, since they're nearly identical anyway and wont have to pass in player this way
-        float playerX = camera.position.x;
-        float playerY = camera.position.y;
-        if(sinceLastAttack > 0) sinceLastAttack -= Gdx.graphics.getDeltaTime();
+        float playerX = MyGdxGame.player.getPosition().x + MyGdxGame.player.sprite.getWidth()/2;
+        float playerY = MyGdxGame.player.getPosition().y + MyGdxGame.player.sprite.getHeight()/2;
+        if(attackCooldown > 0) attackCooldown -= Gdx.graphics.getDeltaTime();
 
         // Layered Behaviours
         switch (aiState) {
             case CHASING:
-                move((playerX < getPosition().x) ? -1 : 1);
+                // Move to player
+                if (Math.abs(getPosition().x - playerX) > 40) {
+                    move((playerX < getPosition().x) ? -1 : 1);
+                }
+
+                // If stuck on something that's not the player, jump
+                if (Math.abs(box2dBody.getLinearVelocity().x) < 0.1f && !(Math.abs(getPosition().x - playerX) <= 30)) jump();
+
+
                 if (!canSeePlayer(playerX, playerY)) {
                     lostViewTimer -= Gdx.graphics.getDeltaTime();
                     if (lostViewTimer < 0) aiState = AIState.PATROLING;
-                } else {
-//                    if(otherInMeleeRange() && sinceLastAttack == 0f) {
-//                        meleeAttack();
-//                    }
+                } else if (otherInMeleeRange(MyGdxGame.player) && attackCooldown <= 0){
+                    meleeAttack(MyGdxGame.player);
                 }
-                if (Math.abs(box2dBody.getLinearVelocity().x) < 0.1f) jump();
-//                if (playerY > getPosition().y + sprite.getHeight()) jump(); // Also jumps if player is above them
 
-
+                if (health <= 1) aiState = AIState.RUNNINGAWAY;
                 break;
             case RUNNINGAWAY:
-
-                break;
-            case ATTACKING:
-                sinceLastAttack = 8f;
+                move((playerX < getPosition().x) ? 0.3f : -0.3f);
                 break;
             case PATROLING:
                 // If can see player
-                if (canSeePlayer(playerX, playerY)) aiState = AIState.CHASING;
+                if (canSeePlayer(playerX, playerY)) {
+                    aiState = AIState.CHASING;
+                    attackCooldown = attackCooldownDefault;
+                }
                 switch (patrolState) {
                     case LEFT:
                         if(Math.random() < flipChance * 5) patrolState = PatrolState.STILL;
-                        move(-0.5f);
+                        move(-0.3f);
                         break;
                     case RIGHT:
                         if(Math.random() < flipChance * 5) patrolState = PatrolState.STILL;
-                        move(0.5f);
+                        move(0.3f);
                         break;
                     case STILL:
                         // Randomly turn
@@ -102,6 +105,19 @@ public class EnemyAI extends Character {
 
                 break;
         }
+    }
+
+    @Override
+    public void takeDamage(float damage) {
+        super.takeDamage(damage);
+        if (aiState != AIState.CHASING) aiState = AIState.CHASING;
+        attackCooldown = attackCooldownDefault;
+    }
+
+    @Override
+    public void meleeAttack(Character other) {
+        super.meleeAttack(other);
+        attackCooldown = attackCooldownDefault;
     }
 
     private boolean canSeePlayer(float playerX, float playerY) {

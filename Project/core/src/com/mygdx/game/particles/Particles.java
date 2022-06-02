@@ -166,6 +166,9 @@ public class Particles {
 
     public void render() {
         if (isFinished()) return;
+        if (!initialised) {
+            initialise();
+        }
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         for (int i = 0; i < particleData[0].length; i++) {
