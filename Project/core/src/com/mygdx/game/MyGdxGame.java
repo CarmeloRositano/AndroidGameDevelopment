@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import java.util.List;
+
 public class MyGdxGame extends ApplicationAdapter {
 
 	public static float R_WIDTH = 1920;
@@ -67,7 +69,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		player = new Player(box2DHandler, camera, batch);
 		player.setPosition(level.getPlayerSpawn().x, level.getPlayerSpawn().y);
 
-		score = 0f;
+		score = player.health;
 		totalTime = 0f;
 
 		newGame();
@@ -116,6 +118,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	public void update() {
 		totalTime += Gdx.graphics.getDeltaTime();
 		userInterface.update(gameState);
+		score = player.health;
 		switch(gameState) {
 			case MAIN_MENU:
 				//TODO MUSIC
@@ -123,7 +126,6 @@ public class MyGdxGame extends ApplicationAdapter {
 				if(userInterface.playButtonPressed()) {
 					gameState = GameState.PLAYING;
 					totalTime = 0f;
-					score = 0f;
 				}
 				if(userInterface.quitButtonPressed()) {
 					player.dispose();
@@ -137,7 +139,7 @@ public class MyGdxGame extends ApplicationAdapter {
 				if (userInterface.moveLeftButtonPressed()) moveX -= 1;
 				if (userInterface.moveRightButtonPressed()) moveX += 1;
 				if (userInterface.jumpButtonPressed()) player.jump();
-				if (userInterface.shootButtonPressed()) //	player.shoot();
+				if (userInterface.shootButtonPressed()) playerAttack();
 				if(userInterface.pauseButtonPressed()) gameState = GameState.PAUSED;
 
 				//Character and Camera Movement
@@ -149,6 +151,13 @@ public class MyGdxGame extends ApplicationAdapter {
 				break;
 			case COMPLETE:
 				break;
+		}
+	}
+	
+	public void playerAttack() {
+		List<Character> enemies = level.getEnemies();
+		for (Character enemy : enemies) {
+			player.meleeAttack(enemy);
 		}
 	}
 

@@ -97,7 +97,7 @@ public class UserInterface {
      * @param score Current score of the player
      */
     public void render(Camera camera, float totalTime, float score) {
-        if(debug) score = Gdx.graphics.getFramesPerSecond();
+//        if(debug) score = Gdx.graphics.getFramesPerSecond();
         // Render score if not in main menu
         if (currentGameState == MyGdxGame.GameState.PLAYING || currentGameState == MyGdxGame.GameState.PAUSED) {
             uiBatch.begin();

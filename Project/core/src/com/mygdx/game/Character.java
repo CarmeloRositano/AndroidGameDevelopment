@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.mygdx.game.particles.ParticleHandler;
@@ -18,8 +20,9 @@ public class Character {
     private SpriteBatch batch;
     protected Camera camera;
 
-    // Health
+    // Health and Attack
     protected float health = 3;
+    protected float meleeDamage = 1;
 
     // Movement
     protected float movementSpeedBuildup = 10.0f;
@@ -78,6 +81,7 @@ public class Character {
     public void update() {
         stateTime += Gdx.graphics.getDeltaTime();
 
+        if (health <= 0 && (currentState != State.DYING && currentState != State.DEAD)) currentState = State.DYING;
         switch (currentState) {
             case RUNNING:
                 currentFrame = (TextureRegion) animations[0].getKeyFrame(stateTime, true);
@@ -179,6 +183,19 @@ public class Character {
         prevVelocityY = box2dBody.getLinearVelocity().y;
     }
 
+    public void meleeAttack(Character other) {
+        if (otherInMeleeRange(other)) {
+            other.takeDamage(meleeDamage);
+        }
+    }
+
+    public boolean otherInMeleeRange(Character other) {
+        Rectangle rect = new Rectangle(getPosition().x + sprite.getWidth()/2, getPosition().y + sprite.getHeight()/5,sprite.getWidth()*1.2f,sprite.getHeight()/1.5f);
+        Rectangle otherRect = new Rectangle(other.getPosition().x, other.getPosition().y, other.sprite.getWidth(), other.sprite.getHeight());
+
+        return rect.overlaps(otherRect);
+    }
+
     public void jump() {
         // TODO fix jump not being reset
 
@@ -193,6 +210,9 @@ public class Character {
         }
     }
 
+    public void takeDamage(float damage) {
+        health -= damage;
+    }
 
     /**
      * Disposes items that wouldn't be cleaned up automatically by the javavm

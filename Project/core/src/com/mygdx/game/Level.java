@@ -20,6 +20,7 @@ import com.mygdx.game.enemies.Golem;
 import com.mygdx.game.enemies.Minotaur;
 import com.mygdx.game.enemies.Satyr;
 
+import java.awt.CheckboxGroup;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -226,6 +227,10 @@ public class Level {
             layer.setOffsetX(x);
             layer.setOffsetY(y);
         }
+    }
+
+    public List<Character> getEnemies() {
+        return enemies;
     }
 
     /**

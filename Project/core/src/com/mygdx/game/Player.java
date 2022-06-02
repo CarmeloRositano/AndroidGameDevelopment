@@ -65,6 +65,14 @@ public class Player extends Character {
         camera.position.y = y;
     }
 
+    @Override
+    public void meleeAttack(Character other) {
+        if (otherInMeleeRange(other)) {
+            other.takeDamage(meleeDamage);
+            health += 0.5f;
+        }
+    }
+
     public void dispose() {
         //TODO All Textures/ Animations Not In Parent
     }
