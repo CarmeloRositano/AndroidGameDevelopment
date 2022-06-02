@@ -237,7 +237,7 @@ public class UserInterface {
     }
 
     public boolean shootButtonPressed() {
-        return Gdx.input.isKeyPressed(Input.Keys.Z) || shootButton.isDown;
+        return Gdx.input.isKeyPressed(Input.Keys.Z) || shootButton.justPressed();
     }
 
     public boolean pauseButtonPressed() {

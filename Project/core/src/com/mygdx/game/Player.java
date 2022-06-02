@@ -67,9 +67,11 @@ public class Player extends Character {
 
     @Override
     public void meleeAttack(Character other) {
+        if (other.currentState == State.DEAD) return;
+
         if (otherInMeleeRange(other)) {
             other.takeDamage(meleeDamage);
-            health += 0.5f;
+            if (other.health <= 0) health += 0.5f;
         }
     }
 

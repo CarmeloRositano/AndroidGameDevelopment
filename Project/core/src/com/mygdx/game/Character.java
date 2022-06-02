@@ -16,7 +16,7 @@ import com.mygdx.game.particles.ParticleHandler;
 
 public class Character {
 
-    public enum State { IDLE, RUNNING , ATTACKING, CASTING, HURT, DYING, DEAD }
+    public enum State { IDLE, RUNNING , ATTACKING, CASTING, HURT, DEAD }
     private SpriteBatch batch;
     protected Camera camera;
 
@@ -81,7 +81,6 @@ public class Character {
     public void update() {
         stateTime += Gdx.graphics.getDeltaTime();
 
-        if (health <= 0 && (currentState != State.DYING && currentState != State.DEAD)) currentState = State.DYING;
         switch (currentState) {
             case RUNNING:
                 currentFrame = (TextureRegion) animations[0].getKeyFrame(stateTime, true);
@@ -90,6 +89,9 @@ public class Character {
             case ATTACKING:
                 currentFrame = (TextureRegion) animations[1].getKeyFrame(stateTime, false);
                 sprite.setRegion(currentFrame);
+                if(animations[1].isAnimationFinished(stateTime)) {
+                    currentState = State.DEAD;
+                }
                 break;
             case CASTING:
                 currentFrame = (TextureRegion) animations[2].getKeyFrame(stateTime, false);
@@ -99,14 +101,10 @@ public class Character {
                 currentFrame = (TextureRegion) animations[3].getKeyFrame(stateTime, true);
                 sprite.setRegion(currentFrame);
                 break;
-            case DYING:
-                currentFrame = (TextureRegion) animations[4].getKeyFrame(stateTime, false);
-                if(animations[4].isAnimationFinished(Gdx.graphics.getDeltaTime())) {
-                    currentState = State.DEAD;
-                }
-                sprite.setRegion(currentFrame);
-                break;
             case DEAD:
+                currentFrame = (TextureRegion) animations[4].getKeyFrame(stateTime, false);
+                sprite.setRegion(currentFrame);
+                box2dBody.setActive(false);
                 break;
             case IDLE:
                 currentFrame = (TextureRegion) animations[5].getKeyFrame(stateTime, true);
@@ -159,31 +157,37 @@ public class Character {
     }
 
     public void move(int x) {
-        float dt = Gdx.graphics.getDeltaTime();
-        if (box2dBody.getLinearVelocity().y == 0 && prevVelocityY < 0) jumpsLeft = 2;
+        if (currentState != State.DEAD) {
+            float dt = Gdx.graphics.getDeltaTime();
+            if (box2dBody.getLinearVelocity().y == 0 && prevVelocityY < 0) jumpsLeft = 2;
 
-        if (x != 0) {
-            box2dBody.setLinearVelocity(box2dBody.getLinearVelocity().x + (x * movementSpeedBuildup * dt),
-                    box2dBody.getLinearVelocity().y);
-            currentState = State.RUNNING;
-            if (box2dBody.getLinearVelocity().x > maxMovementSpeed) {
-                box2dBody.setLinearVelocity(maxMovementSpeed,
+            if (x != 0) {
+                box2dBody.setLinearVelocity(box2dBody.getLinearVelocity().x + (x * movementSpeedBuildup * dt),
                         box2dBody.getLinearVelocity().y);
-            }
-            if (box2dBody.getLinearVelocity().x < -1 * maxMovementSpeed) {
-                box2dBody.setLinearVelocity(-1 * maxMovementSpeed,
+                if (currentState != State.ATTACKING) currentState = State.RUNNING;
+                if (box2dBody.getLinearVelocity().x > maxMovementSpeed) {
+                    box2dBody.setLinearVelocity(maxMovementSpeed,
+                            box2dBody.getLinearVelocity().y);
+                }
+                if (box2dBody.getLinearVelocity().x < -1 * maxMovementSpeed) {
+                    box2dBody.setLinearVelocity(-1 * maxMovementSpeed,
+                            box2dBody.getLinearVelocity().y);
+                }
+            } else {
+                box2dBody.setLinearVelocity(box2dBody.getLinearVelocity().x / 1.2f,
                         box2dBody.getLinearVelocity().y);
+                if (currentState != State.ATTACKING) currentState = State.IDLE;
             }
-        } else {
-            box2dBody.setLinearVelocity(box2dBody.getLinearVelocity().x / 1.2f,
-                    box2dBody.getLinearVelocity().y);
-            currentState = State.IDLE;
+
+            prevVelocityY = box2dBody.getLinearVelocity().y;
         }
-
-        prevVelocityY = box2dBody.getLinearVelocity().y;
     }
 
     public void meleeAttack(Character other) {
+        if (other.currentState == State.DEAD) return;
+
+        currentState = State.ATTACKING;
+        stateTime = 0;
         if (otherInMeleeRange(other)) {
             other.takeDamage(meleeDamage);
         }
@@ -212,6 +216,10 @@ public class Character {
 
     public void takeDamage(float damage) {
         health -= damage;
+        if (health <= 0) {
+            stateTime = 0;
+            currentState = State.DEAD;
+        }
     }
 
     /**
