@@ -13,6 +13,7 @@ public class EnemyAI extends Character {
     public enum AIState {CHASING, RUNNINGAWAY, PATROLING, ATTACKING, DEAD};
     public enum PatrolState {LEFT, RIGHT, STILL};
 
+    PatrolState patrolState;
     AIState aiState;
     private float viewDistance = 160;
     private float viewAngle = 70;
@@ -33,6 +34,7 @@ public class EnemyAI extends Character {
         movementSpeedBuildup = 8;
         maxMovementSpeed = 1.5f;
         aiState = AIState.PATROLING;
+        patrolState = PatrolState.STILL;
     }
 
     @Override
@@ -63,11 +65,30 @@ public class EnemyAI extends Character {
 
                 break;
             case PATROLING:
-                // Randomly turn
-                boolean flip = Math.random() < flipChance;
-                if (flip) lookingLeft = !lookingLeft;
                 // If can see player
                 if (canSeePlayer(playerX, playerY)) aiState = AIState.CHASING;
+                switch (patrolState) {
+                    case LEFT:
+                        if(Math.random() < flipChance * 5) patrolState = PatrolState.STILL;
+                        move(-0.5f);
+                        break;
+                    case RIGHT:
+                        if(Math.random() < flipChance * 5) patrolState = PatrolState.STILL;
+                        move(0.5f);
+                        break;
+                    case STILL:
+                        // Randomly turn
+                        boolean flip = Math.random() < flipChance;
+                        if (flip) lookingLeft = !lookingLeft;
+                        if(Math.random() < flipChance) {
+                            if((int)(Math.random() * 2) == 0 ) {
+                                patrolState = PatrolState.LEFT;
+                            } else {
+                                patrolState = PatrolState.RIGHT;
+                            }
+                        }
+                        break;
+                }
                 break;
             case DEAD:
 
