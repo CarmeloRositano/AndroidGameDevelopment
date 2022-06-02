@@ -7,19 +7,21 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Box2DHandler;
 import com.mygdx.game.Character;
+import com.mygdx.game.Player;
 
 public class EnemyAI extends Character {
 
     public enum AIState {CHASING, RUNNINGAWAY, PATROLING, ATTACKING, DEAD};
     public enum PatrolState {LEFT, RIGHT, STILL};
 
-    PatrolState patrolState;
-    AIState aiState;
+    private PatrolState patrolState;
+    private AIState aiState;
     private float viewDistance = 160;
     private float viewAngle = 70;
     private float flipChance = 0.01f;  // chance per frame to flip
     private float lostViewWait = 2;     // Seconds to look for player
     private float lostViewTimer;
+    private float sinceLastAttack;
 
     /**
      * Constructor that takes a box2DHandler and sets up the character to be placed in the world
@@ -35,6 +37,7 @@ public class EnemyAI extends Character {
         maxMovementSpeed = 1.5f;
         aiState = AIState.PATROLING;
         patrolState = PatrolState.STILL;
+        sinceLastAttack = 8f;
     }
 
     @Override
@@ -44,7 +47,7 @@ public class EnemyAI extends Character {
         // Using camera pos to get player pos, since they're nearly identical anyway and wont have to pass in player this way
         float playerX = camera.position.x;
         float playerY = camera.position.y;
-
+        if(sinceLastAttack > 0) sinceLastAttack -= Gdx.graphics.getDeltaTime();
 
         // Layered Behaviours
         switch (aiState) {
@@ -53,16 +56,21 @@ public class EnemyAI extends Character {
                 if (!canSeePlayer(playerX, playerY)) {
                     lostViewTimer -= Gdx.graphics.getDeltaTime();
                     if (lostViewTimer < 0) aiState = AIState.PATROLING;
+                } else {
+//                    if(otherInMeleeRange() && sinceLastAttack == 0f) {
+//                        meleeAttack();
+//                    }
                 }
                 if (Math.abs(box2dBody.getLinearVelocity().x) < 0.1f) jump();
 //                if (playerY > getPosition().y + sprite.getHeight()) jump(); // Also jumps if player is above them
+
 
                 break;
             case RUNNINGAWAY:
 
                 break;
             case ATTACKING:
-
+                sinceLastAttack = 8f;
                 break;
             case PATROLING:
                 // If can see player
