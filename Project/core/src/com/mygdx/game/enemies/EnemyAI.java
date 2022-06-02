@@ -32,6 +32,7 @@ public class EnemyAI extends Character {
         lostViewTimer = 0;
         movementSpeedBuildup = 8;
         maxMovementSpeed = 1.5f;
+        aiState = AIState.PATROLING;
     }
 
     @Override
@@ -49,7 +50,7 @@ public class EnemyAI extends Character {
                 move((playerX < getPosition().x) ? -1 : 1);
                 if (!canSeePlayer(playerX, playerY)) {
                     lostViewTimer -= Gdx.graphics.getDeltaTime();
-                    if (lostViewTimer < 0) currentState = State.IDLE;
+                    if (lostViewTimer < 0) aiState = AIState.PATROLING;
                 }
                 if (Math.abs(box2dBody.getLinearVelocity().x) < 0.1f) jump();
 //                if (playerY > getPosition().y + sprite.getHeight()) jump(); // Also jumps if player is above them
@@ -66,7 +67,7 @@ public class EnemyAI extends Character {
                 boolean flip = Math.random() < flipChance;
                 if (flip) lookingLeft = !lookingLeft;
                 // If can see player
-                if (canSeePlayer(playerX, playerY)) currentState = State.RUNNING;
+                if (canSeePlayer(playerX, playerY)) aiState = AIState.CHASING;
                 break;
             case DEAD:
 
