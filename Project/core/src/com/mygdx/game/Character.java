@@ -16,13 +16,14 @@ import com.mygdx.game.particles.ParticleHandler;
 
 public class Character {
 
-    public enum State { IDLE, RUNNING , ATTACKING, CASTING, HURT, DEAD }
+    public enum State { IDLE, RUNNING, ATTACKING, CASTING, HURT, DEAD }
     private SpriteBatch batch;
     protected Camera camera;
 
     // Health and Attack
     protected float health = 3;
     protected float meleeDamage = 1;
+
 
     // Movement
     protected float movementSpeedBuildup = 10.0f;
@@ -90,7 +91,7 @@ public class Character {
                 currentFrame = (TextureRegion) animations[1].getKeyFrame(stateTime, false);
                 sprite.setRegion(currentFrame);
                 if(animations[1].isAnimationFinished(stateTime)) {
-                    currentState = State.DEAD;
+                    currentState = State.IDLE;
                 }
                 break;
             case CASTING:
@@ -196,6 +197,14 @@ public class Character {
     public boolean otherInMeleeRange(Character other) {
         Rectangle rect = new Rectangle(getPosition().x + sprite.getWidth()/2, getPosition().y + sprite.getHeight()/5,sprite.getWidth()*1.2f,sprite.getHeight()/1.5f);
         Rectangle otherRect = new Rectangle(other.getPosition().x, other.getPosition().y, other.sprite.getWidth(), other.sprite.getHeight());
+
+        if (box2DHandler.debugLines) {
+            ShapeRenderer sr = new ShapeRenderer();
+            sr.begin(ShapeRenderer.ShapeType.Line);
+            sr.rect(rect.x, rect.y, rect.width, rect.height);
+            sr.rect(otherRect.x, otherRect.y, otherRect.width, otherRect.height);
+            sr.end();
+        }
 
         return rect.overlaps(otherRect);
     }

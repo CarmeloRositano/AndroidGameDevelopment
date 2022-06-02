@@ -69,6 +69,8 @@ public class Player extends Character {
     public void meleeAttack(Character other) {
         if (other.currentState == State.DEAD) return;
 
+        currentState = State.ATTACKING;
+        stateTime = 0;
         if (otherInMeleeRange(other)) {
             other.takeDamage(meleeDamage);
             if (other.health <= 0) health += 0.5f;

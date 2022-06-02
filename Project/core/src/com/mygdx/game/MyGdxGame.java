@@ -25,6 +25,8 @@ public class MyGdxGame extends ApplicationAdapter {
 
 	// Player
 	Player player;
+	float attackCooldownDefault = 0.3f;
+	float attackCooldown;
 
 	// Rendering
 	SpriteBatch batch, uiBatch;
@@ -68,6 +70,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		level = new Level(box2DHandler, camera);
 		player = new Player(box2DHandler, camera, batch);
 		player.setPosition(level.getPlayerSpawn().x, level.getPlayerSpawn().y);
+		attackCooldown = attackCooldownDefault;
 
 		score = player.health;
 		totalTime = 0f;
@@ -116,7 +119,11 @@ public class MyGdxGame extends ApplicationAdapter {
 	 * Updates game state
 	 */
 	public void update() {
-		totalTime += Gdx.graphics.getDeltaTime();
+		float dt = Gdx.graphics.getDeltaTime();
+		totalTime += dt;
+		attackCooldown -= dt;
+		if (attackCooldown < 0) attackCooldown = 0;
+
 		userInterface.update(gameState);
 		score = player.health;
 		switch(gameState) {
@@ -139,7 +146,7 @@ public class MyGdxGame extends ApplicationAdapter {
 				if (userInterface.moveLeftButtonPressed()) moveX -= 1;
 				if (userInterface.moveRightButtonPressed()) moveX += 1;
 				if (userInterface.jumpButtonPressed()) player.jump();
-				if (userInterface.shootButtonPressed()) playerAttack();
+				if (userInterface.shootButtonPressed() && attackCooldown <= 0) playerAttack();
 				if(userInterface.pauseButtonPressed()) gameState = GameState.PAUSED;
 
 				//Character and Camera Movement
@@ -155,6 +162,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	}
 	
 	public void playerAttack() {
+		attackCooldown = attackCooldownDefault;
 		List<Character> enemies = level.getEnemies();
 		for (Character enemy : enemies) {
 			player.meleeAttack(enemy);

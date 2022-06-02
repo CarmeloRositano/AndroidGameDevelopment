@@ -10,6 +10,10 @@ import com.mygdx.game.Character;
 
 public class EnemyAI extends Character {
 
+    public enum AIState {CHASING, RUNNINGAWAY, PATROLING, ATTACKING, DEAD};
+    public enum PatrolState {LEFT, RIGHT, STILL};
+
+    AIState aiState;
     private float viewDistance = 160;
     private float viewAngle = 70;
     private float flipChance = 0.01f;  // chance per frame to flip
@@ -40,8 +44,8 @@ public class EnemyAI extends Character {
 
 
         // Layered Behaviours
-        switch (currentState) {
-            case RUNNING:
+        switch (aiState) {
+            case CHASING:
                 move((playerX < getPosition().x) ? -1 : 1);
                 if (!canSeePlayer(playerX, playerY)) {
                     lostViewTimer -= Gdx.graphics.getDeltaTime();
@@ -51,27 +55,21 @@ public class EnemyAI extends Character {
 //                if (playerY > getPosition().y + sprite.getHeight()) jump(); // Also jumps if player is above them
 
                 break;
+            case RUNNINGAWAY:
+
+                break;
             case ATTACKING:
 
                 break;
-            case CASTING:
-
-                break;
-            case HURT:
-
-                break;
-            case DYING:
-
-                break;
-            case DEAD:
-
-                break;
-            case IDLE:
+            case PATROLING:
                 // Randomly turn
                 boolean flip = Math.random() < flipChance;
                 if (flip) lookingLeft = !lookingLeft;
                 // If can see player
                 if (canSeePlayer(playerX, playerY)) currentState = State.RUNNING;
+                break;
+            case DEAD:
+
                 break;
         }
     }
