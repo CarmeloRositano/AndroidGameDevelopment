@@ -5,20 +5,21 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.mygdx.game.particles.ParticleHandler;
-import com.sun.org.apache.xpath.internal.axes.WalkerFactory;
 
 public class Character {
 
     public enum State { IDLE, RUNNING , ATTACKING, CASTING, HURT, DYING, DEAD }
     private SpriteBatch batch;
     protected Camera camera;
+
+    // Health
+    protected float health = 3;
 
     // Movement
     protected float movementSpeedBuildup = 10.0f;
@@ -45,7 +46,7 @@ public class Character {
     protected TextureRegion currentFrame;
     protected Animation<TextureRegion>[] animations;
     protected int[][] colRow;
-    private boolean flip;
+    protected boolean lookingLeft;
 
 
     /**
@@ -66,7 +67,7 @@ public class Character {
         prevVelocityY = 0;
         this.batch = batch;
         this.camera = camera;
-        flip = false;
+        lookingLeft = false;
 
         particles = new ParticleHandler(camera);
     }
@@ -116,8 +117,8 @@ public class Character {
         jumpWait -= Gdx.graphics.getDeltaTime();
         if (jumpWait < 0) jumpWait = 0;
 
-        if (box2dBody.getLinearVelocity().x > 0f) flip = false;
-        if (box2dBody.getLinearVelocity().x < 0f) flip = true;
+        if (box2dBody.getLinearVelocity().x > 0f) lookingLeft = false;
+        if (box2dBody.getLinearVelocity().x < 0f) lookingLeft = true;
     }
 
     /**
@@ -129,7 +130,7 @@ public class Character {
         particles.render();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        sprite.flip(flip, false);
+        sprite.flip(lookingLeft, false);
         batch.draw(sprite, sprite.getX() - sprite.getHeight()/2,
                 sprite.getY() - sprite.getHeight()/2,
                 sprite.getWidth() * 2,
@@ -178,19 +179,6 @@ public class Character {
         prevVelocityY = box2dBody.getLinearVelocity().y;
     }
 
-    public void moveEnemy(Player player) {
-        if(canSeePlayer(player)) {
-            if (this.getPosition().y < player.getPosition().y)
-                if(player.getPosition().x > getPosition().x) {
-                    move(1);
-                } else if (player.getPosition().x < getPosition().x){
-                    move(-1);
-                } else {
-                    move(0);
-                }
-        }
-    }
-
     public void jump() {
         // TODO fix jump not being reset
 
@@ -205,23 +193,6 @@ public class Character {
         }
     }
 
-    public boolean canSeePlayer(Player player) {
-        float angle = this.getAngle(player.getPosition());
-        if (player.getPosition().x < getPosition().x) {
-            if (angle > 170 && angle < 190) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public float getAngle(Vector2 target) {
-        float angle = (float) Math.toDegrees(Math.atan2(target.y - this.getPosition().y, target.x - this.getPosition().x));
-        if(angle < 0){
-            angle += 360;
-        }
-        return angle;
-    }
 
     /**
      * Disposes items that wouldn't be cleaned up automatically by the javavm

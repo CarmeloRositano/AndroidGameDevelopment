@@ -212,12 +212,6 @@ public class Level {
         }
     }
 
-    private void updateEnemies(Player player) {
-        for(Character temp : enemies) {
-            temp.moveEnemy(player);
-        }
-    }
-
     private void renderEnemies() {
         for(Character temp : enemies) {
             temp.render();

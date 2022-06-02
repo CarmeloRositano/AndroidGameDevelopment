@@ -12,7 +12,7 @@ import com.mygdx.game.Character;
 
 import java.util.Random;
 
-public class Satyr extends Character {
+public class Satyr extends EnemyAI {
 
     Random rand;
     int satyrChoice;

@@ -2,21 +2,14 @@ package com.mygdx.game.enemies;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.AnimationBuild;
 import com.mygdx.game.Box2DHandler;
-import com.mygdx.game.Character;
-import com.mygdx.game.Player;
-
-import org.w3c.dom.Text;
 
 import java.util.Random;
 
-public class Golem extends Character {
+public class Golem extends EnemyAI {
 
     Random rand;
     int golemChoice;

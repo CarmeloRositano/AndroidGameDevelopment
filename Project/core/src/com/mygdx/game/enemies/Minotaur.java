@@ -12,7 +12,7 @@ import com.mygdx.game.Character;
 
 import java.util.Random;
 
-public class Minotaur extends Character {
+public class Minotaur extends EnemyAI {
 
     Random rand;
     int minotaurChoice;
