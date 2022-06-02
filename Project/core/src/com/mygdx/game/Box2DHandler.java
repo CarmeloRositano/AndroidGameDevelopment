@@ -23,7 +23,7 @@ public class Box2DHandler {
     // Important box2d variables
     private World world;
     private Box2DDebugRenderer box2DRenderer;
-    public boolean debugLines = true;
+    public boolean debugLines = false;
 
     // The camera that box2d will be projected on
     private OrthographicCamera camera;

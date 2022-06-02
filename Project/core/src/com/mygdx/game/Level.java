@@ -118,6 +118,7 @@ public class Level {
      */
     public void render() {
 
+
         for (Tuple<TiledMap, TiledMapRenderer, Body[]> tuple : map) {
             tuple.snd.setView(camera);
             tuple.snd.render();

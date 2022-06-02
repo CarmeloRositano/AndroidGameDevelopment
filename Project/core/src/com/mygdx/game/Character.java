@@ -139,6 +139,14 @@ public class Character {
                 sprite.getWidth() * 2,
                 sprite.getHeight() * 2);
         batch.end();
+
+        if (box2DHandler.debugLines) {
+            ShapeRenderer sr = new ShapeRenderer();
+            sr.setProjectionMatrix(camera.combined);
+            sr.begin(ShapeRenderer.ShapeType.Line);
+            sr.rect(getPosition().x + sprite.getWidth()/2 - (lookingLeft ? sprite.getWidth()*1.2f : 0), getPosition().y + sprite.getHeight()/5,sprite.getWidth()*1.2f,sprite.getHeight()/1.5f);
+            sr.end();
+        }
     }
 
     /**
@@ -157,7 +165,7 @@ public class Character {
         return new Vector2(sprite.getX(), sprite.getY());
     }
 
-    public void move(int x) {
+    public void move(float x) {
         if (currentState != State.DEAD) {
             float dt = Gdx.graphics.getDeltaTime();
             if (box2dBody.getLinearVelocity().y == 0 && prevVelocityY < 0) jumpsLeft = 2;
@@ -195,16 +203,8 @@ public class Character {
     }
 
     public boolean otherInMeleeRange(Character other) {
-        Rectangle rect = new Rectangle(getPosition().x + sprite.getWidth()/2, getPosition().y + sprite.getHeight()/5,sprite.getWidth()*1.2f,sprite.getHeight()/1.5f);
+        Rectangle rect = new Rectangle(getPosition().x + sprite.getWidth()/2 - (lookingLeft ? sprite.getWidth()*1.2f : 0), getPosition().y + sprite.getHeight()/5,sprite.getWidth()*1.2f,sprite.getHeight()/1.5f);
         Rectangle otherRect = new Rectangle(other.getPosition().x, other.getPosition().y, other.sprite.getWidth(), other.sprite.getHeight());
-
-        if (box2DHandler.debugLines) {
-            ShapeRenderer sr = new ShapeRenderer();
-            sr.begin(ShapeRenderer.ShapeType.Line);
-            sr.rect(rect.x, rect.y, rect.width, rect.height);
-            sr.rect(otherRect.x, otherRect.y, otherRect.width, otherRect.height);
-            sr.end();
-        }
 
         return rect.overlaps(otherRect);
     }
