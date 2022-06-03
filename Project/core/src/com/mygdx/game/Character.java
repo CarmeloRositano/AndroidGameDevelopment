@@ -204,13 +204,14 @@ public class Character {
         }
     }
 
-    public void meleeAttack(Character other) {
+    public void meleeAttack(Character other, float damageModifier) {
         if (other.currentState == State.DEAD || currentState == State.DEAD) return;
 
         currentState = State.ATTACKING;
         stateTime = 0;
         if (otherInMeleeRange(other)) {
-            other.takeDamage(meleeDamage);
+            System.out.println(meleeDamage + damageModifier);
+            other.takeDamage(meleeDamage + damageModifier);
         }
     }
 

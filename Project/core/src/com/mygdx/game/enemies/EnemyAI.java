@@ -61,12 +61,15 @@ public class EnemyAI extends Character {
                 // If stuck on something that's not the player, jump
                 if (Math.abs(box2dBody.getLinearVelocity().x) < 0.1f && !(Math.abs(getPosition().x - playerX) <= 30)) jump();
 
-
                 if (!canSeePlayer(playerX, playerY)) {
                     lostViewTimer -= Gdx.graphics.getDeltaTime();
                     if (lostViewTimer < 0) aiState = AIState.PATROLING;
                 } else if (otherInMeleeRange(MyGdxGame.player) && attackCooldown <= 0){
-                    meleeAttack(MyGdxGame.player);
+                    if(MyGdxGame.totalTime < 180) {
+                        meleeAttack(MyGdxGame.player, MyGdxGame.totalTime / 36);
+                    } else {
+                        meleeAttack(MyGdxGame.player, 5);
+                    }
                 }
 
                 if (health <= 1) aiState = AIState.RUNNINGAWAY;
@@ -117,8 +120,8 @@ public class EnemyAI extends Character {
     }
 
     @Override
-    public void meleeAttack(Character other) {
-        super.meleeAttack(other);
+    public void meleeAttack(Character other, float damageModifier) {
+        super.meleeAttack(other, damageModifier);
         attackCooldown = attackCooldownDefault;
     }
 

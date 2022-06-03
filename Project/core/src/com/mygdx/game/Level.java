@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapLayer;
@@ -141,6 +142,7 @@ public class Level {
         backgroundRenderer.setView(camera);
         backgroundRenderer.render();
 
+
         // Renders each map piece
         for (Tuple<TiledMap, TiledMapRenderer, Body[]> tuple : map) {
             tuple.snd.setView(camera);
@@ -251,6 +253,16 @@ public class Level {
             layer.setOffsetX(x);
             layer.setOffsetY(y);
         }
+    }
+
+    public void changeColourOverTime(float time) {
+        if(MyGdxGame.hardmode) {
+            batch.setColor(1, 0.4f, 0.4f, 1);
+            return;
+        }
+        float colour = time / 100;
+        if(colour >= 0.6) return;
+        batch.setColor(1, 1 - colour, 1 - colour, 1);
     }
 
     public List<Character> getEnemies() {

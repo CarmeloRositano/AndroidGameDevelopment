@@ -2,12 +2,9 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.game.enemies.TextureSingleton;
 
@@ -23,7 +20,8 @@ public class MyGdxGame extends ApplicationAdapter {
 
 	static float score;
 	float playerHealth;
-	float totalTime;
+	public static float totalTime;
+	public static boolean hardmode;
 
 	// Player
 	public static Player player;				// Static so accessible for targeting
@@ -33,7 +31,6 @@ public class MyGdxGame extends ApplicationAdapter {
 	// Rendering
 	SpriteBatch batch, uiBatch;
 	OrthographicCamera camera;
-
 
 	// Box2D
 	Box2DHandler box2DHandler;
@@ -120,9 +117,10 @@ public class MyGdxGame extends ApplicationAdapter {
 			case COMPLETE:
 				if (userInterface.mainMenuButtonPressed()) gameState = GameState.MAIN_MENU;
 				if (userInterface.restartButtonPressed()) newGame();
-				System.out.println(gameState);
 			case PLAYING:
 				level.update();
+				level.changeColourOverTime(totalTime);
+
 				box2DHandler.update();
 				player.update();
 
@@ -165,7 +163,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		attackCooldown = attackCooldownDefault;
 		List<Character> enemies = level.getEnemies();
 		for (Character enemy : enemies) {
-			player.meleeAttack(enemy);
+			player.meleeAttack(enemy, 0);
 		}
 	}
 
@@ -191,6 +189,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		totalTime = 0f;
 		score = 0;
 		gameState = GameState.PLAYING;
+		hardmode = false;
 	}
 
 	/**

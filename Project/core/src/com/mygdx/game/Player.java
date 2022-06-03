@@ -97,7 +97,7 @@ public class Player extends Character {
     }
 
     @Override
-    public void meleeAttack(Character other) {
+    public void meleeAttack(Character other, float damageModifier) {
         if (other.currentState == State.DEAD || currentState == State.DEAD) return;
 
         currentState = State.ATTACKING;
