@@ -21,7 +21,8 @@ public class MyGdxGame extends ApplicationAdapter {
 
 	GameState gameState;
 
-	float score;
+	static float score;
+	float playerHealth;
 	float totalTime;
 
 	// Player
@@ -83,15 +84,14 @@ public class MyGdxGame extends ApplicationAdapter {
 				break;
 			case PAUSED:
 			case PLAYING:
+			case COMPLETE:
 				level.render();
 				box2DHandler.render();
 				player.render();
 				break;
-			case COMPLETE:
-				break;
 		}
 		uiBatch.end();
-		userInterface.render(camera, totalTime, score);
+		userInterface.render(camera, totalTime, playerHealth, score);
 	}
 
 	/**
@@ -117,6 +117,10 @@ public class MyGdxGame extends ApplicationAdapter {
 					Gdx.app.exit();
 				}
 				break;
+			case COMPLETE:
+				if (userInterface.mainMenuButtonPressed()) gameState = GameState.MAIN_MENU;
+				if (userInterface.restartButtonPressed()) newGame();
+				System.out.println(gameState);
 			case PLAYING:
 				level.update();
 				box2DHandler.update();
@@ -124,33 +128,34 @@ public class MyGdxGame extends ApplicationAdapter {
 
 				attackCooldown -= dt;
 				if (attackCooldown < 0) attackCooldown = 0;
-				score = player.health;
+				playerHealth = player.health;
 
 				int moveX = 0;
-				if (userInterface.moveLeftButtonPressed()) {
-					if (userInterface.moveLeftButtonDoubleTapped()) player.teleDash(-1);
-					moveX -= 1;
-				}
-				if (userInterface.moveRightButtonPressed()) {
-					if (userInterface.moveRightButtonDoubleTapped()) player.teleDash(1);
-					moveX += 1;
-				}
-				if (userInterface.jumpButtonPressed()) player.jump();
-				if (userInterface.shootButtonPressed() && attackCooldown <= 0) playerAttack();
-				if(userInterface.pauseButtonPressed()) gameState = GameState.PAUSED;
+				if (gameState == GameState.PLAYING) {
+					if (userInterface.moveLeftButtonPressed()) {
+						if (userInterface.moveLeftButtonDoubleTapped()) player.teleDash(-1);
+						moveX -= 1;
+					}
+					if (userInterface.moveRightButtonPressed()) {
+						if (userInterface.moveRightButtonDoubleTapped()) player.teleDash(1);
+						moveX += 1;
+					}
+					if (userInterface.jumpButtonPressed()) player.jump();
+					if (userInterface.shootButtonPressed() && attackCooldown <= 0) playerAttack();
+					if(userInterface.pauseButtonPressed()) gameState = GameState.PAUSED;
 
-				//Character and Camera Movement
-				player.move(moveX);
-//				Physics.updatePosition(player);
+					//Character and Camera Movement
+					player.move(moveX);
+					if (player.currentState == Character.State.DEAD) gameState = GameState.COMPLETE;
+
+					score += dt*5;
+				}
+
 				camera.update();
 				break;
 			case PAUSED:
 				if (userInterface.mainMenuButtonPressed()) gameState = GameState.MAIN_MENU;
 				if (userInterface.resumeButtonPressed()) gameState = GameState.PLAYING;
-				if (userInterface.restartButtonPressed()) newGame();
-				break;
-			case COMPLETE:
-				if (userInterface.mainMenuButtonPressed()) gameState = GameState.MAIN_MENU;
 				if (userInterface.restartButtonPressed()) newGame();
 				break;
 		}
@@ -182,8 +187,9 @@ public class MyGdxGame extends ApplicationAdapter {
 		player.setPosition(level.getPlayerSpawn().x, level.getPlayerSpawn().y);
 		attackCooldown = attackCooldownDefault;
 
-		score = player.health;
+		playerHealth = player.health;
 		totalTime = 0f;
+		score = 0;
 		gameState = GameState.PLAYING;
 	}
 

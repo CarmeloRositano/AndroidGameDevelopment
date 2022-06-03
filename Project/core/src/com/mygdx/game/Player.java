@@ -98,6 +98,7 @@ public class Player extends Character {
             other.takeDamage(meleeDamage);
             if (other.health <= 0) health += 1.5f;
             if (health > 10) health = 10;
+            MyGdxGame.score += 50;
         }
     }
 

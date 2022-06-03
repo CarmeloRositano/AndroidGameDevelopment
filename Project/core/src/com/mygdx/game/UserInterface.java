@@ -85,6 +85,7 @@ public class UserInterface {
                 break;
             case COMPLETE: {
                 boolean fadeFinished = deathFade == 1;
+                restartButton.update(checkTouch && fadeFinished, touchX, touchY);
                 mainMenuButton.update(checkTouch && fadeFinished, touchX, touchY);
             }
 
@@ -98,7 +99,7 @@ public class UserInterface {
      * @param totalTime The total time passed since a new game has started. Used to fade out buttons.
      * @param health Current health of the player
      */
-    public void render(Camera camera, float totalTime, float health) {
+    public void render(Camera camera, float totalTime, float health, float score) {
 //        if(debug) score = Gdx.graphics.getFramesPerSecond();
         // Render score if not in main menu
         if (currentGameState == MyGdxGame.GameState.PLAYING || currentGameState == MyGdxGame.GameState.PAUSED) {
@@ -126,6 +127,7 @@ public class UserInterface {
             font.getData().setScale(3);
             font.draw(uiBatch, "  ENERGY" , x+w/2, y+h/2-14, 0f, 1, false);
             font.getData().setScale(3);
+            font.draw(uiBatch, "  SCORE: " + ((int) score), Gdx.graphics.getWidth() * 0.016f, Gdx.graphics.getHeight() * 0.85f, 0f, -1, false);
             uiBatch.end();
         }
 
@@ -188,15 +190,21 @@ public class UserInterface {
                 // Render buttons
                 uiBatch.begin();
                 uiBatch.setColor(1, 1, 1, 1 * deathFade);
+                restartButton.draw(uiBatch);
                 mainMenuButton.draw(uiBatch);
 
                 // Render font
                 font.setColor(1, 1, 1, 1 * deathFade);
                 font.getData().setScale(6);
-                font.draw(uiBatch, "CONGRATULATIONS!\nYOU BEAT THE GAME!", Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() * 0.8f, 0f, 1, false);
+                font.draw(uiBatch, "YOU DIED", Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() * 0.8f, 0f, 1, false);
                 font.setColor(0.7f, 0.7f, 0.8f, 0.3f * deathFade);
                 font.getData().setScale(3);
+                font.draw(uiBatch, "R E S T A R T", Gdx.graphics.getWidth() / 2f, restartButton.y + restartButton.h / 2.7f, 0f, 1, false);
                 font.draw(uiBatch, "M A I N M E N U", Gdx.graphics.getWidth() / 2f, mainMenuButton.y + mainMenuButton.h / 2.7f, 0f, 1, false);
+
+                font.setColor(1, 1, 1, 1 * deathFade);
+                font.getData().setScale(4);
+                font.draw(uiBatch, "Score: " + ((int) score), Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() * 0.6f, 0f, 1, false);
                 uiBatch.end();
 
             default:

@@ -13,7 +13,7 @@ public class Button {
     boolean isDown = false;
     boolean isDownPrev = false;
     float doubleTapCounter;
-    float doubleTapTimeWindow = 0.5f;
+    float doubleTapTimeWindow = 0.3f;
 
     Texture texture;
 
@@ -52,7 +52,11 @@ public class Button {
         return isDown && !isDownPrev;
     }
 
-    public boolean isDoubleTap() { return doubleTapCounter > doubleTapTimeWindow; }
+    public boolean isDoubleTap() {
+        boolean doubleTap = doubleTapCounter > doubleTapTimeWindow;
+        if (doubleTap) doubleTapCounter = 0;
+        return doubleTap;
+    }
 
     public void dispose() {
         if(texture != null) texture.dispose();
