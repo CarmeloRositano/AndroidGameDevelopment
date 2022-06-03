@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -39,6 +40,12 @@ public class MyGdxGame extends ApplicationAdapter {
 	// UI
 	UserInterface userInterface;
 
+	// Music
+	String menuMusic = "sounds/Music/Prandium - Castle.mp3";
+	String gameMusic = "sounds/Music/Prandium - Mountain.mp3";
+	float menuMusicVolume = 1f;
+	float gameMusicVolume = 1f;
+
 	/**
 	 * Sets up game and initialises all field variables
 	 */
@@ -59,6 +66,9 @@ public class MyGdxGame extends ApplicationAdapter {
 		userInterface = new UserInterface();
 
 		gameState = GameState.MAIN_MENU;
+
+		SoundPlayer.getInstance().clearAllSounds();
+		SoundPlayer.getInstance().playNewMusic(menuMusic, menuMusicVolume, true);
 	}
 
 	/**
@@ -66,7 +76,8 @@ public class MyGdxGame extends ApplicationAdapter {
 	 */
 	@Override
 	public void render () {
-		ScreenUtils.clear(0, 0, 0, 1);
+		// 179, 175, 187
+		ScreenUtils.clear(0.702f, 0.6863f, 0.733f, 1);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -102,7 +113,6 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		switch(gameState) {
 			case MAIN_MENU:
-				//TODO MUSIC
 
 				if(userInterface.playButtonPressed()) {
 					newGame();
@@ -115,7 +125,11 @@ public class MyGdxGame extends ApplicationAdapter {
 				}
 				break;
 			case COMPLETE:
-				if (userInterface.mainMenuButtonPressed()) gameState = GameState.MAIN_MENU;
+				if (userInterface.mainMenuButtonPressed()) {
+					gameState = GameState.MAIN_MENU;
+					SoundPlayer.getInstance().clearAllSounds();
+					SoundPlayer.getInstance().playNewMusic(menuMusic, menuMusicVolume, true);
+				}
 				if (userInterface.restartButtonPressed()) newGame();
 			case PLAYING:
 				level.update();
@@ -139,7 +153,10 @@ public class MyGdxGame extends ApplicationAdapter {
 						moveX += 1;
 					}
 					if (userInterface.jumpButtonPressed()) player.jump();
-					if (userInterface.shootButtonPressed() && attackCooldown <= 0) playerAttack();
+					if (userInterface.shootButtonPressed() && attackCooldown <= 0) {
+						playerAttack();
+						SoundPlayer.getInstance().playPlayerAttack(1);
+					}
 					if(userInterface.pauseButtonPressed()) gameState = GameState.PAUSED;
 
 					//Character and Camera Movement
@@ -152,19 +169,33 @@ public class MyGdxGame extends ApplicationAdapter {
 				camera.update();
 				break;
 			case PAUSED:
-				if (userInterface.mainMenuButtonPressed()) gameState = GameState.MAIN_MENU;
+				if (userInterface.mainMenuButtonPressed()) {
+					gameState = GameState.MAIN_MENU;
+					SoundPlayer.getInstance().clearAllSounds();
+					SoundPlayer.getInstance().playNewMusic(menuMusic, menuMusicVolume, true);
+				}
 				if (userInterface.resumeButtonPressed()) gameState = GameState.PLAYING;
 				if (userInterface.restartButtonPressed()) newGame();
 				break;
 		}
 	}
-	
+
 	public void playerAttack() {
 		attackCooldown = attackCooldownDefault;
 		List<Character> enemies = level.getEnemies();
 		for (Character enemy : enemies) {
 			player.meleeAttack(enemy, 0);
 		}
+	}
+
+	public void newNormalGame() {
+		hardmode = false;
+		newGame();
+	}
+
+	public void newHardmodeGame() {
+		hardmode = true;
+		newGame();
 	}
 
 	/**
@@ -190,6 +221,9 @@ public class MyGdxGame extends ApplicationAdapter {
 		score = 0;
 		gameState = GameState.PLAYING;
 		hardmode = false;
+
+		SoundPlayer.getInstance().clearAllSounds();
+		SoundPlayer.getInstance().playNewMusic(gameMusic, gameMusicVolume, true);
 	}
 
 	/**

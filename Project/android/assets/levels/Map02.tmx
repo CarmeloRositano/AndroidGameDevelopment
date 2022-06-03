@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="2021.03.23" orientation="orthogonal" renderorder="right-down" width="36" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="9" nextobjectid="109">
+<map version="1.5" tiledversion="2021.03.23" orientation="orthogonal" renderorder="right-down" width="36" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="10" nextobjectid="110">
  <tileset firstgid="1" source="GreenZoneTileset.tsx"/>
  <tileset firstgid="97" source="BackgroundTileset.tsx"/>
  <tileset firstgid="277" source="DecorTileset.tsx"/>
@@ -233,5 +233,10 @@
   <object id="100" x="576" y="832" width="192" height="32"/>
   <object id="101" x="576" y="864" width="160" height="32"/>
   <object id="108" x="0" y="608" width="64" height="288"/>
+ </objectgroup>
+ <objectgroup id="9" name="Player">
+  <object id="109" name="Spawn" x="424" y="552">
+   <point/>
+  </object>
  </objectgroup>
 </map>

@@ -97,6 +97,12 @@ public class Player extends Character {
     }
 
     @Override
+    public void takeDamage(float damage) {
+        super.takeDamage(damage);
+        SoundPlayer.getInstance().playPlayerHurt(1);
+    }
+
+    @Override
     public void meleeAttack(Character other, float damageModifier) {
         if (other.currentState == State.DEAD || currentState == State.DEAD) return;
 
@@ -123,6 +129,8 @@ public class Player extends Character {
 
             health -= teleDashCost;
             teleDashCooldown = teleDashCooldownDefault;
+
+            SoundPlayer.getInstance().playTeleDash(1);
         }
     }
 

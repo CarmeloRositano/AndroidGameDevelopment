@@ -29,7 +29,7 @@ import java.util.Vector;
 
 
 public class Level {
-    private final int numberOfMapsAvailable = 3;
+    private final int numberOfMapsAvailable = 5;
     private final int mapWidth = 36;
     private final int tileWidth = 32;
     private int currentChunk;
@@ -65,7 +65,7 @@ public class Level {
 
         //Set middle and side map pieces
         addMapPiece(-1);
-        addMapPiece("Map01", 0);
+        addMapPiece(0);
         addMapPiece(1);
         prevCamX = camera.position.x;
     }

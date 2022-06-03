@@ -39,7 +39,9 @@ public class Button {
 
             if (touchX >= x && touchX <= x + w && h2 - touchY >= y && h2 - touchY <= y + h) {
                 isDown = true;
-                if (justPressed()) doubleTapCounter += doubleTapTimeWindow;
+                if (justPressed()) {
+                    doubleTapCounter += doubleTapTimeWindow;
+                }
             }
         }
     }

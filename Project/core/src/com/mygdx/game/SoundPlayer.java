@@ -4,9 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Array;
-import com.sun.tools.javac.util.Pair;
-
-import java.util.Map;
 
 /**
  * SoundPlayer is a singleton that allows other classes to play the sounds they need.
@@ -16,7 +13,7 @@ public class SoundPlayer {
     private static SoundPlayer INSTANCE;
 
     private Music musicLoop;
-    private Array<Sound> sounds;
+//    private Array<Sound> sounds;
 
     /**
      * Get the singleton instance. If not made yet then creates it.
@@ -49,12 +46,13 @@ public class SoundPlayer {
 
     // Sounds to be stored in memory
     private Sound jump;
-    private Sound playerMove;
-    private Sound gEnemyMove;
-    private Sound aEnemyShoot;
-    private Sound shoot;
+    private Sound playerAttack;
+    private Sound enemyAttack;
+    private Sound enemyHurt;
+    private Sound playerHurt;
+    private Sound teleDash;
+    private Sound uiClick;
     private Sound death;
-    private boolean playerMovePlaying;
 
     /**
      * Constructor for the sound player. Once an instance is made, the game will create and store the
@@ -62,13 +60,13 @@ public class SoundPlayer {
      */
     private SoundPlayer() {
         jump = Gdx.audio.newSound(Gdx.files.internal("sounds/jump.mp3"));
-        playerMove = Gdx.audio.newSound(Gdx.files.internal("sounds/player_move.mp3"));
-        gEnemyMove = Gdx.audio.newSound(Gdx.files.internal("sounds/g_enemy_move.mp3"));
-        aEnemyShoot = Gdx.audio.newSound(Gdx.files.internal("sounds/a_enemy_shoot.mp3"));
-        shoot = Gdx.audio.newSound(Gdx.files.internal("sounds/shoot.mp3"));
+        playerAttack = Gdx.audio.newSound(Gdx.files.internal("sounds/player_attack.mp3"));
+        enemyAttack = Gdx.audio.newSound(Gdx.files.internal("sounds/enemy_attack.mp3"));
+        enemyHurt = Gdx.audio.newSound(Gdx.files.internal("sounds/enemy_hurt.mp3"));
+        playerHurt = Gdx.audio.newSound(Gdx.files.internal("sounds/player_hurt.mp3"));
+        teleDash = Gdx.audio.newSound(Gdx.files.internal("sounds/teledash.mp3"));
         death = Gdx.audio.newSound(Gdx.files.internal("sounds/death.mp3"));
-        playerMovePlaying = false;
-
+        uiClick = Gdx.audio.newSound(Gdx.files.internal("sounds/ui_click.mp3"));
     }
 
     /**
@@ -76,25 +74,30 @@ public class SoundPlayer {
      */
     public void dispose() {
         jump.dispose();
-        playerMove.dispose();
-        gEnemyMove.dispose();
-        aEnemyShoot.dispose();
-        shoot.dispose();
+        playerAttack.dispose();
+        enemyAttack.dispose();
+        enemyHurt.dispose();
+        playerHurt.dispose();
+        teleDash.dispose();
+        uiClick.dispose();
         death.dispose();
         musicLoop.dispose();
+        INSTANCE = null;
     }
 
     public void playJump(float volume) { jump.play(volume); }
 
-    public void playPlayerMove(float volume) { if (!playerMovePlaying) playerMove.loop(volume); playerMovePlaying = true; }
+    public void playPlayerAttack(float volume) { playerAttack.play(volume); }
 
-    public void stopPlayerMove() { playerMove.stop(); playerMovePlaying = false; }
+    public void playEnemyAttack(float volume) { enemyAttack.play(volume); }
 
-    public void playGEnemyMove(float volume) { gEnemyMove.play(volume); }
+    public void playEnemyHurt(float volume) { enemyHurt.play(volume); }
 
-    public void playAEnemyShoot(float volume) { aEnemyShoot.play(volume); }
+    public void playPlayerHurt(float volume) { playerHurt.play(volume); }
 
-    public void playShoot(float volume) { shoot.play(volume); }
+    public void playTeleDash(float volume) { teleDash.play(volume); }
+
+    public void playUIClick(float volume) { uiClick.play(volume); }
 
     public void playDeath(float volume) { death.play(volume); }
 
@@ -103,10 +106,12 @@ public class SoundPlayer {
      */
     public void clearAllSounds() {
         jump.stop();
-        playerMove.stop();
-        gEnemyMove.stop();
-        aEnemyShoot.stop();
-        shoot.stop();
+        playerAttack.stop();
+        enemyAttack.stop();
+        enemyHurt.stop();
+        playerHurt.stop();
+        teleDash.stop();
+        uiClick.stop();
         death.stop();
     }
 }

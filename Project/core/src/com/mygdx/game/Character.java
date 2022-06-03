@@ -232,6 +232,8 @@ public class Character {
             jumpsLeft--;
             jumpWait = jumpPause;
 
+            SoundPlayer.getInstance().playJump(1);
+
 //            box2dBody.applyForceToCenter(new Vector2(0, jumpSpeed), true);
         }
     }
@@ -243,6 +245,7 @@ public class Character {
         if (health <= 0) {
             stateTime = 0;
             currentState = State.DEAD;
+            SoundPlayer.getInstance().playDeath(1);
         }
         stateTime = 0;
     }

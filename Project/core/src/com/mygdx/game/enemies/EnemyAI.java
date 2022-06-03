@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.Box2DHandler;
 import com.mygdx.game.Character;
 import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.SoundPlayer;
 
 public class EnemyAI extends Character {
 
@@ -117,12 +118,15 @@ public class EnemyAI extends Character {
         super.takeDamage(damage);
         if (aiState != AIState.CHASING) aiState = AIState.CHASING;
         attackCooldown = attackCooldownDefault;
+        SoundPlayer.getInstance().playEnemyHurt(1);
     }
 
     @Override
     public void meleeAttack(Character other, float damageModifier) {
         super.meleeAttack(other, damageModifier);
         attackCooldown = attackCooldownDefault;
+        SoundPlayer.getInstance().playEnemyAttack(1);
+
     }
 
     private boolean canSeePlayer(float playerX, float playerY) {
