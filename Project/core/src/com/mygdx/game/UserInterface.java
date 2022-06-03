@@ -246,11 +246,19 @@ public class UserInterface {
 
 
     public boolean moveLeftButtonPressed() {
-        return  Gdx.input.isKeyPressed(Input.Keys.LEFT) || moveLeftButton.isDown;
+        return Gdx.input.isKeyPressed(Input.Keys.LEFT) || moveLeftButton.isDown;
+    }
+
+    public boolean moveLeftButtonDoubleTapped() {
+        return moveLeftButton.isDoubleTap();
     }
 
     public boolean moveRightButtonPressed() {
         return Gdx.input.isKeyPressed(Input.Keys.RIGHT) || moveRightButton.isDown;
+    }
+
+    public boolean moveRightButtonDoubleTapped() {
+        return moveRightButton.isDoubleTap();
     }
 
     public boolean jumpButtonPressed() {

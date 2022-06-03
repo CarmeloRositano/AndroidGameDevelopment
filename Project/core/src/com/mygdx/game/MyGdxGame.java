@@ -127,8 +127,14 @@ public class MyGdxGame extends ApplicationAdapter {
 				score = player.health;
 
 				int moveX = 0;
-				if (userInterface.moveLeftButtonPressed()) moveX -= 1;
-				if (userInterface.moveRightButtonPressed()) moveX += 1;
+				if (userInterface.moveLeftButtonPressed()) {
+					if (userInterface.moveLeftButtonDoubleTapped()) player.teleDash(-1);
+					moveX -= 1;
+				}
+				if (userInterface.moveRightButtonPressed()) {
+					if (userInterface.moveRightButtonDoubleTapped()) player.teleDash(1);
+					moveX += 1;
+				}
 				if (userInterface.jumpButtonPressed()) player.jump();
 				if (userInterface.shootButtonPressed() && attackCooldown <= 0) playerAttack();
 				if(userInterface.pauseButtonPressed()) gameState = GameState.PAUSED;
@@ -144,6 +150,8 @@ public class MyGdxGame extends ApplicationAdapter {
 				if (userInterface.restartButtonPressed()) newGame();
 				break;
 			case COMPLETE:
+				if (userInterface.mainMenuButtonPressed()) gameState = GameState.MAIN_MENU;
+				if (userInterface.restartButtonPressed()) newGame();
 				break;
 		}
 	}

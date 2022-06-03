@@ -12,6 +12,8 @@ public class Button {
     float h;
     boolean isDown = false;
     boolean isDownPrev = false;
+    float doubleTapCounter;
+    float doubleTapTimeWindow = 0.5f;
 
     Texture texture;
 
@@ -20,11 +22,15 @@ public class Button {
         this.y = y;
         this.w = w;
         this.h = h;
+        doubleTapCounter = 0;
 
         this.texture = texture;
     }
 
     public void update(boolean checkTouch, int touchX, int touchY) {
+        doubleTapCounter -= Gdx.graphics.getDeltaTime();
+        if (doubleTapCounter < 0) doubleTapCounter = 0;
+
         isDownPrev = isDown;
         isDown = false;
         if (checkTouch) {
@@ -33,6 +39,7 @@ public class Button {
 
             if (touchX >= x && touchX <= x + w && h2 - touchY >= y && h2 - touchY <= y + h) {
                 isDown = true;
+                if (justPressed()) doubleTapCounter += doubleTapTimeWindow;
             }
         }
     }
@@ -44,6 +51,8 @@ public class Button {
     public boolean justPressed() {
         return isDown && !isDownPrev;
     }
+
+    public boolean isDoubleTap() { return doubleTapCounter > doubleTapTimeWindow; }
 
     public void dispose() {
         if(texture != null) texture.dispose();

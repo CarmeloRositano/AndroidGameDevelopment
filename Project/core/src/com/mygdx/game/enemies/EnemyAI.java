@@ -17,7 +17,7 @@ public class EnemyAI extends Character {
     private float viewDistance = 160;
     private float viewAngle = 70;
     private float flipChance = 0.01f;  // chance per frame to flip
-    private float lostViewWait = 2;     // Seconds to look for player
+    private float lostViewWait = 100;     // Seconds to look for player
     private float lostViewTimer;
     private float attackCooldownDefault = 1f;
     private float attackCooldown;
@@ -54,6 +54,8 @@ public class EnemyAI extends Character {
                 // Move to player
                 if (Math.abs(getPosition().x - playerX) > 40) {
                     move((playerX < getPosition().x) ? -1 : 1);
+                } else {
+                    lookingLeft = (playerX < getPosition().x) ? true : false;
                 }
 
                 // If stuck on something that's not the player, jump

@@ -29,9 +29,9 @@ public class Character {
     protected float movementSpeedBuildup = 10.0f;
     protected float maxMovementSpeed = 2f;
     protected float jumpSpeed = 4f;
-    protected float jumpPause = 0.4f;
+    protected float jumpPause = 0.3f;
 
-    private ParticleHandler particles;
+    protected ParticleHandler particles;
 
     // Character states
     public Body box2dBody;
@@ -156,7 +156,7 @@ public class Character {
             ShapeRenderer sr = new ShapeRenderer();
             sr.setProjectionMatrix(camera.combined);
             sr.begin(ShapeRenderer.ShapeType.Line);
-            sr.rect(getPosition().x + sprite.getWidth()/2 - (lookingLeft ? sprite.getWidth()*1.2f : 0), getPosition().y + sprite.getHeight()/5,sprite.getWidth()*1.2f,sprite.getHeight()/1.5f);
+            sr.rect(getPosition().x + sprite.getWidth()/2 - (lookingLeft ? sprite.getWidth()*1.2f : 0), getPosition().y,sprite.getWidth()*1.2f,sprite.getHeight()/1.5f);
             sr.end();
         }
     }
@@ -215,7 +215,7 @@ public class Character {
     }
 
     public boolean otherInMeleeRange(Character other) {
-        Rectangle rect = new Rectangle(getPosition().x + sprite.getWidth()/2 - (lookingLeft ? sprite.getWidth()*1.2f : 0), getPosition().y + sprite.getHeight()/5,sprite.getWidth()*1.2f,sprite.getHeight()/1.5f);
+        Rectangle rect = new Rectangle(getPosition().x + sprite.getWidth()/2 - (lookingLeft ? sprite.getWidth()*1.2f : 0), getPosition().y,sprite.getWidth()*1.2f,sprite.getHeight()/1.5f);
         Rectangle otherRect = new Rectangle(other.getPosition().x, other.getPosition().y, other.sprite.getWidth(), other.sprite.getHeight());
 
         return rect.overlaps(otherRect);
