@@ -17,7 +17,8 @@ public class UserInterface {
     private Button resumeButton, restartButton, mainMenuButton;
     private Button playButton, quitButton;
     private Button nextLevelButton;
-    private Texture mainMenuBackground;
+    private Texture mainMenuBackgroundBack;
+    private Texture mainMenuBackgroundFront;
     private BitmapFont font;
     private SpriteBatch uiBatch;
     private MyGdxGame.GameState currentGameState;
@@ -44,7 +45,8 @@ public class UserInterface {
         nextLevelButton = new Button(w*0.3f, h*0.4f, w*0.4f, h*0.14f, new Texture("buttons/buttonLong_blue.png"));
         font = new BitmapFont(Gdx.files.internal("font/good_neighbors_unity.fnt"), Gdx.files.internal("font/good_neighbors_unity.png"), false);
 
-        mainMenuBackground = new Texture("background/main_menu.png");
+        mainMenuBackgroundBack = new Texture("background/main_menu_back_blur.png");
+        mainMenuBackgroundFront = new Texture("background/main_menu_front_blur.png");
         deathFade = 0;
         debug = false;
 
@@ -154,10 +156,10 @@ public class UserInterface {
 
                 // Render font
                 font.setColor(1, 1, 1, 1);
-                font.getData().setScale(6);
+                font.getData().setScale(10);
                 font.draw(uiBatch, "PAUSED", Gdx.graphics.getWidth()/2f, Gdx.graphics.getHeight()*0.8f, 0f, 1, false);
                 font.setColor(0.7f, 0.7f, 0.8f, 0.3f);
-                font.getData().setScale(3);
+                font.getData().setScale(5);
                 font.draw(uiBatch, "R E S U M E", Gdx.graphics.getWidth()/2f, resumeButton.y + resumeButton.h/2.7f, 0f, 1, false);
                 font.draw(uiBatch, "R E S T A R T", Gdx.graphics.getWidth()/2f, restartButton.y + restartButton.h/2.7f, 0f, 1, false);
                 font.draw(uiBatch, "M A I N M E N U", Gdx.graphics.getWidth()/2f, mainMenuButton.y + mainMenuButton.h/2.7f, 0f, 1, false);
@@ -166,8 +168,10 @@ public class UserInterface {
             case MAIN_MENU:
                 uiBatch.begin();
                 // Render and slowly zoom in menu background
-                float zoomFactor = totalTime > 120 ? 120 : totalTime;
-                uiBatch.draw(mainMenuBackground, 0 - zoomFactor*2*1.66f, 0 - zoomFactor*4, Gdx.graphics.getWidth() + zoomFactor*4*1.66f, Gdx.graphics.getHeight()+ zoomFactor*4);
+                float zoomFactorBack = totalTime*5 > 120 ? 120 : totalTime*5;
+                float zoomFactorFront = zoomFactorBack * 2f;
+                uiBatch.draw(mainMenuBackgroundBack, 0 - zoomFactorBack*2*1.66f, 0 - zoomFactorBack*2, Gdx.graphics.getWidth() + zoomFactorBack*4*1.66f, Gdx.graphics.getHeight()+ zoomFactorBack*4);
+                uiBatch.draw(mainMenuBackgroundFront, 0 - zoomFactorFront*2*1.66f, 0 - zoomFactorFront*2, Gdx.graphics.getWidth() + zoomFactorFront*4*1.66f, Gdx.graphics.getHeight()+ zoomFactorFront*4);
 
                 // Render buttons
                 uiBatch.setColor(1, 1, 1, 1);
@@ -176,10 +180,10 @@ public class UserInterface {
 
                 // Render font
                 font.setColor(1, 1, 1, 1);
-                font.getData().setScale(6);
+                font.getData().setScale(10);
                 font.draw(uiBatch, "Assignment 2", Gdx.graphics.getWidth()/2f, Gdx.graphics.getHeight()*0.8f, 0f, 1, false);
                 font.setColor(0.7f, 0.7f, 0.8f, 0.3f);
-                font.getData().setScale(3);
+                font.getData().setScale(5);
                 font.draw(uiBatch, "P L A Y", Gdx.graphics.getWidth()/2f, playButton.y + restartButton.h/2.7f, 0f, 1, false);
                 font.draw(uiBatch, "Q U I T", Gdx.graphics.getWidth()/2f, quitButton.y + mainMenuButton.h/2.7f, 0f, 1, false);
                 uiBatch.end();
@@ -195,15 +199,15 @@ public class UserInterface {
 
                 // Render font
                 font.setColor(1, 1, 1, 1 * deathFade);
-                font.getData().setScale(6);
+                font.getData().setScale(10);
                 font.draw(uiBatch, "YOU DIED", Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() * 0.8f, 0f, 1, false);
                 font.setColor(0.7f, 0.7f, 0.8f, 0.3f * deathFade);
-                font.getData().setScale(3);
+                font.getData().setScale(5);
                 font.draw(uiBatch, "R E S T A R T", Gdx.graphics.getWidth() / 2f, restartButton.y + restartButton.h / 2.7f, 0f, 1, false);
                 font.draw(uiBatch, "M A I N M E N U", Gdx.graphics.getWidth() / 2f, mainMenuButton.y + mainMenuButton.h / 2.7f, 0f, 1, false);
 
                 font.setColor(1, 1, 1, 1 * deathFade);
-                font.getData().setScale(4);
+                font.getData().setScale(6);
                 font.draw(uiBatch, "Score: " + ((int) score), Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() * 0.6f, 0f, 1, false);
                 uiBatch.end();
 
@@ -323,6 +327,7 @@ public class UserInterface {
         quitButton.dispose();
         nextLevelButton.dispose();
         font.dispose();
-        mainMenuBackground.dispose();
+        mainMenuBackgroundBack.dispose();
+        mainMenuBackgroundFront.dispose();
     }
 }
