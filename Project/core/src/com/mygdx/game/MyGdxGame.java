@@ -114,9 +114,13 @@ public class MyGdxGame extends ApplicationAdapter {
 		switch(gameState) {
 			case MAIN_MENU:
 
-				if(userInterface.playButtonPressed()) {
-					newGame();
+				if(userInterface.normalModeButtonPressed()) {
 					totalTime = 0f;
+					newNormalGame();
+				}
+				if(userInterface.hardModeButtonPressed()) {
+					totalTime = 0f;
+					newHardmodeGame();
 				}
 				if(userInterface.quitButtonPressed()) {
 					player.dispose();
@@ -163,7 +167,11 @@ public class MyGdxGame extends ApplicationAdapter {
 					player.move(moveX);
 					if (player.currentState == Character.State.DEAD) gameState = GameState.COMPLETE;
 
-					score += dt*5;
+					if(hardmode) {
+						score += dt*10;
+					} else {
+						score += dt*5;
+					}
 				}
 
 				camera.update();
@@ -220,7 +228,6 @@ public class MyGdxGame extends ApplicationAdapter {
 		totalTime = 0f;
 		score = 0;
 		gameState = GameState.PLAYING;
-		hardmode = false;
 
 		SoundPlayer.getInstance().clearAllSounds();
 		SoundPlayer.getInstance().playNewMusic(gameMusic, gameMusicVolume, true);

@@ -15,7 +15,7 @@ public class UserInterface {
     // UI Buttons
     private Button moveLeftButton, moveRightButton, jumpButton, shootButton, pauseButton;
     private Button resumeButton, restartButton, mainMenuButton;
-    private Button playButton, quitButton;
+    private Button normalModeButton, hardModeButton, quitButton;
     private Button nextLevelButton;
     private Texture mainMenuBackgroundBack;
     private Texture mainMenuBackgroundFront;
@@ -40,8 +40,9 @@ public class UserInterface {
         resumeButton = new Button(w*0.35f, h*0.5f, w*0.3f, h*0.14f, new Texture("buttons/buttonLong_blue.png"));
         restartButton = new Button(w*0.325f, h*0.35f, w*0.35f, h*0.14f, new Texture("buttons/buttonLong_blue.png"));
         mainMenuButton = new Button(w*0.3f, h*0.2f, w*0.4f, h*0.14f, new Texture("buttons/buttonLong_blue.png"));
-        playButton = new Button(w*0.35f, h*0.5f, w*0.3f, h*0.14f, new Texture("buttons/buttonLong_blue.png"));
-        quitButton = new Button(w*0.35f, h*0.35f, w*0.3f, h*0.14f, new Texture("buttons/buttonLong_blue.png"));
+        normalModeButton = new Button(w*0.35f, h*0.5f, w*0.3f, h*0.14f, new Texture("buttons/buttonLong_blue.png"));
+        hardModeButton = new Button(w*0.35f, h*0.35f, w*0.3f, h*0.14f, new Texture("buttons/buttonLong_blue.png"));
+        quitButton = new Button(w*0.35f, h*0.2f, w*0.3f, h*0.14f, new Texture("buttons/buttonLong_blue.png"));
         nextLevelButton = new Button(w*0.3f, h*0.4f, w*0.4f, h*0.14f, new Texture("buttons/buttonLong_blue.png"));
         font = new BitmapFont(Gdx.files.internal("font/good_neighbors_unity.fnt"), Gdx.files.internal("font/good_neighbors_unity.png"), false);
 
@@ -69,7 +70,8 @@ public class UserInterface {
         switch (currentGameState) {
             // Poll user for input
             case MAIN_MENU:
-                playButton.update(checkTouch, touchX, touchY);
+                normalModeButton.update(checkTouch, touchX, touchY);
+                hardModeButton.update(checkTouch, touchX, touchY);
                 quitButton.update(checkTouch, touchX, touchY);
                 break;
             case PLAYING:
@@ -175,7 +177,8 @@ public class UserInterface {
 
                 // Render buttons
                 uiBatch.setColor(1, 1, 1, 1);
-                playButton.draw(uiBatch);
+                normalModeButton.draw(uiBatch);
+                hardModeButton.draw(uiBatch);
                 quitButton.draw(uiBatch);
 
                 // Render font
@@ -184,7 +187,8 @@ public class UserInterface {
                 font.draw(uiBatch, "Assignment 2", Gdx.graphics.getWidth()/2f, Gdx.graphics.getHeight()*0.8f, 0f, 1, false);
                 font.setColor(0.7f, 0.7f, 0.8f, 0.3f);
                 font.getData().setScale(5);
-                font.draw(uiBatch, "P L A Y", Gdx.graphics.getWidth()/2f, playButton.y + restartButton.h/2.7f, 0f, 1, false);
+                font.draw(uiBatch, "E A S Y", Gdx.graphics.getWidth()/2f, normalModeButton.y + restartButton.h/2.7f, 0f, 1, false);
+                font.draw(uiBatch, "H A R D", Gdx.graphics.getWidth()/2f, hardModeButton.y + restartButton.h/2.7f, 0f, 1, false);
                 font.draw(uiBatch, "Q U I T", Gdx.graphics.getWidth()/2f, quitButton.y + mainMenuButton.h/2.7f, 0f, 1, false);
                 uiBatch.end();
                 break;
@@ -297,8 +301,12 @@ public class UserInterface {
         return Gdx.input.isKeyPressed(Input.Keys.Q) || mainMenuButton.isDown;
     }
 
-    public boolean playButtonPressed() {
-        return Gdx.input.isKeyPressed(Input.Keys.ENTER) || playButton.isDown;
+    public boolean normalModeButtonPressed() {
+        return Gdx.input.isKeyPressed(Input.Keys.ENTER) || normalModeButton.isDown;
+    }
+
+    public boolean hardModeButtonPressed() {
+        return hardModeButton.isDown;
     }
 
     public boolean quitButtonPressed() {
@@ -323,7 +331,8 @@ public class UserInterface {
         resumeButton.dispose();
         restartButton.dispose();
         mainMenuButton.dispose();
-        playButton.dispose();
+        normalModeButton.dispose();
+        hardModeButton.dispose();
         quitButton.dispose();
         nextLevelButton.dispose();
         font.dispose();
