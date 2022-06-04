@@ -23,7 +23,7 @@ public class Character {
     // Health and Attack
     protected float health = 3;
     protected float meleeDamage = 1;
-
+    protected float rangeDamage = 3;
 
     // Movement
     protected float movementSpeedBuildup = 10.0f;
@@ -221,7 +221,7 @@ public class Character {
         currentState = State.ATTACKING;
         stateTime = 0;
         if (otherInRangedRange(other)) {
-            other.takeDamage((meleeDamage * 3) + damageModifier);
+            other.takeDamage(rangeDamage + damageModifier);
         }
     }
 
@@ -233,8 +233,7 @@ public class Character {
     }
 
     public boolean otherInRangedRange(Character other) {
-        Rectangle rect = new Rectangle(getPosition().x + sprite.getWidth()/2 - (lookingLeft ? sprite.getWidth()*1.2f : 0), getPosition().y,sprite.getWidth()*5f,sprite.getHeight()/1.5f);
-        Rectangle otherRect = new Rectangle(other.getPosition().x, other.getPosition().y, other.sprite.getWidth(), other.sprite.getHeight());
+        Rectangle rect = new Rectangle(getPosition().x + sprite.getWidth()/2 - (lookingLeft ? sprite.getWidth()*1.2f : 0), getPosition().y,sprite.getWidth()*15f,sprite.getHeight()/1.5f);        Rectangle otherRect = new Rectangle(other.getPosition().x, other.getPosition().y, other.sprite.getWidth(), other.sprite.getHeight());
 
         return rect.overlaps(otherRect);
     }

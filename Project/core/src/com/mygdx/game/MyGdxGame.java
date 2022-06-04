@@ -26,7 +26,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	// Player
 	public static Player player;				// Static so accessible for targeting
 	float attackCooldownDefault = 0.3f;
-	float rangedAttackCooldownDefault = 3f;
+	float rangedAttackCooldownDefault = 10f;
 	float attackCooldown;
 	float rangedAttackCooldown;
 
@@ -143,7 +143,8 @@ public class MyGdxGame extends ApplicationAdapter {
 				box2DHandler.update();
 				player.update();
 
-				attackCooldown -= dt; rangedAttackCooldown -= dt;
+				attackCooldown -= dt;
+				rangedAttackCooldown -= dt;
 				if (attackCooldown < 0) attackCooldown = 0;
 				if (rangedAttackCooldown < 0) rangedAttackCooldown = 0;
 				playerHealth = player.health;
@@ -236,8 +237,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		level = new Level(box2DHandler, camera);
 		player = new Player(box2DHandler, camera, batch);
 		player.setPosition(level.getPlayerSpawn().x, level.getPlayerSpawn().y);
-		attackCooldown = attackCooldownDefault;
-		rangedAttackCooldown = rangedAttackCooldownDefault;
+		rangedAttackCooldown = attackCooldown = attackCooldownDefault;
 
 		playerHealth = player.health;
 		totalTime = 0f;

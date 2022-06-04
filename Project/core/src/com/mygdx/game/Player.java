@@ -19,6 +19,7 @@ public class Player extends Character {
     private float teleDashCooldown;
     private float teleDashCost = 1;
     private float teleDashDistance = 1;
+    private float rangedAttackCost = 1;
 
     public Player(Box2DHandler box2DHandler, Camera camera, SpriteBatch batch) {
         super(box2DHandler, camera, batch);
@@ -54,6 +55,7 @@ public class Player extends Character {
             health = 0;
             currentState = State.DEAD;
         }
+
 
         sprite.setPosition(sprite.getX() - sprite.getWidth() / 2, sprite.getY() - sprite.getHeight() / 2);
 
@@ -111,29 +113,37 @@ public class Player extends Character {
     @Override
     public void rangedAttack(Character other, float damageModifier) {
         if (other.currentState == State.DEAD || currentState == State.DEAD) return;
-        health -= 1;
-        currentState = State.ATTACKING;
-        particles.addParticle(ParticleHandler.Type.FLOAT, "particleB.png",
-                new Vector2(getPosition().x + sprite.getWidth()/2 + sprite.getWidth()*1.2f*(lookingLeft ? -1 : 1),
+        if(health - rangedAttackCost > 0) {
+            particles.addParticle(ParticleHandler.Type.FLOAT, "particleB.png",
+                    new Vector2(getPosition().x + sprite.getWidth()/2 + sprite.getWidth()*1.2f*(lookingLeft ? -2 : 2),
                             getPosition().y + sprite.getHeight()/2),
                     1000, 1f, 140, new Color(0.5f, 0.1f, 0.5f, 0.8f), 0.2f);
-        particles.addParticle(ParticleHandler.Type.FLOAT, "particleB.png",
-                new Vector2(getPosition().x + sprite.getWidth()/2 + sprite.getWidth()*1.2f*(lookingLeft ? -1.5f : 1.5f),
-                        getPosition().y + sprite.getHeight()/2),
-                1000, 1f, 140, new Color(0.5f, 0.1f, 0.5f, 0.8f), 0.2f);
-        particles.addParticle(ParticleHandler.Type.FLOAT, "particleB.png",
-                new Vector2(getPosition().x + sprite.getWidth()/2 + sprite.getWidth()*1.2f*(lookingLeft ? -2 : 2),
-                        getPosition().y + sprite.getHeight()/2),
-                1000, 1f, 140, new Color(0.5f, 0.1f, 0.5f, 0.8f), 0.2f);
-        stateTime = 0;
-        if (otherInRangedRange(other)) {
-            other.takeDamage(meleeDamage * 3);
-            if (other.health <= 0) health += 1.5f;
-            if (health > 10) health = 10;
-            if (MyGdxGame.hardmode) {
-                MyGdxGame.score += 100;
-            } else {
-                MyGdxGame.score += 50f;
+            particles.addParticle(ParticleHandler.Type.FLOAT, "particleB.png",
+                    new Vector2(getPosition().x + sprite.getWidth()/2 + sprite.getWidth()*1.2f*(lookingLeft ? -3f : 3f),
+                            getPosition().y + sprite.getHeight()/2),
+                    1000, 1f, 140, new Color(0.5f, 0.1f, 0.5f, 0.8f), 0.2f);
+            particles.addParticle(ParticleHandler.Type.FLOAT, "particleB.png",
+                    new Vector2(getPosition().x + sprite.getWidth()/2 + sprite.getWidth()*1.2f*(lookingLeft ? -4 : 4),
+                            getPosition().y + sprite.getHeight()/2),
+                    1000, 1f, 140, new Color(0.5f, 0.1f, 0.5f, 0.8f), 0.2f);
+            particles.addParticle(ParticleHandler.Type.FLOAT, "particleB.png",
+                    new Vector2(getPosition().x + sprite.getWidth()/2 + sprite.getWidth()*1.2f*(lookingLeft ? -5 : 5),
+                            getPosition().y + sprite.getHeight()/2),
+                    1000, 1f, 140, new Color(0.5f, 0.1f, 0.5f, 0.8f), 0.2f);
+            particles.addParticle(ParticleHandler.Type.FLOAT, "particleB.png",
+                    new Vector2(getPosition().x + sprite.getWidth()/2 + sprite.getWidth()*1.2f*(lookingLeft ? -6 : 6),
+                            getPosition().y + sprite.getHeight()/2),
+                    1000, 1f, 140, new Color(0.5f, 0.1f, 0.5f, 0.8f), 0.2f);
+            stateTime = 0;
+            if (otherInRangedRange(other)) {
+                other.takeDamage(meleeDamage * 3);
+                if (other.health <= 0) health += 1.5f;
+                if (health > 10) health = 10;
+                if (MyGdxGame.hardmode) {
+                    MyGdxGame.score += 100;
+                } else {
+                    MyGdxGame.score += 50f;
+                }
             }
         }
     }
