@@ -6,6 +6,12 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class AnimationBuild {
 
+    /**
+     * Builds the animations for the characters.
+     * @param textures An array of textures to be built into animations
+     * @param colRow the amount of columns and rows in each texture in the texture array
+     * @return an array of Animations for the character
+     */
     public static Animation<TextureRegion>[] buildAnimation(Texture[] textures, int[][] colRow) {
 
         Animation<TextureRegion>[] animations;
@@ -36,6 +42,12 @@ public class AnimationBuild {
         return animations;
     }
 
+    /**
+     * Builds the animations for the characters.
+     * @param paths The paths to the textures
+     * @param colRow the amount of columns and rows in each texture in the texture array
+     * @return an array of Animations for the character
+     */
     public static Animation<TextureRegion>[] buildAnimation(String[] paths, int[][] colRow) {
         Texture[] textures;
         textures = new Texture[paths.length];

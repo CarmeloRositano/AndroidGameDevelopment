@@ -14,6 +14,13 @@ public class Golem extends EnemyAI {
     Random rand;
     int golemChoice;
 
+    /**
+     * Constructor that takes a box2DHandler and sets up the character to be placed in the world
+     *
+     * @param box2DHandler The handler to create the physics and collision body for the Character
+     * @param camera The worlds camera that is used
+     * @param batch The batch that is used to render the player
+     */
     public Golem(Box2DHandler box2DHandler, Camera camera, SpriteBatch batch, int golemChoice) {
         super(box2DHandler, camera, batch);
         rand = new Random();
@@ -59,15 +66,17 @@ public class Golem extends EnemyAI {
 
     }
 
+    /**
+     * Updates the character and animation state based on its current state.
+     */
     public void update() {
         super.update();
         sprite.setPosition(sprite.getX() - sprite.getWidth() / 2, sprite.getY() - sprite.getHeight() / 4);
     }
 
-    public void render() {
-        super.render();
-    }
-
+    /**
+     * Disposes items that wouldn't be cleaned up automatically by the javavm
+     */
     public void dispose() {
         super.dispose();
         //TODO All Textures/ Animations Not In Parent

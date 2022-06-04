@@ -63,7 +63,9 @@ public class TextureSingleton {
         return INSTANCE;
     }
 
-
+    /**
+     * Disposes items that wouldn't be cleaned up automatically by the javavm
+     */
     public void dispose() {
         golem01Attacking.dispose();
         golem02Attacking.dispose();

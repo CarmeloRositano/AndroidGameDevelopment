@@ -27,8 +27,8 @@ public class EnemyAI extends Character {
      * Constructor that takes a box2DHandler and sets up the character to be placed in the world
      *
      * @param box2DHandler The handler to create the physics and collision body for the Character
-     * @param camera
-     * @param batch
+     * @param camera The worlds camera that is used
+     * @param batch The batch that is used to render the player
      */
     public EnemyAI(Box2DHandler box2DHandler, Camera camera, SpriteBatch batch) {
         super(box2DHandler, camera, batch);
@@ -40,6 +40,9 @@ public class EnemyAI extends Character {
         attackCooldown = attackCooldownDefault;
     }
 
+    /**
+     * Updates the character and animation state based on its current state.
+     */
     @Override
     public void update() {
         super.update();
@@ -113,6 +116,10 @@ public class EnemyAI extends Character {
         }
     }
 
+    /**
+     * makes the character take x damage if they are able to
+     * @param damage the amount of damage that they are going to take
+     */
     @Override
     public void takeDamage(float damage) {
         super.takeDamage(damage);
@@ -121,6 +128,12 @@ public class EnemyAI extends Character {
         SoundPlayer.getInstance().playEnemyHurt(1);
     }
 
+    /**
+     * Deals damage to another Character if applicable (Character is alive, the attack is in range of
+     * the other character) and applied a damage modifier.
+     * @param other The other Character that is being damage
+     * @param damageModifier A modifier that is added to the base damage
+     */
     @Override
     public void meleeAttack(Character other, float damageModifier) {
         super.meleeAttack(other, damageModifier);
@@ -129,6 +142,14 @@ public class EnemyAI extends Character {
 
     }
 
+    /**
+     * Checks to see if the enemy is able to see the player within a certain angel of their sight line
+     * as well as if they the player is close enough to be able to be spooted.
+     * @param playerX The players x coordinate
+     * @param playerY The players y coordinate
+     * @return A Boolean that is True if the enemy is able to see the player and False if they are
+     * unable to see the player
+     */
     private boolean canSeePlayer(float playerX, float playerY) {
         if (MyGdxGame.player.currentState == State.DEAD) return false;
 
