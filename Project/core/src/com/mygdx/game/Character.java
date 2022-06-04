@@ -24,6 +24,8 @@ public class Character {
     protected float health = 3;
     protected float meleeDamage = 1;
     protected float rangeDamage = 3;
+    protected float meleeDistancesMult = 1.2f;
+    protected float rangedDistancesMult = 8f;
 
     // Movement
     protected float movementSpeedBuildup = 10.0f;
@@ -156,7 +158,11 @@ public class Character {
             ShapeRenderer sr = new ShapeRenderer();
             sr.setProjectionMatrix(camera.combined);
             sr.begin(ShapeRenderer.ShapeType.Line);
-            sr.rect(getPosition().x + sprite.getWidth()/2 - (lookingLeft ? sprite.getWidth()*1.2f : 0), getPosition().y,sprite.getWidth()*1.2f,sprite.getHeight()/1.5f);
+            sr.rect(getPosition().x + sprite.getWidth()/2 - (lookingLeft ? sprite.getWidth()*meleeDistancesMult : 0), getPosition().y,sprite.getWidth()*meleeDistancesMult,sprite.getHeight()/1.5f);
+            sr.setColor(Color.RED);
+            if (this instanceof Player) {
+                sr.rect(getPosition().x + sprite.getWidth()/2 - (lookingLeft ? sprite.getWidth()*rangedDistancesMult : 0), getPosition().y,sprite.getWidth()*rangedDistancesMult,sprite.getHeight()/1.5f);
+            }
             sr.end();
         }
     }
@@ -247,7 +253,7 @@ public class Character {
      * @return Boolean. True if in range False if not in range
      */
     public boolean otherInMeleeRange(Character other) {
-        Rectangle rect = new Rectangle(getPosition().x + sprite.getWidth()/2 - (lookingLeft ? sprite.getWidth()*1.2f : 0), getPosition().y,sprite.getWidth()*1.2f,sprite.getHeight()/1.5f);
+        Rectangle rect = new Rectangle(getPosition().x + sprite.getWidth()/2 - (lookingLeft ? sprite.getWidth()*meleeDistancesMult : 0), getPosition().y,sprite.getWidth()*meleeDistancesMult,sprite.getHeight()/1.5f);
         Rectangle otherRect = new Rectangle(other.getPosition().x, other.getPosition().y, other.sprite.getWidth(), other.sprite.getHeight());
 
         return rect.overlaps(otherRect);
@@ -259,7 +265,8 @@ public class Character {
      * @return Boolean. True if in range False if not in range
      */
     public boolean otherInRangedRange(Character other) {
-        Rectangle rect = new Rectangle(getPosition().x + sprite.getWidth()/2 - (lookingLeft ? sprite.getWidth()*1.2f : 0), getPosition().y,sprite.getWidth()*15f,sprite.getHeight()/1.5f);        Rectangle otherRect = new Rectangle(other.getPosition().x, other.getPosition().y, other.sprite.getWidth(), other.sprite.getHeight());
+        Rectangle rect = new Rectangle(getPosition().x + sprite.getWidth()/2 - (lookingLeft ? sprite.getWidth()*rangedDistancesMult : 0), getPosition().y,sprite.getWidth()*rangedDistancesMult,sprite.getHeight()/1.5f);
+        Rectangle otherRect = new Rectangle(other.getPosition().x, other.getPosition().y, other.sprite.getWidth(), other.sprite.getHeight());
 
         return rect.overlaps(otherRect);
     }

@@ -16,6 +16,9 @@ public class Player extends Character {
     private float teleDashDistance = 1;
     private float rangedAttackCost = 1;
     private float teleDashCoolDown;
+    private float particleSpawnCooldownDefault = 0.1f;
+    private float particleSpawnCooldown;
+
 
     /**
      * Constructor for the Player class. creates a Player Object. Initialises methods, sets the size
@@ -43,6 +46,7 @@ public class Player extends Character {
         // Give Character Box2D Physics
         box2dBody = box2DHandler.createCharacterShape(sprite.getX(), sprite.getY(), sprite.getWidth() * 0.75f, sprite.getHeight());
         teleDashCoolDown = 0;
+        particleSpawnCooldown = 0;
     }
 
     /**
@@ -55,6 +59,8 @@ public class Player extends Character {
 
         teleDashCoolDown -= dt;
         if (teleDashCoolDown < 0) teleDashCoolDown = 0;
+        particleSpawnCooldown -= dt;
+        if (particleSpawnCooldown < 0) particleSpawnCooldown = 0;
 
         health -= dt/4;
         if (health < 0) {
@@ -139,26 +145,18 @@ public class Player extends Character {
     public void rangedAttack(Character other, float damageModifier) {
         if (other.currentState == State.DEAD || currentState == State.DEAD) return;
         if(health - rangedAttackCost > 0) {
-            particles.addParticle(ParticleHandler.Type.FLOAT, "particleB.png",
-                    new Vector2(getPosition().x + sprite.getWidth()/2 + sprite.getWidth()*1.2f*(lookingLeft ? -2 : 2),
-                            getPosition().y + sprite.getHeight()/2),
-                    1000, 1f, 140, new Color(0.5f, 0.1f, 0.5f, 0.8f), 0.2f);
-            particles.addParticle(ParticleHandler.Type.FLOAT, "particleB.png",
-                    new Vector2(getPosition().x + sprite.getWidth()/2 + sprite.getWidth()*1.2f*(lookingLeft ? -3f : 3f),
-                            getPosition().y + sprite.getHeight()/2),
-                    1000, 1f, 140, new Color(0.5f, 0.1f, 0.5f, 0.8f), 0.2f);
-            particles.addParticle(ParticleHandler.Type.FLOAT, "particleB.png",
-                    new Vector2(getPosition().x + sprite.getWidth()/2 + sprite.getWidth()*1.2f*(lookingLeft ? -4 : 4),
-                            getPosition().y + sprite.getHeight()/2),
-                    1000, 1f, 140, new Color(0.5f, 0.1f, 0.5f, 0.8f), 0.2f);
-            particles.addParticle(ParticleHandler.Type.FLOAT, "particleB.png",
-                    new Vector2(getPosition().x + sprite.getWidth()/2 + sprite.getWidth()*1.2f*(lookingLeft ? -5 : 5),
-                            getPosition().y + sprite.getHeight()/2),
-                    1000, 1f, 140, new Color(0.5f, 0.1f, 0.5f, 0.8f), 0.2f);
-            particles.addParticle(ParticleHandler.Type.FLOAT, "particleB.png",
-                    new Vector2(getPosition().x + sprite.getWidth()/2 + sprite.getWidth()*1.2f*(lookingLeft ? -6 : 6),
-                            getPosition().y + sprite.getHeight()/2),
-                    1000, 1f, 140, new Color(0.5f, 0.1f, 0.5f, 0.8f), 0.2f);
+            if (particleSpawnCooldown <= 0) {
+                float distance = sprite.getWidth()*rangedDistancesMult;
+                int particleNumber = 20;
+                for (int i = 1; i < particleNumber; i++) {
+                    particles.addParticle(ParticleHandler.Type.FLOAT, "particleC.png", new Vector2(getPosition().x + sprite.getWidth()/2 + (distance/particleNumber * i) * (lookingLeft ? -1 : 1), getPosition().y + sprite.getHeight()/3), 800, 0.05f, 30, new Color(1,1,1,0.8f), 0.08f);
+                }
+
+                SoundPlayer.getInstance().playPlayerAttackBeam(1);
+                particleSpawnCooldown = particleSpawnCooldownDefault;
+                health -= rangedAttackCost;
+            }
+
             stateTime = 0;
             if (otherInRangedRange(other)) {
                 other.takeDamage(meleeDamage * 3);
@@ -169,6 +167,7 @@ public class Player extends Character {
                 } else {
                     MyGdxGame.score += 50f;
                 }
+
             }
         }
     }
@@ -180,8 +179,11 @@ public class Player extends Character {
      */
     public void teleDash(float x) {
         if (health - teleDashCost > 0 && teleDashCoolDown <= 0) {
-            particles.addParticle(ParticleHandler.Type.EXPLOSION, "particleB.png", new Vector2(sprite.getX() + sprite.getWidth() / 2, sprite.getY() + sprite.getHeight()/2), 500, 1, 140, new Color(70 / 255, 20 / 255, 186 / 255, 0.7f), 0.5f);
-            particles.addParticle(ParticleHandler.Type.EXPLOSION, "particleB.png", new Vector2(sprite.getX() + sprite.getWidth() / 2 + teleDashDistance*Box2DHandler.PPM, sprite.getY() + sprite.getHeight()/2), 500, 1, 140, new Color(70 / 255, 20 / 255, 186 / 255, 0.7f), 0.5f);
+            if (particleSpawnCooldown <= 0) {
+                particles.addParticle(ParticleHandler.Type.EXPLOSION, "particleB.png", new Vector2(sprite.getX() + sprite.getWidth() / 2, sprite.getY() + sprite.getHeight() / 2), 500, 1, 140, new Color(70 / 255, 20 / 255, 186 / 255, 0.7f), 0.5f);
+                particles.addParticle(ParticleHandler.Type.EXPLOSION, "particleB.png", new Vector2(sprite.getX() + sprite.getWidth() / 2 + teleDashDistance * Box2DHandler.PPM, sprite.getY() + sprite.getHeight() / 2), 500, 1, 140, new Color(70 / 255, 20 / 255, 186 / 255, 0.7f), 0.5f);
+                particleSpawnCooldown = particleSpawnCooldownDefault;
+            }
 
             box2dBody.setTransform(box2dBody.getPosition().x + (x * teleDashDistance), box2dBody.getPosition().y, 0);
 

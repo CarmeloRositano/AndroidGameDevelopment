@@ -220,13 +220,13 @@
   <object id="130" x="672" y="608" width="128" height="64"/>
   <object id="131" x="224" y="608" width="480" height="32"/>
   <object id="132" x="-32" y="736" width="1216" height="320"/>
-  <object id="133" x="-32" y="1024" width="384" height="96"/>
-  <object id="134" x="864" y="1024" width="320" height="96"/>
+  <object id="133" x="-32" y="736" width="384" height="384"/>
+  <object id="134" x="864" y="736" width="320" height="384"/>
   <object id="135" x="480" y="1152" width="256" height="32"/>
   <object id="136" x="512" y="1152" width="192" height="64"/>
-  <object id="137" x="-32" y="1280" width="384" height="128"/>
-  <object id="138" x="-32" y="1312" width="1216" height="96"/>
-  <object id="139" x="864" y="1280" width="320" height="128"/>
+  <object id="137" x="-32" y="1280" width="384" height="256"/>
+  <object id="138" x="-32" y="1312" width="1216" height="224"/>
+  <object id="139" x="864" y="1280" width="320" height="256"/>
   <object id="140" x="0" y="544" width="32" height="64"/>
   <object id="141" x="512" y="480" width="160" height="32"/>
  </objectgroup>

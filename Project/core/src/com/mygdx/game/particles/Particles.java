@@ -199,7 +199,7 @@ public class Particles {
     }
 
     public void setDuration(float seconds) {
-        emitEndTime = System.currentTimeMillis() + (long)seconds*1000;
+        emitEndTime = System.currentTimeMillis() + (long)(seconds*1000);
     }
 
     public void dispose(){

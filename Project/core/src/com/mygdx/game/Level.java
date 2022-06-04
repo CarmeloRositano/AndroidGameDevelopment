@@ -67,6 +67,13 @@ public class Level {
         addMapPiece(-1);
         addMapPiece(0);
         addMapPiece(1);
+
+//        // Testmap, comment out above when using
+//        addMapPiece("TestMap", -1);
+//        addMapPiece("TestMap", 0);
+//        addMapPiece("TestMap", 1);
+
+
         prevCamX = camera.position.x;
     }
 

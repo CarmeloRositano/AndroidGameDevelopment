@@ -47,6 +47,7 @@ public class SoundPlayer {
     // Sounds to be stored in memory
     private Sound jump;
     private Sound playerAttack;
+    private Sound playerAttackBeam;
     private Sound enemyAttack;
     private Sound enemyHurt;
     private Sound playerHurt;
@@ -62,6 +63,7 @@ public class SoundPlayer {
         // Gdx.audio.newSound prints lots of information when loading to memory. I don't know why
         jump = Gdx.audio.newSound(Gdx.files.internal("sounds/jump.mp3"));
         playerAttack = Gdx.audio.newSound(Gdx.files.internal("sounds/player_attack.mp3"));
+        playerAttackBeam = Gdx.audio.newSound(Gdx.files.internal("sounds/player_attack_beam.mp3"));
         enemyAttack = Gdx.audio.newSound(Gdx.files.internal("sounds/enemy_attack.mp3"));
         enemyHurt = Gdx.audio.newSound(Gdx.files.internal("sounds/enemy_hurt.mp3"));
         playerHurt = Gdx.audio.newSound(Gdx.files.internal("sounds/player_hurt.mp3"));
@@ -76,6 +78,7 @@ public class SoundPlayer {
     public void dispose() {
         jump.dispose();
         playerAttack.dispose();
+        playerAttackBeam.dispose();
         enemyAttack.dispose();
         enemyHurt.dispose();
         playerHurt.dispose();
@@ -89,6 +92,8 @@ public class SoundPlayer {
     public void playJump(float volume) { jump.play(volume); }
 
     public void playPlayerAttack(float volume) { playerAttack.play(volume); }
+
+    public void playPlayerAttackBeam(float volume) { playerAttackBeam.play(volume); }
 
     public void playEnemyAttack(float volume) { enemyAttack.play(volume); }
 
@@ -108,6 +113,7 @@ public class SoundPlayer {
     public void clearAllSounds() {
         jump.stop();
         playerAttack.stop();
+        playerAttackBeam.stop();
         enemyAttack.stop();
         enemyHurt.stop();
         playerHurt.stop();

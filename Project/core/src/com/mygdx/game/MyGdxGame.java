@@ -26,7 +26,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	// Player
 	public static Player player;				// Static so accessible for targeting
 	float attackCooldownDefault = 0.3f;
-	float rangedAttackCooldownDefault = 10f;
+	float rangedAttackCooldownDefault = 6f;
 	float attackCooldown;
 	float rangedAttackCooldown;
 
@@ -199,6 +199,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		attackCooldown = attackCooldownDefault;
 		List<Character> enemies = level.getEnemies();
 		for (Character enemy : enemies) {
+			if ((enemy.getPosition().x < player.getPosition().x && !player.lookingLeft) || (enemy.getPosition().x > player.getPosition().x && player.lookingLeft)) continue;
+			if (Math.abs(enemy.getPosition().x - player.getPosition().x) > player.sprite.getWidth()*18) continue;
 			player.meleeAttack(enemy, 0);
 		}
 	}
@@ -207,6 +209,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		rangedAttackCooldown = rangedAttackCooldownDefault;
 		List<Character> enemies = level.getEnemies();
 		for (Character enemy : enemies) {
+			if ((enemy.getPosition().x < player.getPosition().x && !player.lookingLeft) || (enemy.getPosition().x > player.getPosition().x && player.lookingLeft)) continue;
+			if (Math.abs(enemy.getPosition().x - player.getPosition().x) > player.sprite.getWidth()*18) continue;
 			player.rangedAttack(enemy, 0);
 		}
 	}
