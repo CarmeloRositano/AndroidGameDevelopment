@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.mygdx.game.AnimationBuild;
 import com.mygdx.game.Box2DHandler;
 import com.mygdx.game.Character;
+import com.mygdx.game.MyGdxGame;
 
 import java.util.Random;
 
@@ -66,6 +67,8 @@ public class Minotaur extends EnemyAI {
 
         //Give Character Box2D Physics
         box2dBody = box2DHandler.createCharacterShape(sprite.getX(), sprite.getY(), sprite.getWidth() * 0.75f, sprite.getHeight());
+
+        health *=1.5f;
     }
 
     /**

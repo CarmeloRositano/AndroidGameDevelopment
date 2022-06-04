@@ -124,7 +124,7 @@ public class EnemyAI extends Character {
     public void takeDamage(float damage) {
         super.takeDamage(damage);
         if (aiState != AIState.CHASING) aiState = AIState.CHASING;
-        attackCooldown = attackCooldownDefault;
+        if (!MyGdxGame.hardmode && Math.random() < 0.2f) attackCooldown = attackCooldownDefault;
         SoundPlayer.getInstance().playEnemyHurt(1);
     }
 

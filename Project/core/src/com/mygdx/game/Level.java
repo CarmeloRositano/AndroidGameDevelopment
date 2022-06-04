@@ -41,6 +41,7 @@ public class Level {
     private Vector<Tuple<TiledMap, TiledMapRenderer, Body[]>> map;
     private TiledMap background;
     private TiledMapRenderer backgroundRenderer;
+    private String path;
 
     private Box2DHandler box2DHandler;
     private OrthographicCamera camera;
@@ -50,8 +51,10 @@ public class Level {
      * Initialises field variables and prepares level.
      */
     public Level(Box2DHandler handler, OrthographicCamera camera) {
+        path = "levels/" + (MyGdxGame.hardmode ? "hardmode/" : "normalmode/");
+
         map = new Vector<>();
-        background = new TmxMapLoader().load("levels/Background.tmx");
+        background = new TmxMapLoader().load(path + "Background.tmx");
         backgroundRenderer = new OrthogonalTiledMapRenderer(background);
 
         // Initialise field variables with arguments
@@ -170,7 +173,7 @@ public class Level {
         float offset = (currentChunk * tileWidth * mapWidth) + (side * (tileWidth * mapWidth));
 
         // Loads map and adds it to a new renderer
-        TiledMap tiledMap = new TmxMapLoader().load("levels/" + mapName + ".tmx");
+        TiledMap tiledMap = new TmxMapLoader().load(path + mapName + ".tmx");
         TiledMapRenderer renderer = new OrthogonalTiledMapRenderer(tiledMap);
 
         // Set offset of tiled map then adds it to map vector

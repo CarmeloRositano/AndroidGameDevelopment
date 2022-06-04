@@ -16,7 +16,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	public static float R_HEIGHT;
 	public enum GameState { MAIN_MENU, PLAYING, PAUSED, COMPLETE }
 
-	GameState gameState;
+	public static GameState gameState;
 
 	static float score;
 	float playerHealth;
@@ -43,7 +43,8 @@ public class MyGdxGame extends ApplicationAdapter {
 
 	// Music
 	String menuMusic = "sounds/Music/Prandium - Castle.mp3";
-	String gameMusic = "sounds/Music/Prandium - Mountain.mp3";
+	String gameMusicNM = "sounds/Music/Prandium - Mountain.mp3";
+	String gameMusicHM = "sounds/Music/David Carso - Countdown.mp3";
 	float menuMusicVolume = 1f;
 	float gameMusicVolume = 1f;
 
@@ -217,11 +218,17 @@ public class MyGdxGame extends ApplicationAdapter {
 
 	public void newNormalGame() {
 		hardmode = false;
+
+		SoundPlayer.getInstance().clearAllSounds();
+		SoundPlayer.getInstance().playNewMusic(gameMusicNM, gameMusicVolume, true);
 		newGame();
 	}
 
 	public void newHardmodeGame() {
 		hardmode = true;
+
+		SoundPlayer.getInstance().clearAllSounds();
+		SoundPlayer.getInstance().playNewMusic(gameMusicHM, gameMusicVolume, true);
 		newGame();
 	}
 
@@ -247,9 +254,6 @@ public class MyGdxGame extends ApplicationAdapter {
 		totalTime = 0f;
 		score = 0;
 		gameState = GameState.PLAYING;
-
-		SoundPlayer.getInstance().clearAllSounds();
-		SoundPlayer.getInstance().playNewMusic(gameMusic, gameMusicVolume, true);
 	}
 
 	/**

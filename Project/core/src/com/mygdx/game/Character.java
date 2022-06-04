@@ -23,7 +23,7 @@ public class Character {
     // Health and Attack
     protected float health = 3;
     protected float meleeDamage = 1;
-    protected float rangeDamage = 3;
+    protected float rangeDamage = 4.4f;
     protected float meleeDistancesMult = 1.2f;
     protected float rangedDistancesMult = 8f;
 
@@ -78,6 +78,7 @@ public class Character {
         deathPlayed = false;
 
         particles = new ParticleHandler(camera);
+        if (MyGdxGame.hardmode) health *=2;
     }
 
     /**
@@ -139,6 +140,8 @@ public class Character {
         particles.update();
     }
 
+    boolean isFlipPrev;
+
     /**
      * Renders the character
      */
@@ -147,7 +150,8 @@ public class Character {
         particles.render();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        sprite.flip(lookingLeft, false);
+        sprite.setFlip(lookingLeft, false);
+
         batch.draw(sprite, sprite.getX() - sprite.getHeight()/2,
                 sprite.getY() - sprite.getHeight()/2,
                 sprite.getWidth() * 2,
