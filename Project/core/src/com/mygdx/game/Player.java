@@ -124,6 +124,36 @@ public class Player extends Character {
         }
     }
 
+    @Override
+    public void rangedAttack(Character other, float damageModifier) {
+        if (other.currentState == State.DEAD || currentState == State.DEAD) return;
+        health -= 1;
+        currentState = State.ATTACKING;
+        particles.addParticle(ParticleHandler.Type.FLOAT, "particleB.png",
+                new Vector2(getPosition().x + sprite.getWidth()/2 + sprite.getWidth()*1.2f*(lookingLeft ? -1 : 1),
+                            getPosition().y + sprite.getHeight()/2),
+                    1000, 1f, 140, new Color(0.5f, 0.1f, 0.5f, 0.8f), 0.2f);
+        particles.addParticle(ParticleHandler.Type.FLOAT, "particleB.png",
+                new Vector2(getPosition().x + sprite.getWidth()/2 + sprite.getWidth()*1.2f*(lookingLeft ? -1.5f : 1.5f),
+                        getPosition().y + sprite.getHeight()/2),
+                1000, 1f, 140, new Color(0.5f, 0.1f, 0.5f, 0.8f), 0.2f);
+        particles.addParticle(ParticleHandler.Type.FLOAT, "particleB.png",
+                new Vector2(getPosition().x + sprite.getWidth()/2 + sprite.getWidth()*1.2f*(lookingLeft ? -2 : 2),
+                        getPosition().y + sprite.getHeight()/2),
+                1000, 1f, 140, new Color(0.5f, 0.1f, 0.5f, 0.8f), 0.2f);
+        stateTime = 0;
+        if (otherInRangedRange(other)) {
+            other.takeDamage(meleeDamage * 3);
+            if (other.health <= 0) health += 1.5f;
+            if (health > 10) health = 10;
+            if (MyGdxGame.hardmode) {
+                MyGdxGame.score += 100;
+            } else {
+                MyGdxGame.score += 50f;
+            }
+        }
+    }
+
     public void teleDash(float x) {
         if (health - teleDashCost > 0 && teleDashCooldown <= 0) {
             particles.addParticle(ParticleHandler.Type.EXPLOSION, "particleB.png", new Vector2(sprite.getX() + sprite.getWidth() / 2, sprite.getY() + sprite.getHeight()/2), 500, 1, 140, new Color(70 / 255, 20 / 255, 186 / 255, 0.7f), 0.5f);

@@ -9,11 +9,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-import jdk.internal.org.jline.utils.ShutdownHooks;
-
 public class UserInterface {
     // UI Buttons
-    private Button moveLeftButton, moveRightButton, jumpButton, shootButton, pauseButton;
+    private Button moveLeftButton, moveRightButton, jumpButton, meeleeAttackButton, rangedAttackButton, pauseButton;
     private Button resumeButton, restartButton, mainMenuButton;
     private Button normalModeButton, hardModeButton, quitButton;
     private Button nextLevelButton;
@@ -35,7 +33,8 @@ public class UserInterface {
         moveLeftButton = new Button(0, 0, w/4, h/2, new Texture("buttons/controls/left.png"));
         moveRightButton = new Button(w/4, 0, w/4, h/2, new Texture("buttons/controls/right.png"));
         jumpButton = new Button(0, h/2, w/2, h/2, new Texture("buttons/controls/jump.png"));
-        shootButton = new Button(w/2, 0, w/2, h/9.6f*8.6f, new Texture("buttons/controls/shoot.png"));
+        meeleeAttackButton = new Button(w/2, 0, w/3, h/9.6f*8.6f, new Texture("buttons/controls/shoot.png"));
+        rangedAttackButton = new Button(w/2 + meeleeAttackButton.w, 0, w/6.2f, h/9.6f*8.6f, new Texture("buttons/controls/shoot.png"));
         pauseButton = new Button(w/2, h/9.6f*8.6f, w/2, h/9.6f, new Texture("buttons/controls/pause.png"));
         resumeButton = new Button(w*0.35f, h*0.5f, w*0.3f, h*0.14f, new Texture("buttons/buttonLong_blue.png"));
         restartButton = new Button(w*0.325f, h*0.35f, w*0.35f, h*0.14f, new Texture("buttons/buttonLong_blue.png"));
@@ -79,7 +78,8 @@ public class UserInterface {
                 moveLeftButton.update(checkTouch, touchX, touchY);
                 moveRightButton.update(checkTouch, touchX, touchY);
                 jumpButton.update(checkTouch, touchX, touchY);
-                shootButton.update(checkTouch, touchX, touchY);
+                meeleeAttackButton.update(checkTouch, touchX, touchY);
+                rangedAttackButton.update(checkTouch, touchX, touchY);
                 pauseButton.update(checkTouch, touchX, touchY);
                 break;
             case PAUSED:
@@ -228,7 +228,8 @@ public class UserInterface {
                 moveLeftButton.draw(uiBatch);
                 moveRightButton.draw(uiBatch);
                 jumpButton.draw(uiBatch);
-                shootButton.draw(uiBatch);
+                meeleeAttackButton.draw(uiBatch);
+                rangedAttackButton.draw(uiBatch);
                 pauseButton.draw(uiBatch);
                 uiBatch.end();
 
@@ -281,8 +282,12 @@ public class UserInterface {
         return (Gdx.input.isKeyPressed(Input.Keys.UP) || jumpButton.justPressed());
     }
 
-    public boolean shootButtonPressed() {
-        return Gdx.input.isKeyPressed(Input.Keys.Z) || shootButton.justPressed();
+    public boolean meleeAttackButtonPressed() {
+        return Gdx.input.isKeyPressed(Input.Keys.Z) || meeleeAttackButton.justPressed();
+    }
+
+    public boolean rangedAttackButtonPressed() {
+        return Gdx.input.isKeyPressed(Input.Keys.X) || rangedAttackButton.justPressed();
     }
 
     public boolean pauseButtonPressed() {
@@ -326,7 +331,8 @@ public class UserInterface {
         moveLeftButton.dispose();
         moveRightButton.dispose();
         jumpButton.dispose();
-        shootButton.dispose();
+        rangedAttackButton.dispose();
+        meeleeAttackButton.dispose();
         pauseButton.dispose();
         resumeButton.dispose();
         restartButton.dispose();

@@ -210,13 +210,29 @@ public class Character {
         currentState = State.ATTACKING;
         stateTime = 0;
         if (otherInMeleeRange(other)) {
-            System.out.println(meleeDamage + damageModifier);
             other.takeDamage(meleeDamage + damageModifier);
+        }
+    }
+
+    public void rangedAttack(Character other, float damageModifier) {
+        if (other.currentState == State.DEAD || currentState == State.DEAD) return;
+
+        currentState = State.ATTACKING;
+        stateTime = 0;
+        if (otherInRangedRange(other)) {
+            other.takeDamage((meleeDamage * 3) + damageModifier);
         }
     }
 
     public boolean otherInMeleeRange(Character other) {
         Rectangle rect = new Rectangle(getPosition().x + sprite.getWidth()/2 - (lookingLeft ? sprite.getWidth()*1.2f : 0), getPosition().y,sprite.getWidth()*1.2f,sprite.getHeight()/1.5f);
+        Rectangle otherRect = new Rectangle(other.getPosition().x, other.getPosition().y, other.sprite.getWidth(), other.sprite.getHeight());
+
+        return rect.overlaps(otherRect);
+    }
+
+    public boolean otherInRangedRange(Character other) {
+        Rectangle rect = new Rectangle(getPosition().x + sprite.getWidth()/2 - (lookingLeft ? sprite.getWidth()*1.2f : 0), getPosition().y,sprite.getWidth()*5f,sprite.getHeight()/1.5f);
         Rectangle otherRect = new Rectangle(other.getPosition().x, other.getPosition().y, other.sprite.getWidth(), other.sprite.getHeight());
 
         return rect.overlaps(otherRect);

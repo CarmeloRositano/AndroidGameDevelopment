@@ -2,7 +2,6 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -27,7 +26,9 @@ public class MyGdxGame extends ApplicationAdapter {
 	// Player
 	public static Player player;				// Static so accessible for targeting
 	float attackCooldownDefault = 0.3f;
+	float rangedAttackCooldownDefault = 3f;
 	float attackCooldown;
+	float rangedAttackCooldown;
 
 	// Rendering
 	SpriteBatch batch, uiBatch;
@@ -142,8 +143,9 @@ public class MyGdxGame extends ApplicationAdapter {
 				box2DHandler.update();
 				player.update();
 
-				attackCooldown -= dt;
+				attackCooldown -= dt; rangedAttackCooldown -= dt;
 				if (attackCooldown < 0) attackCooldown = 0;
+				if (rangedAttackCooldown < 0) rangedAttackCooldown = 0;
 				playerHealth = player.health;
 
 				int moveX = 0;
@@ -157,9 +159,13 @@ public class MyGdxGame extends ApplicationAdapter {
 						moveX += 1;
 					}
 					if (userInterface.jumpButtonPressed()) player.jump();
-					if (userInterface.shootButtonPressed() && attackCooldown <= 0) {
+					if (userInterface.meleeAttackButtonPressed() && attackCooldown <= 0) {
 						playerAttack();
 						SoundPlayer.getInstance().playPlayerAttack(1);
+					}
+					if (userInterface.rangedAttackButtonPressed() && rangedAttackCooldown <= 0) {
+						playerRangedAttack();
+						//TODO PLAY RANGED ATTACK SOUND
 					}
 					if(userInterface.pauseButtonPressed()) gameState = GameState.PAUSED;
 
@@ -196,6 +202,14 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 	}
 
+	public void playerRangedAttack() {
+		rangedAttackCooldown = rangedAttackCooldownDefault;
+		List<Character> enemies = level.getEnemies();
+		for (Character enemy : enemies) {
+			player.rangedAttack(enemy, 0);
+		}
+	}
+
 	public void newNormalGame() {
 		hardmode = false;
 		newGame();
@@ -223,6 +237,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		player = new Player(box2DHandler, camera, batch);
 		player.setPosition(level.getPlayerSpawn().x, level.getPlayerSpawn().y);
 		attackCooldown = attackCooldownDefault;
+		rangedAttackCooldown = rangedAttackCooldownDefault;
 
 		playerHealth = player.health;
 		totalTime = 0f;
