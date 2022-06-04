@@ -173,6 +173,10 @@ public class Character {
                             (sprite.getY() + 32) / Box2DHandler.PPM, 0);
     }
 
+    /**
+     * Returns the current position of the character
+     * @return Vector2 position
+     */
     public Vector2 getPosition() {
         return new Vector2(sprite.getX(), sprite.getY());
     }
@@ -205,6 +209,12 @@ public class Character {
         }
     }
 
+    /**
+     * Deals damage to another Character if applicable (Character is alive, the attack is in range of
+     *      * the other character) and applied a damage modifier.
+     * @param other The other Character that is being damage
+     * @param damageModifier A modifier that is added to the base damage
+     */
     public void meleeAttack(Character other, float damageModifier) {
         if (other.currentState == State.DEAD || currentState == State.DEAD) return;
 
@@ -215,6 +225,12 @@ public class Character {
         }
     }
 
+    /**
+     * Deals damage to another Character if applicable (Character is alive, the attack is in range of
+     * the other character) and applied a damage modifier.
+     * @param other The other Character that is being damage
+     * @param damageModifier A modifier that is added to the base damage
+     */
     public void rangedAttack(Character other, float damageModifier) {
         if (other.currentState == State.DEAD || currentState == State.DEAD) return;
 
@@ -225,6 +241,11 @@ public class Character {
         }
     }
 
+    /**
+     * Checks if other is in melee range and returns result
+     * @param other The other Character that is being melee attacked
+     * @return Boolean. True if in range False if not in range
+     */
     public boolean otherInMeleeRange(Character other) {
         Rectangle rect = new Rectangle(getPosition().x + sprite.getWidth()/2 - (lookingLeft ? sprite.getWidth()*1.2f : 0), getPosition().y,sprite.getWidth()*1.2f,sprite.getHeight()/1.5f);
         Rectangle otherRect = new Rectangle(other.getPosition().x, other.getPosition().y, other.sprite.getWidth(), other.sprite.getHeight());
@@ -232,12 +253,20 @@ public class Character {
         return rect.overlaps(otherRect);
     }
 
+    /**
+     * Checks if other is in ranged range and returns result
+     * @param other The other Character that is being melee attacked
+     * @return Boolean. True if in range False if not in range
+     */
     public boolean otherInRangedRange(Character other) {
         Rectangle rect = new Rectangle(getPosition().x + sprite.getWidth()/2 - (lookingLeft ? sprite.getWidth()*1.2f : 0), getPosition().y,sprite.getWidth()*15f,sprite.getHeight()/1.5f);        Rectangle otherRect = new Rectangle(other.getPosition().x, other.getPosition().y, other.sprite.getWidth(), other.sprite.getHeight());
 
         return rect.overlaps(otherRect);
     }
 
+    /**
+     * Moves the character on the Y axis applies particles from their original jump coordinates
+     */
     public void jump() {
         if (currentState == State.DEAD) return;
 
@@ -254,6 +283,10 @@ public class Character {
         }
     }
 
+    /**
+     * makes the character take x damage if they are able to
+     * @param damage the amount of damage that they are going to take
+     */
     public void takeDamage(float damage) {
         if (currentState == State.DEAD) return;
         health -= damage;

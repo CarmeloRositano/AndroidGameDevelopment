@@ -5,22 +5,25 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Box2D;
 import com.mygdx.game.particles.ParticleHandler;
 
 public class Player extends Character {
-    private float teleDashCooldownDefault = 1;
-    private float teleDashCooldown;
+    private float teleDashCoolDownDefault = 1;
     private float teleDashCost = 1;
     private float teleDashDistance = 1;
     private float rangedAttackCost = 1;
+    private float teleDashCoolDown;
 
+    /**
+     * Constructor for the Player class. creates a Player Object. Initialises methods, sets the size
+     * of the player sprite. Calls and store the Player animations, and textures.
+     * @param box2DHandler Box2D handler for the world. Handles all Box2D interactions.
+     * @param camera The worlds camera that is used
+     * @param batch The batch that is used to render the player
+     */
     public Player(Box2DHandler box2DHandler, Camera camera, SpriteBatch batch) {
         super(box2DHandler, camera, batch);
         sprite.setSize(32, 32);
@@ -39,16 +42,19 @@ public class Player extends Character {
 
         // Give Character Box2D Physics
         box2dBody = box2DHandler.createCharacterShape(sprite.getX(), sprite.getY(), sprite.getWidth() * 0.75f, sprite.getHeight());
-        teleDashCooldown = 0;
+        teleDashCoolDown = 0;
     }
 
+    /**
+     * Updates the Player and animation state based on its current state.
+     */
     @Override
     public void update() {
         super.update();
         float dt = Gdx.graphics.getDeltaTime();
 
-        teleDashCooldown -= dt;
-        if (teleDashCooldown < 0) teleDashCooldown = 0;
+        teleDashCoolDown -= dt;
+        if (teleDashCoolDown < 0) teleDashCoolDown = 0;
 
         health -= dt/4;
         if (health < 0) {
@@ -66,6 +72,9 @@ public class Player extends Character {
         camera.position.y += camYDist / 1.5;
     }
 
+    /**
+     * Render the player
+     */
     @Override
     public void render() {
         super.render();
@@ -73,8 +82,8 @@ public class Player extends Character {
 
     /**
      * Hard sets the character position in the world
-     * @param x
-     * @param y
+     * @param x coordinates
+     * @param y coordinates
      */
     public void setPosition(float x, float y) {
         super.setPosition(x, y);
@@ -82,12 +91,22 @@ public class Player extends Character {
         camera.position.y = y;
     }
 
+    /**
+     * Makes the player take damage and plays the player taking damage sound
+     * @param damage The damage that the player will be taking
+     */
     @Override
     public void takeDamage(float damage) {
         super.takeDamage(damage);
         SoundPlayer.getInstance().playPlayerHurt(1);
     }
 
+    /**
+     * Deals damage to another Character if applicable (Player is alive, the attack is in range of
+     * the other character) and applied a damage modifier.
+     * @param other The other Character that is being damage
+     * @param damageModifier A modifier that is added to the base damage
+     */
     @Override
     public void meleeAttack(Character other, float damageModifier) {
         if (other.currentState == State.DEAD || currentState == State.DEAD) return;
@@ -110,6 +129,12 @@ public class Player extends Character {
         }
     }
 
+    /**
+     * Deals damage to another Character if applicable (Player is alive, the attack is in range of
+     * the other character) and applied a damage modifier.
+     * @param other The other Character that is being damage
+     * @param damageModifier A modifier that is added to the base damage
+     */
     @Override
     public void rangedAttack(Character other, float damageModifier) {
         if (other.currentState == State.DEAD || currentState == State.DEAD) return;
@@ -148,15 +173,20 @@ public class Player extends Character {
         }
     }
 
+    /**
+     * Makes the player dash forward x distance. Makes particles appear where the player was and
+     * where they teleport to. removes lives from the player.
+     * @param x the distance that the player is going to be teleported
+     */
     public void teleDash(float x) {
-        if (health - teleDashCost > 0 && teleDashCooldown <= 0) {
+        if (health - teleDashCost > 0 && teleDashCoolDown <= 0) {
             particles.addParticle(ParticleHandler.Type.EXPLOSION, "particleB.png", new Vector2(sprite.getX() + sprite.getWidth() / 2, sprite.getY() + sprite.getHeight()/2), 500, 1, 140, new Color(70 / 255, 20 / 255, 186 / 255, 0.7f), 0.5f);
             particles.addParticle(ParticleHandler.Type.EXPLOSION, "particleB.png", new Vector2(sprite.getX() + sprite.getWidth() / 2 + teleDashDistance*Box2DHandler.PPM, sprite.getY() + sprite.getHeight()/2), 500, 1, 140, new Color(70 / 255, 20 / 255, 186 / 255, 0.7f), 0.5f);
 
             box2dBody.setTransform(box2dBody.getPosition().x + (x * teleDashDistance), box2dBody.getPosition().y, 0);
 
             health -= teleDashCost;
-            teleDashCooldown = teleDashCooldownDefault;
+            teleDashCoolDown = teleDashCoolDownDefault;
 
             SoundPlayer.getInstance().playTeleDash(1);
         }
