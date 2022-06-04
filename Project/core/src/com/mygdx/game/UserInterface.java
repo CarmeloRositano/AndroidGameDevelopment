@@ -66,12 +66,15 @@ public class UserInterface {
         int touchX = Gdx.input.getX();
         int touchY = Gdx.input.getY();
 
+        boolean fadeFinished;
+
         switch (currentGameState) {
             // Poll user for input
             case MAIN_MENU:
-                normalModeButton.update(checkTouch, touchX, touchY);
-                hardModeButton.update(checkTouch, touchX, touchY);
-                quitButton.update(checkTouch, touchX, touchY);
+                fadeFinished = deathFade == 1;
+                normalModeButton.update(checkTouch && fadeFinished, touchX, touchY);
+                hardModeButton.update(checkTouch && fadeFinished, touchX, touchY);
+                quitButton.update(checkTouch && fadeFinished, touchX, touchY);
                 break;
             case PLAYING:
                 deathFade = 0;
@@ -88,7 +91,7 @@ public class UserInterface {
                 mainMenuButton.update(checkTouch, touchX, touchY);
                 break;
             case COMPLETE: {
-                boolean fadeFinished = deathFade == 1;
+                fadeFinished = deathFade == 1;
                 restartButton.update(checkTouch && fadeFinished, touchX, touchY);
                 mainMenuButton.update(checkTouch && fadeFinished, touchX, touchY);
             }
@@ -168,6 +171,7 @@ public class UserInterface {
                 uiBatch.end();
                 break;
             case MAIN_MENU:
+                fadeScreen(camera);
                 uiBatch.begin();
                 // Render and slowly zoom in menu background
                 float zoomFactorBack = totalTime*5 > 120 ? 120 : totalTime*5;
