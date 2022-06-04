@@ -130,6 +130,8 @@ public class EnemyAI extends Character {
     }
 
     private boolean canSeePlayer(float playerX, float playerY) {
+        if (MyGdxGame.player.currentState == State.DEAD) return false;
+
         float angle = (float) Math.toDegrees(Math.atan2(playerY - this.getPosition().y, Math.abs(playerX - this.getPosition().x)));
 
         // Check if player is within view distance and angle

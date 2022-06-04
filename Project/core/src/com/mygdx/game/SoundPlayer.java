@@ -59,6 +59,7 @@ public class SoundPlayer {
      * gameplay sounds, where they can be played when necessary
      */
     private SoundPlayer() {
+        // Gdx.audio.newSound prints lots of information when loading to memory. I don't know why
         jump = Gdx.audio.newSound(Gdx.files.internal("sounds/jump.mp3"));
         playerAttack = Gdx.audio.newSound(Gdx.files.internal("sounds/player_attack.mp3"));
         enemyAttack = Gdx.audio.newSound(Gdx.files.internal("sounds/enemy_attack.mp3"));

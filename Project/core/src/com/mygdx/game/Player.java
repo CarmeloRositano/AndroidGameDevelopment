@@ -20,8 +20,6 @@ public class Player extends Character {
     private float teleDashCost = 1;
     private float teleDashDistance = 1;
 
-    private boolean lastMoveLeft;
-
     public Player(Box2DHandler box2DHandler, Camera camera, SpriteBatch batch) {
         super(box2DHandler, camera, batch);
         sprite.setSize(32, 32);
@@ -41,7 +39,6 @@ public class Player extends Character {
         // Give Character Box2D Physics
         box2dBody = box2DHandler.createCharacterShape(sprite.getX(), sprite.getY(), sprite.getWidth() * 0.75f, sprite.getHeight());
         teleDashCooldown = 0;
-        lastMoveLeft = false;
     }
 
     @Override
@@ -65,8 +62,6 @@ public class Player extends Character {
         float camYDist = ((sprite.getY() + sprite.getHeight() * 0.8f) - camera.position.y) * dt * 10;
         camera.position.x += camXDist / 1.5;
         camera.position.y += camYDist / 1.5;
-
-        lookingLeft = lastMoveLeft;
     }
 
     @Override
@@ -83,17 +78,6 @@ public class Player extends Character {
         super.setPosition(x, y);
         camera.position.x = x;
         camera.position.y = y;
-    }
-
-    @Override
-    public void move(float x) {
-        super.move(x);
-
-        if (x < 0) {
-            lastMoveLeft = true;
-        } else if (x > 0) {
-            lastMoveLeft = false;
-        }
     }
 
     @Override

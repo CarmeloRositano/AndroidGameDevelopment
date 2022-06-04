@@ -267,7 +267,7 @@ public class UserInterface {
     }
 
     public boolean moveLeftButtonDoubleTapped() {
-        return moveLeftButton.isDoubleTap();
+        return moveLeftButton.isDoubleTap() || Gdx.input.isKeyPressed(Input.Keys.SPACE);
     }
 
     public boolean moveRightButtonPressed() {
@@ -275,7 +275,7 @@ public class UserInterface {
     }
 
     public boolean moveRightButtonDoubleTapped() {
-        return moveRightButton.isDoubleTap();
+        return moveRightButton.isDoubleTap() || Gdx.input.isKeyPressed(Input.Keys.SPACE);
     }
 
     public boolean jumpButtonPressed() {

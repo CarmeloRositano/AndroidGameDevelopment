@@ -36,9 +36,9 @@ public class Character {
     // Character states
     public Body box2dBody;
     private Box2DHandler box2DHandler;
-    protected State currentState;
+    public State currentState;
     protected float stateTime;
-    public int jumpsLeft;
+    private int jumpsLeft;
     private float jumpWait;
     private float prevVelocityY;
 
@@ -130,8 +130,8 @@ public class Character {
         jumpWait -= Gdx.graphics.getDeltaTime();
         if (jumpWait < 0) jumpWait = 0;
 
-        if (box2dBody.getLinearVelocity().x > 0.02f) lookingLeft = false;
-        if (box2dBody.getLinearVelocity().x < -0.02f) lookingLeft = true;
+//        if (box2dBody.getLinearVelocity().x > 0.02f) lookingLeft = false;
+//        if (box2dBody.getLinearVelocity().x < -0.02f) lookingLeft = true;
         if (currentState == State.RUNNING && box2dBody.getLinearVelocity().x == 0f) currentState = State.IDLE;
 
         particles.update();
@@ -183,17 +183,18 @@ public class Character {
             if (box2dBody.getLinearVelocity().y == 0 && prevVelocityY < 0) jumpsLeft = 2;
 
             if (x != 0) {
-                box2dBody.setLinearVelocity(box2dBody.getLinearVelocity().x + (x * movementSpeedBuildup * dt),
-                        box2dBody.getLinearVelocity().y);
+                box2dBody.setLinearVelocity(box2dBody.getLinearVelocity().x + (x * movementSpeedBuildup * dt), box2dBody.getLinearVelocity().y);
+
                 if (currentState != State.ATTACKING) currentState = State.RUNNING;
                 if (box2dBody.getLinearVelocity().x > maxMovementSpeed) {
-                    box2dBody.setLinearVelocity(maxMovementSpeed,
-                            box2dBody.getLinearVelocity().y);
+                    box2dBody.setLinearVelocity(maxMovementSpeed, box2dBody.getLinearVelocity().y);
                 }
                 if (box2dBody.getLinearVelocity().x < -1 * maxMovementSpeed) {
-                    box2dBody.setLinearVelocity(-1 * maxMovementSpeed,
-                            box2dBody.getLinearVelocity().y);
+                    box2dBody.setLinearVelocity(-1 * maxMovementSpeed, box2dBody.getLinearVelocity().y);
                 }
+
+                lookingLeft = x > 0 ? false : true;
+
             } else {
                 box2dBody.setLinearVelocity(box2dBody.getLinearVelocity().x / 1.2f,
                         box2dBody.getLinearVelocity().y);
