@@ -1,0 +1,8 @@
+Desktop Controls:
+
+LEFT: 	Move left
+RIGHT: 	Move right
+UP:		Jump
+Z:		Melee Attack
+X:		Range Attack
+SPACE:	Teleport
