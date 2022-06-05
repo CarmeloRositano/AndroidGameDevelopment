@@ -11,11 +11,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.particles.ParticleHandler;
 
 public class Player extends Character {
-    private float teleDashCoolDownDefault = 1;
+    public float teleDashCoolDownDefault = 1;
+    public float teleDashCoolDown;
     private float teleDashCost = 1;
     private float teleDashDistance = 1;
     private float rangedAttackCost = 1;
-    private float teleDashCoolDown;
     private float particleSpawnCooldownDefault = 0.1f;
     private float particleSpawnCooldown;
 
@@ -173,12 +173,28 @@ public class Player extends Character {
     }
 
     /**
+     * Checks if the player has enough health to shoot a ranged attack
+     * @return boolean True if player can shoot
+     */
+    public boolean canShoot() {
+        return health - rangedAttackCost > 0;
+    }
+
+    /**
+     * Checks if the player has enough health to dash
+     * @return boolean True if player can dash
+     */
+    public boolean canDash() {
+        return health - teleDashCost > 0;
+    }
+
+    /**
      * Makes the player dash forward x distance. Makes particles appear where the player was and
      * where they teleport to. removes lives from the player.
      * @param x the distance that the player is going to be teleported
      */
     public void teleDash(float x) {
-        if (health - teleDashCost > 0 && teleDashCoolDown <= 0) {
+        if (canDash() && teleDashCoolDown <= 0) {
             if (particleSpawnCooldown <= 0) {
                 particles.addParticle(ParticleHandler.Type.EXPLOSION, "particleB.png", new Vector2(sprite.getX() + sprite.getWidth() / 2, sprite.getY() + sprite.getHeight() / 2), 500, 1, 140, new Color(70 / 255, 20 / 255, 186 / 255, 0.7f), 0.5f);
                 particles.addParticle(ParticleHandler.Type.EXPLOSION, "particleB.png", new Vector2(sprite.getX() + sprite.getWidth() / 2 + teleDashDistance * Box2DHandler.PPM, sprite.getY() + sprite.getHeight() / 2), 500, 1, 140, new Color(70 / 255, 20 / 255, 186 / 255, 0.7f), 0.5f);

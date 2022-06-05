@@ -7,6 +7,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import java.util.Arrays;
 
+/**
+ * Main particle class/ parent. Should be spawned with the particle handler.
+ * @author David Galbory
+ */
 public class Particles {
     protected float gravity = 300f;
     private SpriteBatch batch;
@@ -33,6 +37,14 @@ public class Particles {
     protected float scale;
 
 
+    /**
+     * The main constructor for particles. Creates a particle spawner based on the given values.
+     * @param camera Camera to use for placing particles on its projection matrix.
+     * @param texturePath The path of the particle image
+     * @param spawnX The X coordinate to place the particles
+     * @param spawnY The Y coordinate to place the particles
+     * @param lifetimeMS The lifetime of each particle
+     */
     public Particles(Camera camera, String texturePath, float spawnX, float spawnY, long lifetimeMS) {
         this.camera = camera;
         batch = new SpriteBatch();
@@ -48,22 +60,55 @@ public class Particles {
         emitEndTime = -1;
     }
 
+    /**
+     * Constructor to create a particle spawner with more configuration
+     * @param camera Camera to use for placing particles on its projection matrix.
+     * @param texturePath The path of the particle image
+     * @param spawnX The X coordinate to place the particles
+     * @param spawnY The Y coordinate to place the particles
+     * @param lifetimeMS The lifetime of each particle
+     * @param color The colour of the particles
+     */
     public Particles(Camera camera, String texturePath, float spawnX, float spawnY, long lifetimeMS, Color color) {
         this(camera, texturePath, spawnX, spawnY, lifetimeMS);
         baseColour = color;
     }
 
+    /**
+     * Constructor to create a particle spawner with more configuration
+     * @param camera Camera to use for placing particles on its projection matrix.
+     * @param texturePath The path of the particle image
+     * @param spawnX The X coordinate to place the particles
+     * @param spawnY The Y coordinate to place the particles
+     * @param lifetimeMS The lifetime of each particle
+     * @param spawnSpeed The time gap between each particle being spawned
+     * @param maxVelocity The maximum velocity a particle will have when spawned
+     */
     public Particles(Camera camera, String texturePath, float spawnX, float spawnY, long lifetimeMS, float spawnSpeed, float maxVelocity) {
         this(camera, texturePath, spawnX, spawnY, lifetimeMS);
         this.maxVelocity = maxVelocity;
         this.spawnSpeed = spawnSpeed;
     }
 
+    /**
+     * Constructor to create a particle spawner with more configuration
+     * @param camera Camera to use for placing particles on its projection matrix.
+     * @param texturePath The path of the particle image
+     * @param spawnX The X coordinate to place the particles
+     * @param spawnY The Y coordinate to place the particles
+     * @param lifetimeMS The lifetime of each particle
+     * @param spawnSpeed The time gap between each particle being spawned
+     * @param maxVelocity The maximum velocity a particle will have when spawned
+     * @param color The colour of the particles
+     */
     public Particles(Camera camera, String texturePath, float spawnX, float spawnY, long lifetimeMS, float spawnSpeed, float maxVelocity, Color color) {
         this(camera, texturePath, spawnX, spawnY, lifetimeMS, spawnSpeed, maxVelocity);
         baseColour = color;
     }
 
+    /**
+     * Initialises much of the particle configuration. Must be run before using, however is usually run automatically in required places.
+     */
     protected void initialise() {
         // Uses lifetimeMS to estimate how many concurrent particles are needed.
         int particleCount = (int)(((float)lifetimeMS/1000) / (spawnSpeed == 0 ? 0.002f : spawnSpeed));
@@ -76,6 +121,7 @@ public class Particles {
             Arrays.fill(particleData[i], 0);
         }
 
+        // Sets each color in the color array
         for (int i = 0; i < color.length; i++) {
             color[i] = baseColour.cpy();
         }
@@ -83,20 +129,35 @@ public class Particles {
         initialised = true;
     }
 
+    /**
+     * Changes the spawn of the particles
+     * @param spawnX
+     * @param spawnY
+     */
     public void setSpawn(float spawnX, float spawnY) {
         this.spawnX = spawnX;
         this.spawnY = spawnY;
     }
 
+    /**
+     * Changes the multiplier on the particle velocity
+     * @param multX X velocity multiplier
+     * @param multY Y velocity multiplier
+     */
     public void setVelocityMult(float multX, float multY) {
         velocityXMult = multX;
         velocityYMult = multY;
     }
 
+    /**
+     * Creates a new particle to add to the data array. Only makes a new one when necessary
+     */
     protected void createParticle() {
         if (stopped) return;
         if (emitEndTime >= 0 && System.currentTimeMillis() > emitEndTime) stop();
         int validIndex = -1;
+
+        // Loocs for an empty or finished data slot
         for (int i = 0; i < creationTime.length; i++) {
             if (creationTime[i] == 0) {
                 validIndex = i;
@@ -107,20 +168,23 @@ public class Particles {
 
         float[] velocities = makeParticleVelocities();
         float rotation = 0;
-
         float[] dataset = {spawnX, spawnY, velocities[0], velocities[1], rotation};
 
+        // Adds the new particle data to the data array
         for (int i = 0; i < particleData.length; i++) {
             particleData[i][validIndex] = dataset[i];
         }
+
+        // Adds color and time data for the particle
         color[validIndex] = baseColour.cpy();
-
         creationTime[validIndex] = System.currentTimeMillis();
-
         lastCreateTime = System.currentTimeMillis();
     }
 
-    // Allows for children to override this particular
+    /**
+     * Creates an array of random particle velocities.
+     * @return Float array containing x and y velocities.
+     */
     protected float[] makeParticleVelocities() {
         float velX = (float)((Math.random() * maxVelocity*2 - maxVelocity) * velocityXMult);
         float velY = (float)((Math.random() * maxVelocity*2 - maxVelocity) * velocityXMult);
@@ -128,6 +192,9 @@ public class Particles {
         return velocities;
     }
 
+    /**
+     * Updates all the particle data.
+     */
     public void update() {
         if (isFinished()) return;
         if (!initialised) {
@@ -135,10 +202,12 @@ public class Particles {
         }
         float dt = Gdx.graphics.getDeltaTime();
 
+        // Create new particle if the minimum duration has been met
         if (System.currentTimeMillis() > lastCreateTime + (long)(spawnSpeed * 1000)) {
             createParticle();
         }
 
+        // Updates the particle data
         for (int i = 0; i < particleData[0].length; i++) {
             if (System.currentTimeMillis() > creationTime[i] + lifetimeMS) creationTime[i] = 0;
 
@@ -164,6 +233,9 @@ public class Particles {
         }
     }
 
+    /**
+     * Renders all the particles
+     */
     public void render() {
         if (isFinished()) return;
         if (!initialised) {
@@ -171,6 +243,8 @@ public class Particles {
         }
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
+
+        // Goes through particle data and renders the texture to each particles coordinates with its configuration
         for (int i = 0; i < particleData[0].length; i++) {
             if (creationTime[i] > 0) {
                 batch.setColor(color[i]);
@@ -182,6 +256,9 @@ public class Particles {
         batch.end();
     }
 
+    /**
+     * Stops any more particles being made.
+     */
     public void stop() {
         if (!stopped) {
             stopped = true;
@@ -189,19 +266,34 @@ public class Particles {
         }
     }
 
+    /**
+     * Checks if the particles are finished decaying/ disappearing after being stopped.
+     * @return boolean indicating if particles are still alive or not.
+     */
     public boolean isFinished() {
         if (stopped && System.currentTimeMillis() > stopTime + lifetimeMS) return true;
         return false;
     }
 
+    /**
+     * Sets the scale of the particles
+     * @param scale Scale to change the texture to
+     */
     public void setScale(float scale) {
         this.scale = scale;
     }
 
+    /**
+     * Set the duration to spawn the particles for.
+     * @param seconds
+     */
     public void setDuration(float seconds) {
         emitEndTime = System.currentTimeMillis() + (long)(seconds*1000);
     }
 
+    /**
+     * Cleans up the particles.
+     */
     public void dispose(){
         batch.dispose();
         texture.dispose();

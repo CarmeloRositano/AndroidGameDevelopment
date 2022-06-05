@@ -316,8 +316,8 @@ public class Character {
     public void dispose() {
 //        texture.dispose(); // TEXTURES CURRENTLY STORED AS STATIC FOR ALL CHARACTERS
         box2DHandler.removeBodies(new Body[]{box2dBody});
-
-
+        particles.removeAll();
+        particles.dispose();
         //TODO Dispose All Necessary Objects
     }
 }

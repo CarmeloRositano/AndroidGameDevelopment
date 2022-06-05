@@ -5,6 +5,10 @@ import com.badlogic.gdx.graphics.Color;
 
 import java.util.Arrays;
 
+/**
+ * More specific version of Particles. Constructors are the same, initialisation is different.
+ * @author David Galbory
+ */
 public class ParticlesExplosion extends Particles {
 
 
@@ -24,6 +28,9 @@ public class ParticlesExplosion extends Particles {
         super(camera, texturePath, spawnX, spawnY, lifetimeMS, spawnSpeed, maxVelocity, color);
     }
 
+    /**
+     * Customises the parents initialise to create an explosion effect. Disables some of the constructor settings, such as spawnSpeed
+     */
     @Override
     protected void initialise() {
         // Uses lifetimeMS to estimate how many concurrent particles are needed.
@@ -57,6 +64,9 @@ public class ParticlesExplosion extends Particles {
         stop();
     }
 
+    /**
+     * Disables making more particles.
+     */
     @Override
     protected void createParticle() {}
 }

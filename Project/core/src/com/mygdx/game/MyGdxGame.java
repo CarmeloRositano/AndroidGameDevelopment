@@ -22,13 +22,14 @@ public class MyGdxGame extends ApplicationAdapter {
 	float playerHealth;
 	public static float totalTime;
 	public static boolean hardmode;
+	public static float difficultTimer;
 
 	// Player
 	public static Player player;				// Static so accessible for targeting
-	float attackCooldownDefault = 0.3f;
-	float rangedAttackCooldownDefault = 6f;
-	float attackCooldown;
-	float rangedAttackCooldown;
+	public static float attackCooldownDefault = 0.3f;
+	public static float rangedAttackCooldownDefault = 6f;
+	public static float attackCooldown;
+	public static float rangedAttackCooldown;
 
 	// Rendering
 	SpriteBatch batch, uiBatch;
@@ -42,11 +43,11 @@ public class MyGdxGame extends ApplicationAdapter {
 	UserInterface userInterface;
 
 	// Music
-	String menuMusic = "sounds/Music/Prandium - Castle.mp3";
-	String gameMusicNM = "sounds/Music/Prandium - Mountain.mp3";
+	String menuMusic = "sounds/Music/David Carso - Why not.mp3";
+	String gameMusicNM = "sounds/Music/David Carso - Something.mp3";
 	String gameMusicHM = "sounds/Music/David Carso - Countdown.mp3";
-	float menuMusicVolume = 1f;
-	float gameMusicVolume = 1f;
+	float menuMusicVolume = 0.35f;
+	float gameMusicVolume = 0.25f;
 
 	/**
 	 * Sets up game and initialises all field variables
@@ -138,6 +139,7 @@ public class MyGdxGame extends ApplicationAdapter {
 				}
 				if (userInterface.restartButtonPressed()) newGame();
 			case PLAYING:
+				difficultTimer += dt;
 				level.update();
 				level.changeColourOverTime(totalTime);
 
@@ -196,6 +198,9 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 	}
 
+	/**
+	 * Scans acceptable area for targets for the player to attack then applies damage to them.
+	 */
 	public void playerAttack() {
 		attackCooldown = attackCooldownDefault;
 		List<Character> enemies = level.getEnemies();
@@ -206,6 +211,9 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 	}
 
+	/**
+	 * Scans acceptable area for targets for the player to attack then applies damage to them.
+	 */
 	public void playerRangedAttack() {
 		rangedAttackCooldown = rangedAttackCooldownDefault;
 		List<Character> enemies = level.getEnemies();
@@ -216,6 +224,9 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 	}
 
+	/**
+	 * Creates a new game with basic and easy settings
+	 */
 	public void newNormalGame() {
 		hardmode = false;
 
@@ -224,6 +235,9 @@ public class MyGdxGame extends ApplicationAdapter {
 		newGame();
 	}
 
+	/**
+	 * Creates a new game with hardmode settings
+	 */
 	public void newHardmodeGame() {
 		hardmode = true;
 
@@ -253,6 +267,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		playerHealth = player.health;
 		totalTime = 0f;
 		score = 0;
+		difficultTimer = 0;
 		gameState = GameState.PLAYING;
 	}
 

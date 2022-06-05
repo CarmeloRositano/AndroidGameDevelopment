@@ -3,6 +3,10 @@ package com.mygdx.game.particles;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 
+/**
+ * More specific version of Particles. Constructors are the same, velocity generation is different.
+ * @author David Galbory
+ */
 public class ParticlesFountain extends Particles {
 
 
@@ -22,6 +26,10 @@ public class ParticlesFountain extends Particles {
         super(camera, texturePath, spawnX, spawnY, MS, spawnSpeed, maxVelocity, color);
     }
 
+    /**
+     * Creates particle velocities that represent a fountain pattern
+     * @return Float array containing x and y velocities.
+     */
     @Override
     protected float[] makeParticleVelocities() {
         float velX = (float)((Math.random() * maxVelocity - maxVelocity/2) * velocityXMult);

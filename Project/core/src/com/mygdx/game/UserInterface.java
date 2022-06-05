@@ -117,24 +117,55 @@ public class UserInterface {
             float w = Gdx.graphics.getWidth() * 0.20f;
             float h = Gdx.graphics.getHeight() * 0.05f;
 
+            // Energy Background
             ShapeRenderer sr = new ShapeRenderer();
             sr.begin(ShapeRenderer.ShapeType.Filled);
             sr.setColor(0, 0, 0, 0.4f);
             sr.rect(x - lineW, y - lineW, w + lineW * 2, h + lineW * 2);
-
+            // Energy Foreground
             sr.setColor(0.7f, 0, 0, 1);
             sr.rect(x, y, w * (health/playerMaxHealth), h);
             sr.setColor(0, 0, 0, 1);
+
+            float x2 = x*2 + w;
+
+            // Ability Background
+            sr.setColor(0, 0, 0, 0.4f);
+            sr.rect(x2 - lineW, y - lineW, w + lineW * 2, h + lineW * 2);
+            // Ability Foreground
+            if (MyGdxGame.player.canShoot()) {
+                sr.setColor(0.4f, 0, 0.7f, 1);
+            } else {
+                sr.setColor(0.3f, 0.3f, 0.3f, 1);
+            }
+            sr.rect(x2, y, w * ((MyGdxGame.rangedAttackCooldownDefault - MyGdxGame.rangedAttackCooldown) / MyGdxGame.rangedAttackCooldownDefault), h);
+            sr.setColor(0, 0, 0, 1);
+
+            float x3 = x*3 + w*2;
+
+            // Ability Background
+            sr.setColor(0, 0, 0, 0.4f);
+            sr.rect(x3 - lineW, y - lineW, w*0.6f + lineW * 2, h + lineW * 2);
+            // Ability Foreground
+            if (MyGdxGame.player.canDash()) {
+                sr.setColor(0.1f, 0, 0.6f, 1);
+            } else {
+                sr.setColor(0.3f, 0.3f, 0.3f, 1);
+            }
+            sr.rect(x3, y, w*0.6f * ((MyGdxGame.player.teleDashCoolDownDefault - MyGdxGame.player.teleDashCoolDown) / MyGdxGame.player.teleDashCoolDownDefault), h);
+            sr.setColor(0, 0, 0, 1);
             sr.end();
+
             sr.dispose();
 
 
             uiBatch.begin();
             font.setColor(1, 1, 1, 0.8f);
             font.getData().setScale(3);
-            font.draw(uiBatch, "  ENERGY" , x+w/2, y+h/2-14, 0f, 1, false);
-            font.getData().setScale(3);
-            font.draw(uiBatch, "  SCORE: " + ((int) score), Gdx.graphics.getWidth() * 0.016f, Gdx.graphics.getHeight() * 0.85f, 0f, -1, false);
+            font.draw(uiBatch, "ENERGY" , x+w/2, y+h/2-14, 0f, 1, false);
+            font.draw(uiBatch, "RANGED ATTACK" , x2+w/2, y+h/2-14, 0f, 1, false);
+            font.draw(uiBatch, "DASH" , x3+(w*0.6f)/2, y+h/2-14, 0f, 1, false);
+            font.draw(uiBatch, "   SCORE: " + ((int) score), Gdx.graphics.getWidth() * 0.016f, Gdx.graphics.getHeight() * 0.85f, 0f, -1, false);
             uiBatch.end();
         }
 

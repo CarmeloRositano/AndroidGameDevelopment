@@ -69,8 +69,8 @@ public class EnemyAI extends Character {
                     lostViewTimer -= Gdx.graphics.getDeltaTime();
                     if (lostViewTimer < 0) aiState = AIState.PATROLING;
                 } else if (otherInMeleeRange(MyGdxGame.player) && attackCooldown <= 0){
-                    if(MyGdxGame.totalTime < 180) {
-                        meleeAttack(MyGdxGame.player, MyGdxGame.totalTime / 36);
+                    if(MyGdxGame.difficultTimer < 180) {
+                        meleeAttack(MyGdxGame.player, MyGdxGame.difficultTimer / 36);
                     } else {
                         meleeAttack(MyGdxGame.player, 5);
                     }
