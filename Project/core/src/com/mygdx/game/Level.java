@@ -11,6 +11,7 @@ import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Polygon;
@@ -54,7 +55,7 @@ public class Level {
         path = "levels/" + (MyGdxGame.hardmode ? "hardmode/" : "normalmode/");
 
         map = new Vector<>();
-        background = new TmxMapLoader().load(path + "Background.tmx");
+        background = new TmxMapLoader().load(path + "BackgroundPara.tmx");
         backgroundRenderer = new OrthogonalTiledMapRenderer(background);
 
         // Initialise field variables with arguments
@@ -106,18 +107,23 @@ public class Level {
     public void update() {
         // Gets width and current offset
         int bgWidth = (background.getProperties().get("tilewidth", Integer.class) * background.getProperties().get("width", Integer.class));
-        float bgOffset = background.getLayers().get(0).getOffsetX();
 
-        // Adjust offset depending on when camera is
-        if (camera.position.x > bgOffset+(bgWidth/3)*2) {
-            bgOffset += bgWidth/3;
-        } else if (camera.position.x < bgOffset+bgWidth/3) {
-            bgOffset -= bgWidth/3;
+        for (int i = 0; i < background.getLayers().size(); i++) {
+            MapLayer backgroundPiece = background.getLayers().get(i);
+            float bgOffset = backgroundPiece.getOffsetX();
+
+            // Adjust offset depending on when camera is
+            if (camera.position.x > bgOffset+(bgWidth/3)*2) {
+                bgOffset += bgWidth/3 ;
+            } else if (camera.position.x < bgOffset+bgWidth/3) {
+                bgOffset -= bgWidth/3;
+            }
+            // Apply offset and remeber previous camera
+            bgOffset += (camera.position.x - prevCamX)/(Math.pow(i+1, 0.7f));
+            backgroundPiece.setOffsetX(bgOffset);
         }
-        // Apply offset and remeber previous camera
-        bgOffset += (camera.position.x - prevCamX)/4;
         prevCamX = camera.position.x;
-        background.getLayers().get(0).setOffsetX(bgOffset);
+
 
         // Sets current chunk based on cam pos
         currentChunk = (int)(camera.position.x / (mapWidth*tileWidth)) - (camera.position.x >= 0 ? 0 : 1);

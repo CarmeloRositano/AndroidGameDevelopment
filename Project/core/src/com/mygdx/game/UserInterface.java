@@ -33,8 +33,8 @@ public class UserInterface {
         moveLeftButton = new Button(0, 0, w/4, h/2, new Texture("buttons/controls/left.png"));
         moveRightButton = new Button(w/4, 0, w/4, h/2, new Texture("buttons/controls/right.png"));
         jumpButton = new Button(0, h/2, w/2, h/2, new Texture("buttons/controls/jump.png"));
-        meeleeAttackButton = new Button(w/2, 0, w/3, h/9.6f*8.6f, new Texture("buttons/controls/shoot.png"));
-        rangedAttackButton = new Button(w/2 + meeleeAttackButton.w, 0, w/6.2f, h/9.6f*8.6f, new Texture("buttons/controls/shoot.png"));
+        meeleeAttackButton = new Button(w/2, 0, w/3, h/9.6f*8.6f, new Texture("buttons/controls/melee.png"));
+        rangedAttackButton = new Button(w/2 + meeleeAttackButton.w, 0, w/6.2f, h/9.6f*8.6f, new Texture("buttons/controls/range.png"));
         pauseButton = new Button(w/2, h/9.6f*8.6f, w/2, h/9.6f, new Texture("buttons/controls/pause.png"));
         resumeButton = new Button(w*0.35f, h*0.5f, w*0.3f, h*0.14f, new Texture("buttons/buttonLong_blue.png"));
         restartButton = new Button(w*0.325f, h*0.35f, w*0.35f, h*0.14f, new Texture("buttons/buttonLong_blue.png"));
